@@ -14,18 +14,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Represents a user in the system
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
+  isActive      Boolean   @default(true)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  accounts  Account[]
+  auditLogs AuditLog[]
+
+  oMId String?
+
+  schedules Schedule[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  OM OM? @relation(fields: [oMId], references: [id])
+
+  @@index([email])
+  @@index([oMId])
 }
 
+/// Represents OAuth accounts linked to users
 model Account {
   userId            String
   type              String
@@ -45,12 +60,183 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
+  @@index([userId])
 }
 
+/// Stores email verification tokens
 model VerificationToken {
   identifier String
-  token      String
+  token      String   @unique
   expires    DateTime
 
   @@id([identifier, token])
+  @@index([token])
+}
+
+/// Represents different roles in the organization
+enum OMRole {
+  CSUP
+  COMRJ
+  DEPOSITO
+}
+
+/// Represents an organizational unit
+model OM {
+  id       String  @id @default(cuid())
+  name     String
+  sigla    String  @unique
+  isActive Boolean @default(true)
+
+  militares User[]
+
+  role OMRole @default(DEPOSITO)
+
+  deliveryTypes  DeliveryType[]
+  availabilities Availability[]
+  schedules      Schedule[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([sigla])
+}
+
+/// Represents different types of deliveries
+model DeliveryType {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  isActive    Boolean @default(true)
+
+  availability Availability?
+  schedules    Schedule[]
+
+  omId String
+  om   OM     @relation(fields: [omId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([omId])
+}
+
+/// Represents availability slots for deliveries
+model Availability {
+  id        String   @id @default(cuid())
+  weekDay   Int      @db.SmallInt
+  startTime DateTime
+  endTime   DateTime
+  isActive  Boolean  @default(true)
+
+  deliveryTypeId String       @unique
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+
+  omId String
+  om   OM     @relation(fields: [omId], references: [id])
+
+  availabilityRule AvailabilityRule?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([omId])
+  @@index([weekDay])
+}
+
+/// Stores rules for availability slots
+model AvailabilityRule {
+  id String @id @default(cuid())
+
+  rule Json
+
+  availabilityId String       @unique
+  availability   Availability @relation(fields: [availabilityId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([availabilityId])
+}
+
+/// Represents scheduled deliveries
+model Schedule {
+  id     String         @id @default(cuid())
+  date   DateTime
+  status ScheduleStatus @default(PENDING)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  deliveryTypeId String
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+
+  omId String
+  om   OM     @relation(fields: [omId], references: [id])
+
+  observations Json
+  isDeleted    Boolean @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([userId])
+  @@index([omId])
+  @@index([deliveryTypeId])
+  @@index([date])
+}
+
+/// Represents the status of a schedule
+enum ScheduleStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+/// Represents different types of audit actions
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  SCHEDULE
+  OTHER
+}
+
+/// Stores audit logs for system actions
+model AuditLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User information
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Action details
+  action    AuditAction
+  entity    String // The type of entity being audited (e.g., "User", "OM", "DeliveryType")
+  entityId  String? // The ID of the entity being audited
+  details   String? // Additional details about the action
+  ipAddress String? // IP address of the user
+  userAgent String? // User agent/browser information
+
+  // Resource information
+  oldValues Json? // Previous values before the change
+  newValues Json? // New values after the change
+
+  // Metadata
+  status   String? // Success, failure, or other status
+  error    String? // Error message if any
+  metadata Json? // Additional metadata in JSON format
+
+  @@index([userId])
+  @@index([entity])
+  @@index([entityId])
+  @@index([createdAt])
 }
