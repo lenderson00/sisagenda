@@ -1,4 +1,5 @@
 import OmSelection from "./_component/om-selection";
+import { Stepper } from "./_component/stepper";
 
 const oms = [
 	{
@@ -28,7 +29,7 @@ const AgendaPage = () => {
 		<div className="flex flex-col items-center justify-start pt-48 h-screen bg-muted">
 			<div className="max-w-md w-full flex flex-col gap-4 items-center">
 				<h1 className="text-xl font-bold">Agendar</h1>
-
+				<Stepper step={1} totalSteps={3} />
 				<div className="w-full flex flex-col">
 					{oms.map((om, index) => (
 						<OmSelection
