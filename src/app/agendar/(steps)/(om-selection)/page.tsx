@@ -1,6 +1,6 @@
+import { prisma } from "@/lib/prisma";
 import OmSelection from "../../_component/om-selection";
 import { Stepper } from "../../_component/stepper";
-
 const oms = [
 	{
 		omName: "OM 1",
@@ -24,17 +24,34 @@ const oms = [
 	},
 ];
 
-const AgendaPage = () => {
+const AgendaPage = async () => {
+	const oms = await prisma.oM.findMany({
+		where: {
+			isActive: true,
+			deletedAt: null,
+			role: "DEPOSITO",
+		},
+		orderBy: {
+			name: "asc",
+		},
+	});
+
+	console.log(oms);
+
+	if (oms.length === 0) {
+		return <div>Nenhuma OM encontrada</div>;
+	}
+
 	return (
 		<>
 			<Stepper step={1} totalSteps={3} />
 			<div className="w-full flex flex-col">
 				{oms.map((om, index) => (
 					<OmSelection
-						key={`${om.omSigla}-${index}`}
-						omName={om.omName}
-						omSigla={om.omSigla}
-						omDescription={om.omDescription}
+						key={`${om.id}`}
+						omName={om.name}
+						omSigla={om.sigla}
+						omDescription={om.description ?? ""}
 						position={
 							index === 0
 								? "top"

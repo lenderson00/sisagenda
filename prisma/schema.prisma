@@ -82,10 +82,14 @@ enum OMRole {
 
 /// Represents an organizational unit
 model OM {
-  id       String  @id @default(cuid())
-  name     String
-  sigla    String  @unique
-  isActive Boolean @default(true)
+  id    String @id @default(cuid())
+  name  String
+  sigla String @unique
+  slug  String @unique
+
+  description String?
+  isActive    Boolean @default(true)
+  order       Int     @unique @default(autoincrement())
 
   militares User[]
 
@@ -107,7 +111,9 @@ model DeliveryType {
   id          String  @id @default(cuid())
   name        String
   description String?
-  isActive    Boolean @default(true)
+
+  slug     String  @unique
+  isActive Boolean @default(true)
 
   availability Availability?
   schedules    Schedule[]
