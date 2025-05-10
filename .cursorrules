@@ -1,0 +1,46 @@
+# Conventional Commits Rules
+# This file defines the rules for commit messages in this repository
+
+# Commit Message Format
+# <type>(<scope>): <description>
+# [optional body]
+# [optional footer(s)]
+
+# Types
+# feat: A new feature
+# fix: A bug fix
+# docs: Documentation only changes
+# style: Changes that do not affect the meaning of the code (white-space, formatting, etc)
+# refactor: A code change that neither fixes a bug nor adds a feature
+# perf: A code change that improves performance
+# test: Adding missing tests or correcting existing tests
+# chore: Changes to the build process or auxiliary tools and libraries
+
+# Scopes
+# api: API related changes
+# ui: UI/UX related changes
+# auth: Authentication related changes
+# db: Database related changes
+# config: Configuration related changes
+# deps: Dependency related changes
+
+# Examples
+# feat(auth): add login functionality
+# fix(api): resolve user data fetching issue
+# docs: update README with new installation steps
+# style(ui): format components according to style guide
+# refactor(db): optimize database queries
+# perf(api): improve response time for user list
+# test(auth): add unit tests for login flow
+# chore(deps): update dependencies to latest versions
+
+# Rules
+1. Each commit message must start with a type
+2. The type must be one of: feat, fix, docs, style, refactor, perf, test, chore
+3. The scope is optional but recommended
+4. The description must be in present tense and not capitalized
+5. The description should be concise but descriptive
+6. Use imperative mood in the description (e.g., "add" not "added")
+7. Separate subject from body with a blank line
+8. Wrap the body at 72 characters
+9. Use the footer to reference issues (e.g., "Fixes #123") 
