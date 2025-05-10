@@ -30,7 +30,7 @@ export const Stepper = ({ step, totalSteps }: StepperProps) => {
 									"w-full h-1 rounded-full transition-colors duration-200",
 									"bg-neutral-400",
 									isActive && "bg-primary",
-									isCompleted && "bg-primary/30",
+									isCompleted && "bg-primary",
 								)}
 								aria-label={`Step ${idx + 1}`}
 							/>
