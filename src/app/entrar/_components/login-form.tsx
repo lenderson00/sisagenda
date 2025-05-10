@@ -54,9 +54,9 @@ export function LoginForm({
 						<div className="flex size-8 items-center justify-center rounded-md">
 							<Logo className="size-8" />
 						</div>
-						<span className="sr-only">Animes.com.br</span>
+						<span className="sr-only">Sisgenda</span>
 					</a>
-					<h1 className="text-xl font-semibold">Bem-vindo ao Animes.com.br</h1>
+					<h1 className="text-xl font-semibold">Bem-vindo ao Sisgenda</h1>
 				</div>
 
 				<FormProvider {...form}>
@@ -85,7 +85,7 @@ export function LoginForm({
 							{form.formState.isSubmitting && (
 								<IconLoader className="mr-2 h-4 w-4 animate-spin" />
 							)}
-							Entrar com Email
+							Entrar
 						</Button>
 					</form>
 				</FormProvider>
