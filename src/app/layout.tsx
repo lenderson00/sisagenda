@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fira_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 import { auth } from "@/lib/auth/auth";
 import type { Session } from "next-auth";
 import { Providers } from "./providers";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
+const roboto = Roboto({
+	variable: "--font-roboto",
 	subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
+const firaMono = Fira_Mono({
+	variable: "--font-fira-mono",
 	subsets: ["latin"],
+	weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -30,7 +31,7 @@ export default async function RootLayout({
 	return (
 		<html lang="pt-BR" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`${roboto.variable} ${firaMono.variable} antialiased font-[family-name:var(--font-roboto)]`}
 			>
 				<Providers session={session}>{children}</Providers>
 			</body>
