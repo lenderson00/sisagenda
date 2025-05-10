@@ -31,7 +31,7 @@ const AgendaPage = () => {
 			<div className="w-full flex flex-col">
 				{oms.map((om, index) => (
 					<OmSelection
-						key={om.omSigla}
+						key={`${om.omSigla}-${index}`}
 						omName={om.omName}
 						omSigla={om.omSigla}
 						omDescription={om.omDescription}
