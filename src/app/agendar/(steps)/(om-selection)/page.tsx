@@ -36,8 +36,6 @@ const AgendaPage = async () => {
 		},
 	});
 
-	console.log(oms);
-
 	if (oms.length === 0) {
 		return <div>Nenhuma OM encontrada</div>;
 	}
