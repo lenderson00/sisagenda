@@ -50,39 +50,34 @@ const data = {
 const adminMain = [
 	{
 		name: "Usuários",
-		url: "/usuarios",
+		url: "/admin/usuarios",
 		icon: IconUsers,
 	},
 	{
 		name: "Organizações Militares",
-		url: "/oms",
+		url: "/admin/organizacoes-militares",
 		icon: IconBuilding,
+	},
+];
+
+const navDashboard = [
+	{
+		name: "Dashboard",
+		url: "/admin",
+		icon: IconDashboard,
 	},
 ];
 
 const navMain = [
 	{
-		name: "Dashboard",
-		url: "/",
-		icon: IconDashboard,
-	},
-	{
 		name: "Agendamentos",
-		url: "/agenda",
+		url: "/admin/agendamentos",
 		icon: IconCalendar,
 	},
 	{
 		name: "Fornecedores",
-		url: "/fornecedores",
+		url: "/admin/fornecedores",
 		icon: IconBuildings,
-	},
-];
-
-const navConfig = [
-	{
-		name: "Transporte",
-		url: "/transporte",
-		icon: IconCar,
 	},
 ];
 
@@ -93,9 +88,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<TeamSwitcher teams={data.teams} />
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={navMain} title="Menu Principal" />
+				<NavMain items={navDashboard} title="" />
 				<NavMain items={adminMain} title="Administração" />
-				<NavMain items={navConfig} title="Configurações" />
+				<NavMain items={navMain} title="Outros" />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser user={data.user} />
