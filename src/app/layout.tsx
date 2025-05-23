@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Fira_Mono, Roboto } from "next/font/google";
 import "./globals.css";
-import { isAppSetuped } from "@/actions/setup";
 import { auth } from "@/lib/auth/auth";
 import type { Session } from "next-auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Providers } from "./providers";
 

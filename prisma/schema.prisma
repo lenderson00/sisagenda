@@ -29,6 +29,7 @@ model User {
   image         String?
   isActive      Boolean   @default(true)
   role          UserRole  @default(USER)
+  password      String
 
   accounts  Account[]
   auditLogs AuditLog[]
