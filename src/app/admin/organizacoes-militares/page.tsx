@@ -10,7 +10,13 @@ import Link from "next/link";
 import { OrganizationCard } from "./_components/card";
 
 export default async function OrganizationsPage() {
-	const organizations = await getOrganizations();
+	const organizationsResult = await getOrganizations();
+
+	const organizations = organizationsResult?.data;
+
+	if (!organizations) {
+		return <div>Erro ao carregar organizações</div>;
+	}
 
 	// Calculate statistics
 	const totalOrganizations = organizations.length;

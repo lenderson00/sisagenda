@@ -39,3 +39,12 @@ export const authAction = actionClient.use(async ({ next }) => {
     },
   });
 });
+
+export const authSuperAdminAction = authAction.use(async ({ next, ctx }) => {
+
+  if (ctx.user.role !== "SUPER_ADMIN") {
+    redirect("/");
+  }
+
+  return next();
+});
