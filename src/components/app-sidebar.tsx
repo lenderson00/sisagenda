@@ -55,7 +55,7 @@ const adminMain = [
 	},
 	{
 		name: "Organizações Militares",
-		url: "/admin/organizacoes-militares",
+		url: "/admin/organizacao",
 		icon: IconBuilding,
 	},
 ];

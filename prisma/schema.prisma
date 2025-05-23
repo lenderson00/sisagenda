@@ -91,15 +91,13 @@ model Organization {
   id    String @id @default(cuid())
   name  String
   sigla String @unique
-  slug  String @unique
 
   description String?
   isActive    Boolean @default(true)
-  order       Int     @unique @default(autoincrement())
-
-  militares User[]
 
   role OMRole @default(DEPOSITO)
+
+  militares User[]
 
   deliveryTypes  DeliveryType[]
   availabilities Availability[]

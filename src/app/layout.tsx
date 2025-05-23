@@ -29,11 +29,7 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const session = (await auth()) as Session;
-	const appHasSetup = await isAppSetuped();
 
-	if (!appHasSetup) {
-		redirect("/setup");
-	}
 	return (
 		<html lang="pt-BR" suppressHydrationWarning>
 			<body
