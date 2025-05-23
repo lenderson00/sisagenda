@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Fira_Mono, Roboto } from "next/font/google";
 import "./globals.css";
+import { isAppSetuped } from "@/actions/setup";
 import { auth } from "@/lib/auth/auth";
 import type { Session } from "next-auth";
+import { redirect } from "next/navigation";
 import { Providers } from "./providers";
 
 const roboto = Roboto({
@@ -27,7 +29,11 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const session = (await auth()) as Session;
+	const appHasSetup = await isAppSetuped();
 
+	if (!appHasSetup) {
+		redirect("/setup");
+	}
 	return (
 		<html lang="pt-BR" suppressHydrationWarning>
 			<body
