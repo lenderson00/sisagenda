@@ -33,18 +33,17 @@ model User {
   accounts  Account[]
   auditLogs AuditLog[]
 
-  oMId String?
-
   schedules Schedule[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  OM OM? @relation(fields: [oMId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   @@index([email])
-  @@index([oMId])
+  @@index([organizationId])
 }
 
 /// Represents OAuth accounts linked to users
@@ -88,7 +87,7 @@ enum OMRole {
 }
 
 /// Represents an organizational unit
-model OM {
+model Organization {
   id    String @id @default(cuid())
   name  String
   sigla String @unique
@@ -125,14 +124,14 @@ model DeliveryType {
   availability Availability?
   schedules    Schedule[]
 
-  omId String
-  om   OM     @relation(fields: [omId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  @@index([omId])
+  @@index([organizationId])
 }
 
 /// Represents availability slots for deliveries
@@ -146,8 +145,8 @@ model Availability {
   deliveryTypeId String       @unique
   deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
 
-  omId String
-  om   OM     @relation(fields: [omId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   availabilityRule AvailabilityRule?
 
@@ -155,7 +154,7 @@ model Availability {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  @@index([omId])
+  @@index([organizationId])
   @@index([weekDay])
 }
 
@@ -186,8 +185,8 @@ model Schedule {
   deliveryTypeId String
   deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
 
-  omId String
-  om   OM     @relation(fields: [omId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   observations Json
   isDeleted    Boolean @default(false)
@@ -197,7 +196,7 @@ model Schedule {
   deletedAt DateTime?
 
   @@index([userId])
-  @@index([omId])
+  @@index([organizationId])
   @@index([deliveryTypeId])
   @@index([date])
 }

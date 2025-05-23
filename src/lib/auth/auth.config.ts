@@ -8,9 +8,9 @@ export const authOptions: NextAuthConfig = {
 		maxAge: 30 * 24 * 60 * 60, // 30 days
 	},
 	pages: {
-		signIn: "/login",
+		signIn: "/entrar",
 		verifyRequest: "/magiclink",
-		// error: "/login?error=true",
-		signOut: "/login",
+		// error: "/entrar?error=true",
+		signOut: "/entrar",
 	},
 };
