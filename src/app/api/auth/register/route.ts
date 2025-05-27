@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/resend";
 import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 
@@ -21,9 +22,10 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
-        mustChangePassword: true,
+        mustChangePassword: false,
       },
     });
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
