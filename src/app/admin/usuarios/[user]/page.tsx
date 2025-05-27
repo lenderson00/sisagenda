@@ -2,6 +2,7 @@ import { BreadcrumbNav } from "@/components/breadcrumb-nav";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
+import { UserPageClient } from "./page-client";
 
 const UserPage = async ({ params }: { params: Promise<{ user: string }> }) => {
   const session = await auth();
@@ -34,7 +35,6 @@ const UserPage = async ({ params }: { params: Promise<{ user: string }> }) => {
   ];
   return (
     <>
-      {" "}
       <div className="border-b ">
         <div className="container mx-auto px-6 py-8">
           <BreadcrumbNav items={breadcrumbItems} />
@@ -48,6 +48,7 @@ const UserPage = async ({ params }: { params: Promise<{ user: string }> }) => {
           </div>
         </div>
       </div>
+      <UserPageClient user={userResult} />
     </>
   );
 };
