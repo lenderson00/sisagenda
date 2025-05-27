@@ -23,6 +23,8 @@ export const Credentials: Provider = CredentialsProvider({
       },
     });
 
+    console.log("user", user);
+
     if (!user) {
       throw new Error("User not found");
     }
