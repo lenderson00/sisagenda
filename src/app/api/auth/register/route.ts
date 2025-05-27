@@ -1,3 +1,4 @@
+import { signIn } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/resend";
 import { hash } from "bcryptjs";
@@ -24,6 +25,13 @@ export async function POST(req: Request) {
         password: hashedPassword,
         mustChangePassword: false,
       },
+    });
+
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: true,
+      redirectTo: "/",
     });
 
     return NextResponse.json({ success: true });

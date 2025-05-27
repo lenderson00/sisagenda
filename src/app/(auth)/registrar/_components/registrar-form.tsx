@@ -64,12 +64,6 @@ export function RegistrarForm({
 				throw new Error(data.error || "Registration failed");
 			}
 
-			const loginResult = await signInWithEmail(values.email, values.password);
-
-			if (loginResult?.error) {
-				throw new Error(loginResult.error);
-			}
-
 			toast.success("Registration and login successful!");
 			form.reset();
 		} catch (error: unknown) {
