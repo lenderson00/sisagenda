@@ -45,7 +45,6 @@ export default auth(async (req: NextAuthRequest) => {
 
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
   const role = token?.role as UserRole;
-  console.log("role", role);
   // Check route types
   const isAuthRoute = authRoutes.includes(pathname);
   const isApiRoute = pathname.startsWith("/api/");
@@ -108,7 +107,7 @@ export default auth(async (req: NextAuthRequest) => {
   }
   // Allow access to protected routes for logged in users
 
-  const rolePrefix = role.toLowerCase();
+  const rolePrefix = role.toLowerCase().replace("_", "-");
   const newPath = `/${rolePrefix}${path}`;
   return NextResponse.rewrite(new URL(newPath, nextUrl));
 });
