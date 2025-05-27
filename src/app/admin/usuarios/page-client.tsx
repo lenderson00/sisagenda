@@ -11,29 +11,44 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { User } from "@prisma/client";
 import { format } from "date-fns";
-import {
-  Filter,
-  Plus,
-  Search,
-  UserCheck,
-  UserMinus,
-  UserX,
-  Users,
-} from "lucide-react";
+import { Plus, UserCheck, UserMinus, UserX, Users } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { UserForm } from "../_components/user-form";
-import { useCreateUser, useUserStats, useUsers } from "./user-queries";
+import { UserForm } from "./_components/user-form";
+import { useCreateUser } from "./_hooks/user-queries";
+
+// Types for props
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  whatsapp?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  organization?: {
+    id: string;
+    name: string;
+    sigla: string;
+  };
+  department?: string;
+  lastLogin?: string | null;
+  status?: string;
+}
+
+interface Stats {
+  total: number;
+  active: number;
+  inactive: number;
+  suspended?: number;
+}
+
+interface UsersPageClientProps {
+  users: User[];
+  stats: Stats;
+}
 
 type UserData = {
   name: string;
@@ -41,28 +56,13 @@ type UserData = {
   whatsapp: string;
 };
 
-export default function UsersPage() {
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-
-  const { data: users = [], isLoading, error } = useUsers();
-  const { data: stats } = useUserStats();
-  const createUserMutation = useCreateUser();
-
-  const handleCreateUser = (userData: UserData) => {
-    createUserMutation.mutate(userData, {
-      onSuccess: () => {
-        setIsCreateDialogOpen(false);
-      },
-    });
-  };
-
+export function UsersPageClient({ users, stats }: UsersPageClientProps) {
   const getStatusColor = (status: User["isActive"]) => {
     switch (status) {
       case true:
         return "bg-emerald-100 text-emerald-800";
       case false:
         return "bg-gray-100 text-gray-800";
-
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -81,64 +81,8 @@ export default function UsersPage() {
     }
   };
 
-  const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "Users", current: true },
-  ];
-
-  if (error) {
-    return (
-      <div className="min-h-screen  flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Error loading users
-          </h2>
-          <p className="text-gray-600">Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen ">
-      <div className="border-b ">
-        <div className="container mx-auto px-6 py-8">
-          <BreadcrumbNav items={breadcrumbItems} />
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                User Management
-              </h1>
-              <p className="text-gray-600">
-                Manage system users, roles, and permissions
-              </p>
-            </div>
-            <Dialog
-              open={isCreateDialogOpen}
-              onOpenChange={setIsCreateDialogOpen}
-            >
-              <DialogTrigger asChild>
-                <Button className="bg-gray-900 hover:bg-gray-800 text-white">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add User
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle className="text-gray-900">
-                    Create New User
-                  </DialogTitle>
-                </DialogHeader>
-                <UserForm
-                  onSubmit={handleCreateUser}
-                  onCancel={() => setIsCreateDialogOpen(false)}
-                />
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-[80vh] ">
       <div className="container mx-auto px-6 py-8">
         {/* Stats Cards */}
         <div className="grid gap-6 md:grid-cols-4 mb-8">
@@ -207,24 +151,7 @@ export default function UsersPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={`user-skeleton-${i}`}
-                    className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg animate-pulse"
-                  >
-                    <div className="w-12 h-12 bg-gray-200 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-200 rounded w-1/4" />
-                      <div className="h-3 bg-gray-200 rounded w-1/3" />
-                    </div>
-                    <div className="w-20 h-6 bg-gray-200 rounded" />
-                    <div className="w-16 h-6 bg-gray-200 rounded" />
-                  </div>
-                ))}
-              </div>
-            ) : users.length === 0 ? (
+            {users.length === 0 ? (
               <div className="text-center py-12">
                 <Users className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
@@ -245,7 +172,7 @@ export default function UsersPage() {
                           <span className="text-sm font-medium text-gray-700">
                             {user.name
                               .split(" ")
-                              .map((n: any[]) => n[0])
+                              .map((n: string[]) => n[0])
                               .join("")
                               .toUpperCase()}
                           </span>

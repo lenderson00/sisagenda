@@ -1,26 +1,25 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { type User } from "@prisma/client";
+import type { User } from "@prisma/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 // Query Keys
 export const userKeys = {
-  all: ["users"] as const,
-  lists: () => [...userKeys.all, "list"] as const,
-  list: (filters: Record<string, any>) =>
-    [...userKeys.lists(), { filters }] as const,
-  details: () => [...userKeys.all, "detail"] as const,
-  detail: (id: string) => [...userKeys.details(), id] as const,
-  stats: () => [...userKeys.all, "stats"] as const,
+  all: (orgId: string) => ["users", orgId] as const,
+  list: (orgId: string) => [...userKeys.all(orgId), "list"] as const,
+  details: (orgId: string) => [...userKeys.all(orgId), "detail"] as const,
+  detail: (orgId: string, id: string) =>
+    [...userKeys.details(orgId), id] as const,
+  stats: (orgId: string) => [...userKeys.all(orgId), "stats"] as const,
 };
 
 // Queries
-export function useUsers() {
+export function useUsers(orgId: string) {
   return useQuery({
-    queryKey: userKeys.list({}),
+    queryKey: userKeys.list(orgId),
     queryFn: async () => {
-      const response = await fetch(`/api/users`);
+      const response = await fetch("/api/users");
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
@@ -29,9 +28,9 @@ export function useUsers() {
   });
 }
 
-export function useUser(id: string) {
+export function useUser(orgId: string, id: string) {
   return useQuery({
-    queryKey: userKeys.detail(id),
+    queryKey: userKeys.detail(orgId, id),
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}`);
       if (!response.ok) {
@@ -43,9 +42,9 @@ export function useUser(id: string) {
   });
 }
 
-export function useUserStats() {
+export function useUserStats(orgId: string) {
   return useQuery({
-    queryKey: userKeys.stats(),
+    queryKey: userKeys.stats(orgId),
     queryFn: async () => {
       const response = await fetch("/api/users/stats");
       if (!response.ok) {
@@ -63,7 +62,7 @@ type UserData = {
 };
 
 // Mutations
-export function useCreateUser() {
+export function useCreateUser(orgId: string, onDialogClose?: () => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -81,8 +80,9 @@ export function useCreateUser() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User created successfully");
+      queryClient.invalidateQueries({ queryKey: userKeys.list(orgId) });
+      if (onDialogClose) onDialogClose();
+      toast.success("Usuário criado com sucesso");
     },
     onError: (error) => {
       toast.error("Failed to create user");
@@ -91,7 +91,7 @@ export function useCreateUser() {
   });
 }
 
-export function useUpdateUser() {
+export function useUpdateUser(orgId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -109,8 +109,11 @@ export function useUpdateUser() {
       return response.json();
     },
     onSuccess: (updatedUser) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.all });
-      queryClient.setQueryData(userKeys.detail(updatedUser.id), updatedUser);
+      queryClient.invalidateQueries({ queryKey: userKeys.all(orgId) });
+      queryClient.setQueryData(
+        userKeys.detail(orgId, updatedUser.id),
+        updatedUser,
+      );
       toast.success("User updated successfully");
     },
     onError: (error) => {
@@ -120,7 +123,7 @@ export function useUpdateUser() {
   });
 }
 
-export function useDeleteUser() {
+export function useDeleteUser(orgId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -136,7 +139,7 @@ export function useDeleteUser() {
       return id;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.all });
+      queryClient.invalidateQueries({ queryKey: userKeys.all(orgId) });
       toast.success("User deleted successfully");
     },
     onError: (error) => {
