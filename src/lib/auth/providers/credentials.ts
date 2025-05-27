@@ -9,7 +9,7 @@ export const Credentials: Provider = CredentialsProvider({
     email: { label: "Email", type: "email" },
     password: { label: "Password", type: "password" },
   },
-  async authorize(credentials, req) {
+  async authorize(credentials) {
     const { email, password } = credentials as {
       email: string;
       password: string;
@@ -26,14 +26,16 @@ export const Credentials: Provider = CredentialsProvider({
       },
     });
 
+    console.log(user);
+
     if (!user) {
-      throw new Error("User not found");
+      return null;
     }
 
     const isPasswordValid = await compare(password, user.password);
 
     if (!isPasswordValid || !user.isActive) {
-      throw new Error("Invalid credentials");
+      return null;
     }
 
     return {

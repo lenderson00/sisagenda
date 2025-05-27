@@ -15,11 +15,12 @@ import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@tabler/icons-react";
+import { signIn } from "next-auth/react";
+import { redirect } from "next/navigation";
 import type React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { signInWithEmail } from "../../_actions/sign-in";
 
 const loginSchema = z.object({
 	email: z.string().email("Por favor, insira um email válido"),
@@ -42,14 +43,24 @@ export function LoginForm({
 
 	async function onSubmit(values: LoginSchema) {
 		const { email, password } = values;
+		try {
+			const res = await signIn("credentials", {
+				email,
+				password,
+				redirect: false,
+			});
 
-		const res = await signInWithEmail(email, password);
-
-		if (res?.error) {
-			toast.error(res.error);
-		} else {
-			toast.success("Login realizado com sucesso!");
+			if (res?.error) {
+				toast.error("Email ou senha inválidos, tente novamente!");
+			} else {
+				toast.success("Login realizado com sucesso!");
+			}
+		} catch (error) {
+			console.error(error);
+			toast.error("Erro ao fazer login");
 		}
+
+		redirect("/");
 	}
 
 	return (
