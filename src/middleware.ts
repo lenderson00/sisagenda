@@ -1,10 +1,11 @@
 import { authOptions } from "@/lib/auth";
 import NextAuth from "next-auth";
 import { type NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export const publicRoutes: string[] = [];
 
-export const authRoutes = ["/entrar", "/registrar", "/resetar-senha", "/nova-senha"];
+export const authRoutes = ["/entrar", "/registrar", "/resetar-senha"];
 
 export const defaultRedirects = {
   isNotAuthenticated: "/entrar",
@@ -41,18 +42,19 @@ export default auth(async (req: NextAuthRequest) => {
 
   const isLogged = !!req.auth;
 
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-
-
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
   // Check route types
   const isAuthRoute = authRoutes.includes(pathname);
   const isApiRoute = pathname.startsWith("/api/");
   const isPublicRoute = publicRoutes.includes(pathname);
+  const isNewPasswordRoute = pathname === "/nova-senha";
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
   // Allow API routes to pass through
   if (isApiRoute) {
@@ -77,8 +79,7 @@ export default auth(async (req: NextAuthRequest) => {
     );
   }
 
-  // Redirect logged in users who must change password
-  if (isLogged && req.auth?.user?.mustChangePassword && pathname !== "/nova-senha") {
+  if (token?.mustChangePassword && !isNewPasswordRoute) {
     return NextResponse.redirect(new URL("/nova-senha", nextUrl));
   }
 

@@ -14,13 +14,19 @@ export const authOptions: NextAuthConfig = {
         const u = user as User;
         token.role = u.role;
         token.organizationId = u.organizationId;
+        token.mustChangePassword = u.mustChangePassword;
       }
       return token;
     },
     session: async ({ session, token }) => {
       if (session.user) {
         session.user.role = token.role as string | undefined;
-        session.user.organizationId = token.organizationId as string | undefined;
+        session.user.organizationId = token.organizationId as
+          | string
+          | undefined;
+        session.user.mustChangePassword = token.mustChangePassword as
+          | boolean
+          | undefined;
       }
       return session;
     },

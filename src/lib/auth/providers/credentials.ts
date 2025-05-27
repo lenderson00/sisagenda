@@ -10,7 +10,10 @@ export const Credentials: Provider = CredentialsProvider({
     password: { label: "Password", type: "password" },
   },
   async authorize(credentials, req) {
-    const { email, password } = credentials as { email: string; password: string };
+    const { email, password } = credentials as {
+      email: string;
+      password: string;
+    };
 
     const user = await prisma.user.findUnique({
       where: { email },
@@ -23,8 +26,6 @@ export const Credentials: Provider = CredentialsProvider({
       },
     });
 
-    console.log("user", user);
-
     if (!user) {
       throw new Error("User not found");
     }
@@ -35,10 +36,6 @@ export const Credentials: Provider = CredentialsProvider({
       throw new Error("Invalid credentials");
     }
 
-    if (user.mustChangePassword) {
-      throw new Error("Password change required");
-    }
-
     return {
       id: user.id,
       email: user.email,
@@ -47,6 +44,7 @@ export const Credentials: Provider = CredentialsProvider({
       image: user.image,
       createdAt: user.createdAt,
       organizationId: user.organization?.id,
+      mustChangePassword: user.mustChangePassword,
     };
   },
 });

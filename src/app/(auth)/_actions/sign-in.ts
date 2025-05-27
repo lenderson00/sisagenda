@@ -8,11 +8,10 @@ export const signInWithEmail = async (email: string, password: string) => {
       email,
       password,
       redirect: true,
-      redirectTo: "/",
     });
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { error: "Credenciais inválidas" };
+    throw error;
   }
 };
