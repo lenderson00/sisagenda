@@ -58,7 +58,7 @@ const adminMain = [
 const navDashboard = [
   {
     name: "Dashboard",
-    url: "/admin",
+    url: "/",
     icon: IconDashboard,
   },
 ];
