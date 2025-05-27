@@ -19,7 +19,7 @@ import type React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { signInWithEmail } from "../_actions/sign-in";
+import { signInWithEmail } from "../../_actions/sign-in";
 
 const loginSchema = z.object({
 	email: z.string().email("Por favor, insira um email válido"),
@@ -43,11 +43,13 @@ export function LoginForm({
 	async function onSubmit(values: LoginSchema) {
 		const { email, password } = values;
 
-		console.log("values", values);
+		const res = await signInWithEmail(email, password);
 
-		// await signInWithEmail(email, password);
-
-		toast.success(`Email: ${email} e senha: ${password}`);
+		if (res?.error) {
+			toast.error(res.error);
+		} else {
+			toast.success("Login realizado com sucesso!");
+		}
 	}
 
 	return (

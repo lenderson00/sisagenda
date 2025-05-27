@@ -13,10 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@tabler/icons-react";
+import { signIn } from "next-auth/react";
 import type React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { signInWithEmail } from "../../_actions/sign-in";
 
 const registrarSchema = z
 	.object({
@@ -47,7 +49,31 @@ export function RegistrarForm({
 	});
 
 	async function onSubmit(values: RegistrarSchema) {
-		toast.success(`Registrado: ${values.email}`);
+		try {
+			const res = await fetch("/api/auth/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					name: values.name,
+					email: values.email,
+					password: values.password,
+				}),
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.error || "Registration failed");
+			}
+
+			await signInWithEmail(values.email, values.password);
+
+			form.reset();
+		} catch (error: unknown) {
+			let message = "Registration failed";
+			if (error instanceof Error) {
+				message = error.message;
+			}
+			toast.error(message);
+		}
 	}
 
 	return (
