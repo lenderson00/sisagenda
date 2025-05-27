@@ -26,6 +26,7 @@ model User {
   role               UserRole  @default(USER)
   password           String
   mustChangePassword Boolean   @default(true)
+  whatsapp           String?
 
   auditLogs AuditLog[]
 
