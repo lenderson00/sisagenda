@@ -107,6 +107,10 @@ export default auth(async (req: NextAuthRequest) => {
   }
   // Allow access to protected routes for logged in users
 
+  if (isLogged && isNewPasswordRoute && token?.mustChangePassword) {
+    return response;
+  }
+
   const rolePrefix = role.toLowerCase().replace("_", "-");
   const newPath = `/${rolePrefix}${path}`;
   return NextResponse.rewrite(new URL(newPath, nextUrl));

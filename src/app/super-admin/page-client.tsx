@@ -74,10 +74,12 @@ export function OrganizationList() {
                       align="end"
                       className="bg-white border-gray-200"
                     >
-                      <DropdownMenuItem className="text-gray-700 hover:bg-gray-50">
-                        <Edit className="mr-2 h-4 w-4" />
-                        Editar
-                      </DropdownMenuItem>
+                      <Link href={`/${organization.id}/editar`}>
+                        <DropdownMenuItem className="text-gray-700 hover:bg-gray-50">
+                          <Edit className="mr-2 h-4 w-4" />
+                          Editar
+                        </DropdownMenuItem>
+                      </Link>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -108,11 +110,7 @@ export function OrganizationList() {
                       className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
                       variant="outline"
                     >
-                      <Link
-                        href={`/super-admin/organizations/${organization.id}`}
-                      >
-                        Ver Detalhes
-                      </Link>
+                      <Link href={`/${organization.id}`}>Ver Detalhes</Link>
                     </Button>
                   </div>
                 </div>
