@@ -8,12 +8,10 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-	FormProvider,
 } from "@/components/ui/form-skeleton";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@tabler/icons-react";
-import type React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -30,13 +28,28 @@ export function ResetarSenhaForm({
 }: React.ComponentProps<"div">) {
 	const form = useForm<ResetarSenhaSchema>({
 		resolver: zodResolver(resetarSenhaSchema),
-		defaultValues: {
-			email: "",
-		},
+		defaultValues: { email: "" },
 	});
 
 	async function onSubmit(values: ResetarSenhaSchema) {
-		toast.success(`Email enviado para: ${values.email}`);
+		try {
+			const res = await fetch("/api/auth/resetar-senha", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email: values.email }),
+			});
+			if (res.ok) {
+				toast.success(
+					"Se o email existir, um link de redefinição foi enviado.",
+				);
+				form.reset();
+			} else {
+				const data = await res.json();
+				toast.error(data.error || "Erro ao enviar email de redefinição.");
+			}
+		} catch (e) {
+			toast.error("Erro ao enviar email de redefinição.");
+		}
 	}
 
 	return (
