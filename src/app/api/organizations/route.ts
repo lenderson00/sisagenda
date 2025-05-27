@@ -29,8 +29,10 @@ export async function GET() {
 
     return NextResponse.json(organizations);
   } catch (error) {
-    console.error("[ORGANIZATIONS_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch organizations" },
+      { status: 500 },
+    );
   }
 }
 
