@@ -2,6 +2,7 @@ import { authOptions } from "@/lib/auth";
 import NextAuth from "next-auth";
 import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { UserRole } from "@prisma/client";
 
 export const publicRoutes: string[] = [];
 
@@ -43,7 +44,8 @@ export default auth(async (req: NextAuthRequest) => {
   const isLogged = !!req.auth;
 
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-
+  const role = token?.role as UserRole;
+  console.log("role", role);
   // Check route types
   const isAuthRoute = authRoutes.includes(pathname);
   const isApiRoute = pathname.startsWith("/api/");
@@ -90,6 +92,23 @@ export default auth(async (req: NextAuthRequest) => {
     );
   }
 
+  const path = nextUrl.pathname;
+  // Handle root path
+  if (path === "/") {
+    switch (token?.role) {
+      case UserRole.SUPER_ADMIN:
+        return NextResponse.rewrite(new URL("/super-admin", nextUrl));
+      case UserRole.ADMIN:
+        return NextResponse.rewrite(new URL("/admin", nextUrl));
+      case UserRole.USER:
+        return NextResponse.rewrite(new URL("/user", nextUrl));
+      case UserRole.FORNECEDOR:
+        return NextResponse.rewrite(new URL("/fornecedor", nextUrl));
+    }
+  }
   // Allow access to protected routes for logged in users
-  return response;
+
+  const rolePrefix = role.toLowerCase();
+  const newPath = `/${rolePrefix}${path}`;
+  return NextResponse.rewrite(new URL(newPath, nextUrl));
 });
