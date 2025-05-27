@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
@@ -22,16 +16,16 @@ enum UserRole {
 
 /// Represents a user in the system
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  isActive      Boolean   @default(true)
-  role          UserRole  @default(USER)
-  password      String
+  id              String    @id @default(cuid())
+  name            String?
+  email           String    @unique
+  emailVerified   DateTime?
+  image           String?
+  isActive        Boolean   @default(true)
+  role            UserRole  @default(USER)
+  password        String
+  passwordReseted Boolean   @default(false)
 
-  accounts  Account[]
   auditLogs AuditLog[]
 
   schedules Schedule[]
@@ -47,29 +41,6 @@ model User {
   @@index([organizationId])
 }
 
-/// Represents OAuth accounts linked to users
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([provider, providerAccountId])
-  @@index([userId])
-}
-
 /// Stores email verification tokens
 model VerificationToken {
   identifier String
@@ -82,12 +53,10 @@ model VerificationToken {
 
 /// Represents different roles in the organization
 enum OMRole {
-  CSUP
-  COMRJ
+  COMIMSUP
   DEPOSITO
 }
 
-/// Represents an organizational unit
 model Organization {
   id    String @id @default(cuid())
   name  String
@@ -96,17 +65,21 @@ model Organization {
   description String?
   isActive    Boolean @default(true)
 
+  comimsupId String?
+  comimsup   Organization? @relation("ComimsupRelation", fields: [comimsupId], references: [id])
+
   role OMRole @default(DEPOSITO)
 
   militares User[]
 
-  deliveryTypes  DeliveryType[]
-  availabilities Availability[]
-  schedules      Schedule[]
+  deliveryTypes DeliveryType[]
+  schedules     Schedule[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  Organization Organization[] @relation("ComimsupRelation")
+  Availability Availability[]
 
   @@index([sigla])
 }
@@ -187,8 +160,7 @@ model Schedule {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  observations Json
-  isDeleted    Boolean @default(false)
+  observations Json?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

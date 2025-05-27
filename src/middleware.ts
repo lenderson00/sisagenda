@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export const publicRoutes: string[] = [];
 
-export const authRoutes = ["/entrar"];
+export const authRoutes = ["/entrar", "/registrar", "/resetar-senha"];
 
 export const defaultRedirects = {
   isNotAuthenticated: "/entrar",

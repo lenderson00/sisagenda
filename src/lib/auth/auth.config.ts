@@ -1,8 +1,8 @@
 import type { NextAuthConfig } from "next-auth";
-import Google from "next-auth/providers/google";
+import { Credentials } from "./providers/credentials";
 
 export const authOptions: NextAuthConfig = {
-  providers: [Google],
+  providers: [Credentials],
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
