@@ -16,15 +16,15 @@ enum UserRole {
 
 /// Represents a user in the system
 model User {
-  id              String    @id @default(cuid())
-  name            String?
-  email           String    @unique
-  emailVerified   DateTime?
-  image           String?
-  isActive        Boolean   @default(true)
-  role            UserRole  @default(USER)
-  password        String
-  passwordReseted Boolean   @default(false)
+  id                 String    @id @default(cuid())
+  name               String?
+  email              String    @unique
+  emailVerified      DateTime?
+  image              String?
+  isActive           Boolean   @default(true)
+  role               UserRole  @default(USER)
+  password           String
+  mustChangePassword Boolean   @default(true)
 
   auditLogs AuditLog[]
 

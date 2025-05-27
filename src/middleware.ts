@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export const publicRoutes: string[] = [];
 
-export const authRoutes = ["/entrar", "/registrar", "/resetar-senha"];
+export const authRoutes = ["/entrar", "/registrar", "/resetar-senha", "/nova-senha"];
 
 export const defaultRedirects = {
   isNotAuthenticated: "/entrar",
@@ -75,6 +75,11 @@ export default auth(async (req: NextAuthRequest) => {
     return NextResponse.redirect(
       new URL(defaultRedirects.isNotAuthenticated, nextUrl),
     );
+  }
+
+  // Redirect logged in users who must change password
+  if (isLogged && req.auth?.user?.mustChangePassword && pathname !== "/nova-senha") {
+    return NextResponse.redirect(new URL("/nova-senha", nextUrl));
   }
 
   // Redirect logged in users away from auth routes

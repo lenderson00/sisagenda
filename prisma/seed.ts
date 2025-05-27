@@ -17,6 +17,7 @@ async function main() {
       password: hashedPassword,
       role: 'SUPER_ADMIN',
       isActive: true,
+      mustChangePassword: true,
     },
     create: {
       email,
@@ -24,6 +25,7 @@ async function main() {
       role: 'SUPER_ADMIN',
       isActive: true,
       name: 'Super Admin',
+      mustChangePassword: true,
     },
   });
 

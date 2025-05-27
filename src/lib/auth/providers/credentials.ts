@@ -35,6 +35,10 @@ export const Credentials: Provider = CredentialsProvider({
       throw new Error("Invalid credentials");
     }
 
+    if (user.mustChangePassword) {
+      throw new Error("Password change required");
+    }
+
     return {
       id: user.id,
       email: user.email,
