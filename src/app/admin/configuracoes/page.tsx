@@ -1,5 +1,5 @@
-const FornecedorPage = () => {
-  return <>Div</>;
+const ConfiguracoesPage = () => {
+  return <div>ConfiguracoesPage</div>;
 };
 
-export default FornecedorPage;
+export default ConfiguracoesPage;

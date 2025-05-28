@@ -1,10 +1,10 @@
 "use client";
 
-import { Bell, Settings, ExternalLink, Calendar, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Bell, Calendar, ExternalLink, Search, Settings } from "lucide-react";
 import Link from "next/link";
-import { NavTabs, Tab } from "./tabs";
+import { NavTabs, type Tab } from "./tabs";
 
 type Props = {
   tabs: Tab[];
@@ -12,7 +12,7 @@ type Props = {
 
 export function TopNavigation({ tabs }: Props) {
   return (
-    <div className="border-b bg-white shadow-sm">
+    <div className="border-b bg-white shadow-none">
       {/* Top Bar */}
       <div className="flex h-14 items-center justify-between px-6">
         <div className="flex items-center gap-4">

@@ -86,7 +86,7 @@ export function UsersPageClient({ users, stats }: UsersPageClientProps) {
       <div className="container mx-auto px-6 py-8">
         {/* Stats Cards */}
         <div className="grid gap-6 md:grid-cols-4 mb-8">
-          <Card className="border-gray-200 shadow-sm">
+          <Card className="border-gray-200 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-700">
                 Total Users
@@ -100,7 +100,7 @@ export function UsersPageClient({ users, stats }: UsersPageClientProps) {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 shadow-sm">
+          <Card className="border-gray-200 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-700">
                 Active Users
@@ -114,7 +114,7 @@ export function UsersPageClient({ users, stats }: UsersPageClientProps) {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 shadow-sm">
+          <Card className="border-gray-200 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-700">
                 Inactive Users
@@ -128,7 +128,7 @@ export function UsersPageClient({ users, stats }: UsersPageClientProps) {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 shadow-sm">
+          <Card className="border-gray-200 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-700">
                 Suspended Users
@@ -144,7 +144,7 @@ export function UsersPageClient({ users, stats }: UsersPageClientProps) {
         </div>
 
         {/* Users List */}
-        <Card className="border-gray-200 shadow-sm">
+        <Card className="border-gray-200 shadow-none">
           <CardHeader>
             <CardTitle className="text-gray-900">
               Users ({users.length})
