@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -62,6 +63,8 @@ export async function POST(req: Request) {
       return new NextResponse("Invalid body", { status: 400 });
     }
 
+    const hashedPassword = await hash("Fornecedor@2025", 10);
+
     const supplier = await prisma.user.create({
       data: {
         name: validatedBody.data.name,
@@ -72,7 +75,8 @@ export async function POST(req: Request) {
         organizationId: session.user.organizationId,
         role: "FORNECEDOR",
         isActive: true,
-        password: "Fornecedor@2025",
+        password: hashedPassword,
+        mustChangePassword: true,
       },
     });
 

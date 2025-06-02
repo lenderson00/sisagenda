@@ -41,10 +41,10 @@ model User {
   address String?
   cnpj    String?
 
-  organizationId        String?
-  organization          Organization?           @relation(fields: [organizationId], references: [id])
-  PasswordResetToken    PasswordResetToken[]
-  ScheduleStatusHistory ScheduleStatusHistory[]
+  organizationId     String?
+  organization       Organization?        @relation(fields: [organizationId], references: [id])
+  PasswordResetToken PasswordResetToken[]
+  ScheduleActivity   ScheduleActivity[]
 
   @@index([email])
   @@index([organizationId])
@@ -157,9 +157,8 @@ model AvailabilityRule {
 
 /// Represents scheduled deliveries
 model Schedule {
-  id     String         @id @default(cuid())
-  date   DateTime
-  status ScheduleStatus @default(PENDING)
+  id   String   @id @default(cuid())
+  date DateTime
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
@@ -172,7 +171,7 @@ model Schedule {
 
   observations Json?
 
-  statusHistory ScheduleStatusHistory[]
+  activities ScheduleActivity[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -184,19 +183,26 @@ model Schedule {
   @@index([date])
 }
 
-/// Represents the status of a schedule
-enum ScheduleStatus {
-  PENDING
-  CONFIRMED
+/// Represents different types of activities that can be performed on a schedule
+enum ActivityType {
+  CREATED
+  UPDATED
   CANCELLED
   COMPLETED
+  COMMENT
+  STATUS_CHANGE
+  ASSIGNED
+  UNASSIGNED
+  OTHER
 }
 
-/// Tracks the history of status changes and comments for schedules
-model ScheduleStatusHistory {
-  id      String         @id @default(cuid())
-  status  ScheduleStatus
-  comment String?
+/// Tracks all activities and changes related to a schedule
+model ScheduleActivity {
+  id       String       @id @default(cuid())
+  type     ActivityType
+  title    String
+  content  String?
+  metadata Json? // Additional data specific to the activity type
 
   scheduleId String
   schedule   Schedule @relation(fields: [scheduleId], references: [id])
@@ -210,6 +216,7 @@ model ScheduleStatusHistory {
   @@index([scheduleId])
   @@index([userId])
   @@index([createdAt])
+  @@index([type])
 }
 
 /// Represents different types of audit actions
