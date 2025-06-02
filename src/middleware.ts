@@ -15,7 +15,6 @@ export const defaultRedirects = {
 };
 
 type NextAuthRequest = NextRequest & {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   auth?: any;
 };
 

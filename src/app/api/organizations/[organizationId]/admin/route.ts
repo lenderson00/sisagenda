@@ -78,8 +78,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { organizationId: string } }
+  request: Request
 ) {
   try {
     const session = await auth();
