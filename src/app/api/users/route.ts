@@ -23,6 +23,9 @@ export async function GET() {
       where: {
         organizationId: orgId,
         deletedAt: null,
+        role: {
+          in: ["USER", "ADMIN"],
+        },
       },
       select: {
         id: true,

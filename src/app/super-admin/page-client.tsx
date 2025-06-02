@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyCard } from "@/components/empty-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { IconUser } from "@tabler/icons-react";
 import { Building, Edit, MoreHorizontal, Plus, User } from "lucide-react";
 import Link from "next/link";
 import { CreateOrganizationDialog } from "./_components/create-organization-dialog";
@@ -120,24 +122,13 @@ export function OrganizationList() {
         </div>
 
         {data.length === 0 && (
-          <Card className="text-center rounded-[6px] py-12 h-full  border-gray-200 flex-1">
-            <CardContent>
-              <div className="space-y-4">
-                <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-gray-500" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">
-                    Nenhuma organização encontrada
-                  </h3>
-                  <p className="text-gray-600">
-                    Comece criando sua primeira Organização Militar.
-                  </p>
-                </div>
-                <CreateOrganizationDialog />
-              </div>
-            </CardContent>
-          </Card>
+          <EmptyCard
+            title="Nenhuma organização encontrada"
+            description="Comece criando sua primeira Organização Militar."
+            icon={IconUser}
+          >
+            <CreateOrganizationDialog />
+          </EmptyCard>
         )}
       </div>
     </>

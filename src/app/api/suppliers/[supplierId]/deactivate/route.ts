@@ -1,0 +1,35 @@
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
+
+export async function PUT(
+  req: Request,
+  { params }: { params: { supplierId: string } }
+) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    const supplier = await prisma.user.update({
+      where: {
+        id: params.supplierId,
+        role: "FORNECEDOR",
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    return NextResponse.json(supplier);
+  } catch (error) {
+    console.error("[SUPPLIER_DEACTIVATE]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}
