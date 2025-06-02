@@ -7,7 +7,7 @@ export function useUsers(orgId: string) {
   return useQuery({
     queryKey: userKeys.list(orgId),
     queryFn: async () => {
-      const response = await fetch(`/api/users?organizationId=${orgId}`, {
+      const response = await fetch("/api/users", {
         headers: {
           "Content-Type": "application/json",
         },

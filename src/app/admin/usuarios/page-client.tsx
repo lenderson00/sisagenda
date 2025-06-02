@@ -42,7 +42,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { UserForm } from "./_components/user-form";
-import { useDeleteUser, usePasswordReset } from "./_hooks/user-mutations";
+import {
+  useActivateUser,
+  useDeactivateUser,
+  useDeleteUser,
+  usePasswordReset,
+} from "./_hooks/user-mutations";
 import { useUserStats, useUsers } from "./_hooks/user-queries";
 
 // Types for props
@@ -85,6 +90,8 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
 
   const resetPasswordMutation = usePasswordReset();
   const deleteMutation = useDeleteUser(organizationId);
+  const activateMutation = useActivateUser(organizationId);
+  const deactivateMutation = useDeactivateUser(organizationId);
 
   const handleResetPassword = async () => {
     if (!selectedUser) return;
@@ -94,6 +101,14 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
   const handleDelete = async () => {
     if (!selectedUser) return;
     deleteMutation.mutate(selectedUser.id);
+  };
+
+  const handleActivate = async (userId: string) => {
+    activateMutation.mutate(userId);
+  };
+
+  const handleDeactivate = async (userId: string) => {
+    deactivateMutation.mutate(userId);
   };
 
   if (isLoadingUsers || isLoadingStats) {
@@ -211,6 +226,23 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
                         <IconLock className="mr-2 h-4 w-4" />
                         Reset Password
                       </DropdownMenuItem>
+                      {user.isActive ? (
+                        <DropdownMenuItem
+                          onClick={() => handleDeactivate(user.id)}
+                          className="text-yellow-600 focus:text-yellow-600"
+                        >
+                          <UserMinus className="mr-2 h-4 w-4" />
+                          Deactivate
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          onClick={() => handleActivate(user.id)}
+                          className="text-emerald-600 focus:text-emerald-600"
+                        >
+                          <UserCheck className="mr-2 h-4 w-4" />
+                          Activate
+                        </DropdownMenuItem>
+                      )}
                       {!user.isActive && (
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
@@ -254,18 +286,6 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
                     <IconLock className="mr-2 h-3 w-3" />
                     Reset
                   </Button>
-                  {!user.isActive && (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setIsDeleteDialogOpen(true);
-                      }}
-                    >
-                      <Trash className="h-3 w-3" />
-                    </Button>
-                  )}
                 </div>
               </CardContent>
             </Card>

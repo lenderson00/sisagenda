@@ -72,11 +72,72 @@ export function useUpdateUser(orgId: string) {
   });
 }
 
+export function useActivateUser(orgId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/users/${id}/activate`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to activate user");
+      }
+
+      return response.json();
+    },
+    onSuccess: (updatedUser) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.all(orgId) });
+      queryClient.setQueryData(
+        userKeys.detail(orgId, updatedUser.id),
+        updatedUser,
+      );
+      toast.success("Usuário ativado com sucesso");
+    },
+    onError: (error) => {
+      toast.error("Falha ao ativar usuário");
+      console.error("Activate user error:", error);
+    },
+  });
+}
+
+export function useDeactivateUser(orgId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/users/${id}/deactivate`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to deactivate user");
+      }
+
+      return response.json();
+    },
+    onSuccess: (updatedUser) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.all(orgId) });
+      queryClient.setQueryData(
+        userKeys.detail(orgId, updatedUser.id),
+        updatedUser,
+      );
+      toast.success("Usuário desativado com sucesso");
+    },
+    onError: (error) => {
+      toast.error("Falha ao desativar usuário");
+      console.error("Deactivate user error:", error);
+    },
+  });
+}
+
 export function useDeleteUser(orgId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
+
       const response = await fetch(`/api/users/${id}`, {
         method: "DELETE",
       });
@@ -89,10 +150,14 @@ export function useDeleteUser(orgId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.all(orgId) });
-      toast.success("User deleted successfully");
+      toast.success("Usuário excluído com sucesso");
     },
     onError: (error) => {
-      toast.error("Failed to delete user");
+      if (error.message === "Cannot delete active user. Please deactivate first.") {
+        toast.error("Não é possível excluir um usuário ativo. Desative-o primeiro.");
+      } else {
+        toast.error("Falha ao excluir usuário");
+      }
       console.error("Delete user error:", error);
     },
   });

@@ -13,7 +13,6 @@ export async function GET() {
 
   const orgId = session.user.organizationId;
 
-  console.log(orgId);
 
   if (!orgId) {
     return new NextResponse("Organization not found", { status: 404 });
@@ -23,6 +22,7 @@ export async function GET() {
     const users = await prisma.user.findMany({
       where: {
         organizationId: orgId,
+        deletedAt: null,
       },
       select: {
         id: true,

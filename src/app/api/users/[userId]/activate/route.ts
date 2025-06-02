@@ -3,14 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-
-export async function PATCH(request: Request, { params }: { params: Promise<{ userId: string }> }) {
+export async function POST(request: Request, { params }: { params: Promise<{ userId: string }> }) {
   try {
     const session = await auth();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-
 
     const { userId } = await params;
 
@@ -25,14 +23,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ us
       return new NextResponse("User not found", { status: 404 });
     }
 
-    const isSuperAdmin = user.role === "ADMIN";
 
-    // Check if user is super admin
-    if (isSuperAdmin && session.user.role !== "SUPER_ADMIN") {
+    if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    if (session.user.organizationId !== user.organizationId) {
+    if (session.user.role === "ADMIN" && session.user.organizationId !== user.organizationId) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
@@ -41,7 +37,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ us
         id: userId,
       },
       data: {
-        isActive: !user.isActive,
+        isActive: true,
       },
     });
 
@@ -51,7 +47,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ us
       return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
 
-    console.error("[ADMIN_TOGGLE_STATUS]", error);
+    console.error("[ADMIN_ACTIVATE_USER]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }

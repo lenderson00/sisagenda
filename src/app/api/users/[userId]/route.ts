@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
+import { NextResponse } from "next/server";
 import { updateUserSchema, userIdParamSchema } from "../_schemas/user-schemas";
 
 export async function GET(
@@ -107,7 +107,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const session = await auth();
@@ -115,9 +115,33 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const validatedParams = userIdParamSchema.safeParse(params);
+    const awaitedParams = await params;
+
+    const validatedParams = userIdParamSchema.safeParse(awaitedParams);
+
     if (!validatedParams.success) {
+      console.log(validatedParams.error);
       return new NextResponse("Invalid user ID", { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: validatedParams.data.userId },
+    });
+
+    if (!user) {
+      return new NextResponse("User Not Found", { status: 404 });
+    }
+
+    if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    if (session.user.role === "ADMIN" && session.user.organizationId !== user.organizationId) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    if (user.isActive) {
+      return new NextResponse("Cannot delete active user. Please deactivate first.", { status: 400 });
     }
 
     await prisma.user.update({

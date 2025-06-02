@@ -16,7 +16,7 @@ export async function GET() {
   }
 
   try {
-    const [total, active, inactive] = await Promise.all([
+    const [total, active, inactive, suspended] = await Promise.all([
       prisma.user.count({ where: { deletedAt: null, organizationId: orgId } }),
       prisma.user.count({
         where: { isActive: true, deletedAt: null, organizationId: orgId },
@@ -24,9 +24,12 @@ export async function GET() {
       prisma.user.count({
         where: { isActive: false, deletedAt: null, organizationId: orgId },
       }),
+      prisma.user.count({
+        where: { isActive: false, deletedAt: { not: null }, organizationId: orgId },
+      }),
     ]);
 
-    const stats = { total, active, inactive };
+    const stats = { total, active, inactive, suspended };
 
     return NextResponse.json(stats);
   } catch (error) {
