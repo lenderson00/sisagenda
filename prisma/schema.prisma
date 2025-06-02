@@ -30,7 +30,7 @@ model User {
 
   auditLogs AuditLog[]
 
-  schedules Schedule[]
+  appointments Appointment[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -41,10 +41,10 @@ model User {
   address String?
   cnpj    String?
 
-  organizationId     String?
-  organization       Organization?        @relation(fields: [organizationId], references: [id])
-  PasswordResetToken PasswordResetToken[]
-  ScheduleActivity   ScheduleActivity[]
+  organizationId      String?
+  organization        Organization?         @relation(fields: [organizationId], references: [id])
+  PasswordResetToken  PasswordResetToken[]
+  AppointmentActivity AppointmentActivity[]
 
   @@index([email])
   @@index([organizationId])
@@ -83,7 +83,7 @@ model Organization {
   militares User[]
 
   deliveryTypes DeliveryType[]
-  schedules     Schedule[]
+  appointments  Appointment[]
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -104,7 +104,7 @@ model DeliveryType {
   isActive Boolean @default(true)
 
   availability Availability?
-  schedules    Schedule[]
+  appointments Appointment[]
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
@@ -155,8 +155,8 @@ model AvailabilityRule {
   @@index([availabilityId])
 }
 
-/// Represents scheduled deliveries
-model Schedule {
+/// Represents scheduled appointments
+model Appointment {
   id   String   @id @default(cuid())
   date DateTime
 
@@ -171,7 +171,7 @@ model Schedule {
 
   observations Json?
 
-  activities ScheduleActivity[]
+  activities AppointmentActivity[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -183,7 +183,7 @@ model Schedule {
   @@index([date])
 }
 
-/// Represents different types of activities that can be performed on a schedule
+/// Represents different types of activities that can be performed on an appointment
 enum ActivityType {
   CREATED
   UPDATED
@@ -196,16 +196,16 @@ enum ActivityType {
   OTHER
 }
 
-/// Tracks all activities and changes related to a schedule
-model ScheduleActivity {
+/// Tracks all activities and changes related to an appointment
+model AppointmentActivity {
   id       String       @id @default(cuid())
   type     ActivityType
   title    String
   content  String?
   metadata Json? // Additional data specific to the activity type
 
-  scheduleId String
-  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
@@ -213,7 +213,7 @@ model ScheduleActivity {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([scheduleId])
+  @@index([appointmentId])
   @@index([userId])
   @@index([createdAt])
   @@index([type])
@@ -226,7 +226,7 @@ enum AuditAction {
   DELETE
   LOGIN
   LOGOUT
-  SCHEDULE
+  APPOINTMENT
   OTHER
 }
 

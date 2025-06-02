@@ -1,23 +1,24 @@
 "use client";
 
 import { getQueryClient } from "@/lib/react-query";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import { useState } from "react";
 import type { PropsWithChildren } from "react";
 import { Toaster } from "sonner";
 
 type Props = PropsWithChildren<{
-	session: Session;
+  session: Session;
 }>;
 
-export const Providers = ({ children, session }: Props) => {
-	const queryClient = getQueryClient();
+export function Providers({ children, session }: Props) {
+  const [queryClient] = useState(() => new QueryClient());
 
-	return (
-		<SessionProvider session={session} refetchOnWindowFocus={false}>
-			<Toaster />
-			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-		</SessionProvider>
-	);
-};
+  return (
+    <SessionProvider session={session} refetchOnWindowFocus={false}>
+      <Toaster />
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </SessionProvider>
+  );
+}
