@@ -1,9 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { DialogClose } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -13,8 +11,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useCreateAdmin } from "../_hooks/use-create-admin";
-import { DialogClose } from "@/components/ui/dialog";
 
 const adminFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
@@ -25,9 +25,10 @@ type AdminFormValues = z.infer<typeof adminFormSchema>;
 
 interface AdminFormProps {
   organizationId: string;
+  onSuccess: () => void;
 }
 
-export function AdminForm({ organizationId }: AdminFormProps) {
+export function AdminForm({ organizationId, onSuccess }: AdminFormProps) {
   const createAdmin = useCreateAdmin();
   const form = useForm<AdminFormValues>({
     resolver: zodResolver(adminFormSchema),
@@ -43,6 +44,7 @@ export function AdminForm({ organizationId }: AdminFormProps) {
       {
         onSuccess: () => {
           form.reset();
+          onSuccess?.();
         },
       },
     );

@@ -21,14 +21,6 @@ export default async function OrganizationAdminPage({
       id: nextParams.organization,
       deletedAt: null,
     },
-    include: {
-      militares: {
-        where: {
-          role: "ADMIN",
-          deletedAt: null,
-        },
-      },
-    },
   });
 
   if (!organization) {

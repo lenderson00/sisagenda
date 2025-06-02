@@ -1,10 +1,10 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { useState, useRef, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Moon, Sun } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 export type Tab = {
   label: string;
@@ -67,7 +67,9 @@ export const NavTabs = ({ tabs }: Props) => {
 
   return (
     <Card
-      className={`w-full max-w-[1200px] border-none shadow-none relative flex p-1 px-4`}
+      className={
+        "w-full max-w-[1200px] border-none shadow-none relative flex p-1 px-4"
+      }
     >
       <CardContent className="p-0">
         <div className="relative">
@@ -93,6 +95,11 @@ export const NavTabs = ({ tabs }: Props) => {
                 <div
                   ref={(el) => {
                     tabRefs.current[index] = el;
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      setActiveIndex(index);
+                    }
                   }}
                   className={`px-3 py-2 cursor-pointer transition-colors duration-300 h-[30px] ${
                     index === activeIndex

@@ -1,9 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { DialogClose } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -21,19 +19,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useCreateOrganization } from "../_hooks/use-create-organization";
-import { DialogClose } from "@/components/ui/dialog";
 
 const organizationFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
   sigla: z.string().min(2, "Mínimo 2 letras"),
   description: z.string().optional(),
-  role: z.enum(["COMIMSUP", "DEPOSITO"]),
+  role: z.enum(["COMIMSUP", "DEPOSITO", "COMRJ"]),
 });
 
 type OrganizationFormValues = z.infer<typeof organizationFormSchema>;
 
-export function OrganizationForm() {
+export function OrganizationForm({ onSuccess }: { onSuccess?: () => void }) {
   const createOrganization = useCreateOrganization();
   const form = useForm<OrganizationFormValues>({
     resolver: zodResolver(organizationFormSchema),
@@ -49,7 +49,7 @@ export function OrganizationForm() {
     createOrganization.mutate(values, {
       onSuccess: () => {
         form.reset();
-        // TODO: Fechar Dialog
+        onSuccess?.();
       },
     });
   }
@@ -119,6 +119,7 @@ export function OrganizationForm() {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="COMIMSUP">COMIMSUP</SelectItem>
+                  <SelectItem value="COMRJ">COMRJ</SelectItem>
                   <SelectItem value="DEPOSITO">DEPOSITO</SelectItem>
                 </SelectContent>
               </Select>

@@ -57,6 +57,7 @@ model VerificationToken {
 /// Represents different roles in the organization
 enum OMRole {
   COMIMSUP
+  COMRJ
   DEPOSITO
 }
 

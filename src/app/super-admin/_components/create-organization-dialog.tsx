@@ -1,6 +1,5 @@
 "use client";
 
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,11 +8,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 import { OrganizationForm } from "./organization-form";
 
 export function CreateOrganizationDialog() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button className="bg-gray-900 hover:bg-gray-800 text-white">
           <Plus className="mr-2 h-4 w-4" />
@@ -24,7 +26,7 @@ export function CreateOrganizationDialog() {
         <DialogHeader>
           <DialogTitle>Criar Nova Organização</DialogTitle>
         </DialogHeader>
-        <OrganizationForm />
+        <OrganizationForm onSuccess={() => setIsDialogOpen(false)} />
       </DialogContent>
     </Dialog>
   );

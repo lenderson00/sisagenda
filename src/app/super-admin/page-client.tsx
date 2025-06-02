@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, MoreHorizontal, Edit, User, Building } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,10 +15,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+import { Building, Edit, MoreHorizontal, Plus, User } from "lucide-react";
 import Link from "next/link";
-import { useOrganizations } from "./_hooks/use-organizations";
 import { CreateOrganizationDialog } from "./_components/create-organization-dialog";
+import { useOrganizations } from "./_hooks/use-organizations";
 
 export function OrganizationList() {
   const { data, isPending } = useOrganizations();
@@ -31,7 +31,7 @@ export function OrganizationList() {
 
   return (
     <>
-      <div className="container mx-auto px-6 py-8 flex-1">
+      <div className="container mx-auto px-6 py-8 flex-1 h-full flex flex-col">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data.map((organization) => (
             <Card key={organization.id} className="border-gray-200">
@@ -120,7 +120,7 @@ export function OrganizationList() {
         </div>
 
         {data.length === 0 && (
-          <Card className="text-center rounded-[6px] py-12 border-gray-200 flex-1">
+          <Card className="text-center rounded-[6px] py-12 h-full  border-gray-200 flex-1">
             <CardContent>
               <div className="space-y-4">
                 <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">

@@ -5,7 +5,7 @@ type CreateOrganizationData = {
   name: string;
   sigla: string;
   description?: string;
-  role: "COMIMSUP" | "DEPOSITO";
+  role: "COMIMSUP" | "DEPOSITO" | "COMRJ";
 };
 
 async function createOrganization(data: CreateOrganizationData) {

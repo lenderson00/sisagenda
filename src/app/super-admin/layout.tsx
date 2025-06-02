@@ -10,7 +10,7 @@ const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col">
       <TopNavigation tabs={tabs} />
-      <div className="min-h-[80vh] bg-neutral-50">{children}</div>
+      <div className="min-h-[60vh] bg-neutral-50">{children}</div>
       <Footer />
     </div>
   );

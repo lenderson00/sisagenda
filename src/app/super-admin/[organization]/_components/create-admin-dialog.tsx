@@ -1,6 +1,5 @@
 "use client";
 
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,6 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 import { AdminForm } from "./admin-form";
 
 interface CreateAdminDialogProps {
@@ -16,8 +17,10 @@ interface CreateAdminDialogProps {
 }
 
 export function CreateAdminDialog({ organizationId }: CreateAdminDialogProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button className="bg-gray-900 hover:bg-gray-800 text-white">
           <Plus className="mr-2 h-4 w-4" />
@@ -28,7 +31,10 @@ export function CreateAdminDialog({ organizationId }: CreateAdminDialogProps) {
         <DialogHeader>
           <DialogTitle>Criar Novo Administrador</DialogTitle>
         </DialogHeader>
-        <AdminForm organizationId={organizationId} />
+        <AdminForm
+          organizationId={organizationId}
+          onSuccess={() => setIsDialogOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

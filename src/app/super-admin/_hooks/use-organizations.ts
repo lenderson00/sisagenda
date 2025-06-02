@@ -1,4 +1,4 @@
-import { Organization } from "@prisma/client";
+import type { Organization } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 
 export async function getOrganizations() {

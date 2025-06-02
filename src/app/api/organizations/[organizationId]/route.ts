@@ -13,7 +13,7 @@ const updateOrganizationSchema = z.object({
 
 export async function GET(
   req: Request,
-  { params }: { params: { organizationId: string } },
+  { params }: { params: Promise<{ organizationId: string }> },
 ) {
   try {
     const session = await auth();
@@ -22,9 +22,11 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const { organizationId } = await params;
+
     const organization = await prisma.organization.findUnique({
       where: {
-        id: params.organizationId,
+        id: organizationId,
         deletedAt: null,
       },
     });
@@ -42,10 +44,12 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { organizationId: string } },
+  { params }: { params: Promise<{ organizationId: string }> },
 ) {
   try {
     const session = await auth();
+
+    const { organizationId } = await params;
 
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -61,7 +65,7 @@ export async function PATCH(
 
     const organization = await prisma.organization.update({
       where: {
-        id: params.organizationId,
+        id: organizationId,
       },
       data: validatedData,
     });
@@ -79,7 +83,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { organizationId: string } },
+  { params }: { params: Promise<{ organizationId: string }> },
 ) {
   try {
     const session = await auth();
@@ -93,10 +97,12 @@ export async function DELETE(
       return new NextResponse("Forbidden", { status: 403 });
     }
 
+    const { organizationId } = await params;
+
     // Soft delete the organization
     const organization = await prisma.organization.update({
       where: {
-        id: params.organizationId,
+        id: organizationId,
       },
       data: {
         deletedAt: new Date(),

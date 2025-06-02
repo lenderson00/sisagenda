@@ -7,7 +7,7 @@ const createOrganizationSchema = z.object({
   name: z.string().min(1, "Name is required"),
   sigla: z.string().min(1, "Sigla is required"),
   description: z.string().optional(),
-  role: z.enum(["COMIMSUP", "DEPOSITO"]),
+  role: z.enum(["COMIMSUP", "DEPOSITO", "COMRJ"]),
 });
 
 export async function GET() {
@@ -64,6 +64,7 @@ export async function POST(req: Request) {
     return NextResponse.json(organization);
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(error.errors);
       return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
 

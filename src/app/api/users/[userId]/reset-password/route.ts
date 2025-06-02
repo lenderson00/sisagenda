@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { randomBytes } from "node:crypto";
 import { auth } from "@/lib/auth";
-import { randomBytes } from "crypto";
+import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
+import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const session = await auth();
@@ -17,8 +17,10 @@ export async function POST(
     const tempPassword = randomBytes(4).toString("hex");
     const hashedPassword = await hash(tempPassword, 12);
 
+    const { userId } = await params;
+
     await prisma.user.update({
-      where: { id: params.userId },
+      where: { id: userId },
       data: {
         password: hashedPassword,
         mustChangePassword: true,

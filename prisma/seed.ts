@@ -11,15 +11,8 @@ async function main() {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await prisma.user.upsert({
-    where: { email },
-    update: {
-      password: hashedPassword,
-      role: 'SUPER_ADMIN',
-      isActive: true,
-      mustChangePassword: true,
-    },
-    create: {
+  const user = await prisma.user.create({
+    data: {
       email,
       password: hashedPassword,
       role: 'SUPER_ADMIN',
@@ -29,7 +22,7 @@ async function main() {
     },
   });
 
-  console.log('Super admin user ensured.');
+  console.log('Super admin user ensured.', user);
 }
 
 main()

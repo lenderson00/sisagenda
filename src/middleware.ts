@@ -1,8 +1,8 @@
 import { authOptions } from "@/lib/auth";
-import NextAuth from "next-auth";
-import { type NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 import { UserRole } from "@prisma/client";
+import NextAuth from "next-auth";
+import { getToken } from "next-auth/jwt";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const publicRoutes: string[] = [];
 
@@ -111,7 +111,36 @@ export default auth(async (req: NextAuthRequest) => {
     return response;
   }
 
-  const rolePrefix = role.toLowerCase().replace("_", "-");
-  const newPath = `/${rolePrefix}${path}`;
-  return NextResponse.rewrite(new URL(newPath, nextUrl));
+  // Check for common static file extensions.
+  // This is to prevent rewriting URLs like /image.png to /[role]/image.png
+  // These assets are typically served directly from the public directory or by Next.js.
+  const looksLikeStaticAsset = /\.(jpg|jpeg|png|gif|svg|css|js|woff|woff2|ttf|eot)(\?.*)?$/i.test(pathname);
+
+  if (looksLikeStaticAsset) {
+    // console.log(`Middleware: Path ${pathname} identified as static asset. Passing through.`);
+    return response; // Pass through with existing headers (response object has them)
+  }
+
+  // If we're here, user is logged in, not on a special route handled above,
+  // not root, and not a likely static asset. Proceed with role-based rewrite.
+  if (role && typeof role === 'string') {
+    const rolePrefix = role.toLowerCase().replace("_", "-");
+
+    // Avoid re-prefixing if the path ALREADY starts with the correct role prefix.
+    if (pathname.startsWith(`/${rolePrefix}/`)) {
+      // console.log(`Middleware: Path ${pathname} already correctly prefixed for role ${role}. Passing through.`);
+      return response;
+    }
+
+    // Ensure pathname is not "/" here, as root path rewrites are handled earlier.
+    const newPath = `/${rolePrefix}${pathname === "/" ? "" : pathname}`;
+    // console.log(`Middleware: Rewriting path ${pathname} to ${newPath} for role ${role}`);
+    return NextResponse.rewrite(new URL(newPath, nextUrl), { request: { headers: requestHeaders } });
+  }
+
+  // If role is not valid for a logged-in user reaching this point (which means isLogged is true).
+  // This is an unexpected state for a logged-in user on a path that wasn't handled by earlier checks.
+  // It implies the user is logged in, but their role is missing or not a string.
+  // console.warn(`Middleware: User is logged in, but role is missing or invalid ('${role}') for path ${pathname}. Passing through without rewrite.`);
+  return response; // Pass through without rewrite
 });
