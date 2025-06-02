@@ -3,30 +3,20 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const toggleStatusSchema = z.object({
-  userId: z.string().cuid(),
-});
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ userId: string }> }) {
   try {
     const session = await auth();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Check if user is super admin
-    if (session.user.role !== "SUPER_ADMIN") {
-      return new NextResponse("Forbidden", { status: 403 });
-    }
 
-
-
-    const body = await request.json();
-    const validatedData = toggleStatusSchema.parse(body);
+    const { userId } = await params;
 
     const user = await prisma.user.findUnique({
       where: {
-        id: validatedData.userId,
+        id: userId,
       },
     });
 
@@ -35,9 +25,20 @@ export async function PATCH(request: Request) {
       return new NextResponse("User not found", { status: 404 });
     }
 
+    const isSuperAdmin = user.role === "ADMIN";
+
+    // Check if user is super admin
+    if (isSuperAdmin && session.user.role !== "SUPER_ADMIN") {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    if (session.user.organizationId !== user.organizationId) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
     const updatedUser = await prisma.user.update({
       where: {
-        id: validatedData.userId,
+        id: userId,
       },
       data: {
         isActive: !user.isActive,

@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { CreateUserDialog } from "./_components/create-user-dialog";
 import { UsersPageClient } from "./page-client";
@@ -21,60 +20,6 @@ export default async function UsersPage() {
     redirect("/");
   }
 
-  // Fetch users
-  const usersRaw = await prisma.user.findMany({
-    where: {
-      organizationId: orgId,
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      isActive: true,
-      whatsapp: true,
-      createdAt: true,
-      updatedAt: true,
-      organization: {
-        select: {
-          id: true,
-          name: true,
-          sigla: true,
-        },
-      },
-    },
-  });
-
-  // Normalize users for client
-  const users = usersRaw.map((user) => ({
-    ...user,
-    name: user.name ?? "",
-    whatsapp: user.whatsapp ?? "",
-    createdAt: user.createdAt?.toISOString?.() ?? "",
-    updatedAt: user.updatedAt?.toISOString?.() ?? "",
-    organization: user.organization
-      ? {
-          id: user.organization.id ?? "",
-          name: user.organization.name ?? "",
-          sigla: user.organization.sigla ?? "",
-        }
-      : { id: "", name: "", sigla: "" },
-  }));
-
-  // Fetch stats
-  const [total, active, inactive] = await Promise.all([
-    prisma.user.count({ where: { deletedAt: null, organizationId: orgId } }),
-    prisma.user.count({
-      where: { isActive: true, deletedAt: null, organizationId: orgId },
-    }),
-    prisma.user.count({
-      where: { isActive: false, deletedAt: null, organizationId: orgId },
-    }),
-  ]);
-
-  // Optionally, calculate suspended if needed
-  const stats = { total, active, inactive };
-
   return (
     <>
       <div className="border-b ">
@@ -93,7 +38,7 @@ export default async function UsersPage() {
           </div>
         </div>
       </div>
-      <UsersPageClient users={users} stats={stats} />
+      <UsersPageClient organizationId={orgId} />
     </>
   );
 }

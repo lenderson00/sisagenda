@@ -1,20 +1,23 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 export async function GET() {
+  const session = await auth();
+
+  if (!session) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const orgId = session.user.organizationId;
+
+  if (!orgId) {
+    return new NextResponse("Organization not found", { status: 404 });
+  }
+
   try {
-    const session = await auth();
-    if (!session) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const orgId = session.user.organizationId;
-
     const [total, active, inactive] = await Promise.all([
-      prisma.user.count({
-        where: { deletedAt: null, organizationId: orgId },
-      }),
+      prisma.user.count({ where: { deletedAt: null, organizationId: orgId } }),
       prisma.user.count({
         where: { isActive: true, deletedAt: null, organizationId: orgId },
       }),
@@ -23,13 +26,11 @@ export async function GET() {
       }),
     ]);
 
-    return NextResponse.json({
-      total,
-      active,
-      inactive,
-    });
+    const stats = { total, active, inactive };
+
+    return NextResponse.json(stats);
   } catch (error) {
-    console.error("[USERS_STATS]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    console.error("Error fetching user stats:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

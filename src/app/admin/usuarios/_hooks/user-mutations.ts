@@ -1,59 +1,9 @@
 "use client";
 
 import type { User } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-// Query Keys
-export const userKeys = {
-  all: (orgId: string) => ["users", orgId] as const,
-  list: (orgId: string) => [...userKeys.all(orgId), "list"] as const,
-  details: (orgId: string) => [...userKeys.all(orgId), "detail"] as const,
-  detail: (orgId: string, id: string) =>
-    [...userKeys.details(orgId), id] as const,
-  stats: (orgId: string) => [...userKeys.all(orgId), "stats"] as const,
-};
-
-// Queries
-export function useUsers(orgId: string) {
-  return useQuery({
-    queryKey: userKeys.list(orgId),
-    queryFn: async () => {
-      const response = await fetch("/api/users");
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      return response.json();
-    },
-  });
-}
-
-export function useUser(orgId: string, id: string) {
-  return useQuery({
-    queryKey: userKeys.detail(orgId, id),
-    queryFn: async () => {
-      const response = await fetch(`/api/users/${id}`);
-      if (!response.ok) {
-        throw new Error("User not found");
-      }
-      return response.json();
-    },
-    enabled: !!id,
-  });
-}
-
-export function useUserStats(orgId: string) {
-  return useQuery({
-    queryKey: userKeys.stats(orgId),
-    queryFn: async () => {
-      const response = await fetch("/api/users/stats");
-      if (!response.ok) {
-        throw new Error("Failed to fetch user stats");
-      }
-      return response.json();
-    },
-  });
-}
+import { userKeys } from "./user-keys";
 
 type UserData = {
   name: string;
@@ -61,7 +11,6 @@ type UserData = {
   whatsapp: string;
 };
 
-// Mutations
 export function useCreateUser(orgId: string, onDialogClose?: () => void) {
   const queryClient = useQueryClient();
 

@@ -66,18 +66,12 @@ export function AdminList({
 
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ admin }: { admin: UserType }) => {
-      const response = await fetch(
-        `/api/organizations/${admin.organizationId}/admin/toggle-status`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: admin.id,
-          }),
+      const response = await fetch(`/api/users/${admin.id}/toggle-status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       if (!response.ok) {
         throw new Error("Failed to toggle status");

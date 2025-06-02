@@ -9,14 +9,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useCreateUser } from "../_hooks/user-queries";
+import { useCreateUser } from "../_hooks/user-mutations";
 import { UserForm } from "./user-form";
 
 export const CreateUserDialog = ({ orgId }: { orgId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
-  const { mutate: createUser } = useCreateUser(orgId, () => setIsOpen(false));
+  const { mutate: createUser } = useCreateUser(orgId, () => {
+    setIsOpen(false);
+    router.refresh();
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

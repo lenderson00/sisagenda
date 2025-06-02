@@ -1,22 +1,49 @@
 "use client";
 
 import { BreadcrumbNav } from "@/components/breadcrumb-nav";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  IconCalendar,
+  IconLock,
+  IconMail,
+  IconUser,
+} from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Plus, UserCheck, UserMinus, UserX, Users } from "lucide-react";
+import {
+  Key,
+  MoreHorizontal,
+  Plus,
+  Trash,
+  UserCheck,
+  UserMinus,
+  UserX,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 import { UserForm } from "./_components/user-form";
-import { useCreateUser } from "./_hooks/user-queries";
+import { useDeleteUser, usePasswordReset } from "./_hooks/user-mutations";
+import { useUserStats, useUsers } from "./_hooks/user-queries";
 
 // Types for props
 interface User {
@@ -38,51 +65,50 @@ interface User {
   status?: string;
 }
 
-interface Stats {
-  total: number;
-  active: number;
-  inactive: number;
-  suspended?: number;
-}
-
 interface UsersPageClientProps {
-  users: User[];
-  stats: Stats;
+  organizationId: string;
 }
 
-type UserData = {
-  name: string;
-  email: string;
-  whatsapp: string;
-};
+export function UsersPageClient({ organizationId }: UsersPageClientProps) {
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
 
-export function UsersPageClient({ users, stats }: UsersPageClientProps) {
-  const getStatusColor = (status: User["isActive"]) => {
-    switch (status) {
-      case true:
-        return "bg-emerald-100 text-emerald-800";
-      case false:
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+  const { data: users = [], isLoading: isLoadingUsers } =
+    useUsers(organizationId);
+
+  const {
+    data: stats = { total: 0, active: 0, inactive: 0, suspended: 0 },
+    isLoading: isLoadingStats,
+  } = useUserStats(organizationId);
+
+  const resetPasswordMutation = usePasswordReset();
+  const deleteMutation = useDeleteUser(organizationId);
+
+  const handleResetPassword = async () => {
+    if (!selectedUser) return;
+    resetPasswordMutation.mutate(selectedUser.id);
   };
 
-  const getRoleColor = (role: User["role"]) => {
-    switch (role) {
-      case "ADMIN":
-        return "bg-purple-100 text-purple-800";
-      case "FORNECEDOR":
-        return "bg-blue-100 text-blue-800";
-      case "USER":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    deleteMutation.mutate(selectedUser.id);
   };
+
+  if (isLoadingUsers || isLoadingStats) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto" />
+          <p className="mt-4 text-gray-600">Carregando usuários...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-[80vh] ">
+    <div className="min-h-[80vh]">
       <div className="container mx-auto px-6 py-8">
         {/* Stats Cards */}
         <div className="grid gap-6 md:grid-cols-4 mb-8">
@@ -143,75 +169,156 @@ export function UsersPageClient({ users, stats }: UsersPageClientProps) {
           </Card>
         </div>
 
-        {/* Users List */}
-        <Card className="border-gray-200 shadow-none">
-          <CardHeader>
-            <CardTitle className="text-gray-900">
-              Users ({users.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {users.length === 0 ? (
-              <div className="text-center py-12">
-                <Users className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  No users found
-                </h3>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {users.map((user: any) => (
-                  <Link
-                    key={user.id}
-                    href={`/usuarios/${user.id}`}
-                    className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-700">
-                            {user.name
-                              .split(" ")
-                              .map((n: string[]) => n[0])
-                              .join("")
-                              .toUpperCase()}
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-900">
-                            {user.name}
-                          </h3>
-                          <p className="text-sm text-gray-500">{user.email}</p>
-                          {user.department && (
-                            <p className="text-xs text-gray-400">
-                              {user.department}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Badge className={getStatusColor(user.status)}>
-                          {user.status}
-                        </Badge>
-                        <Badge className={getRoleColor(user.role)}>
-                          {user.role}
-                        </Badge>
-                        <div className="text-right">
-                          <p className="text-xs text-gray-500">
-                            {user.lastLogin
-                              ? format(user.lastLogin, "MMM dd")
-                              : "Never"}
-                          </p>
-                          <p className="text-xs text-gray-400">Last login</p>
-                        </div>
-                      </div>
+        {/* Users Grid */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
+          {users.map((user: User) => (
+            <Card
+              key={user.id}
+              className="relative hover:shadow-md transition-shadow"
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                      <IconUser className="h-5 w-5 text-primary" />
                     </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="space-y-1">
+                      <h3 className="font-semibold leading-none">
+                        {user.name}
+                      </h3>
+                      <Badge
+                        variant={user.isActive ? "default" : "secondary"}
+                        className="text-xs"
+                      >
+                        {user.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Open menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsResetDialogOpen(true);
+                        }}
+                      >
+                        <IconLock className="mr-2 h-4 w-4" />
+                        Reset Password
+                      </DropdownMenuItem>
+                      {!user.isActive && (
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setIsDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <IconMail className="h-4 w-4" />
+                    <span className="truncate">{user.email}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <IconCalendar className="h-4 w-4" />
+                    <span>
+                      Added{" "}
+                      {format(new Date(user.createdAt || ""), "MMM dd, yyyy")}
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-4 flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsResetDialogOpen(true);
+                    }}
+                  >
+                    <IconLock className="mr-2 h-3 w-3" />
+                    Reset
+                  </Button>
+                  {!user.isActive && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Reset Password Dialog */}
+        <AlertDialog
+          open={isResetDialogOpen}
+          onOpenChange={setIsResetDialogOpen}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Reset Password</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to reset the password for{" "}
+                {selectedUser?.name}? A password reset link will be sent to
+                their email address.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleResetPassword}>
+                Reset Password
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Delete User Dialog */}
+        <AlertDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete User</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete {selectedUser?.name}? This
+                action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

@@ -1,18 +1,25 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
 import { createUserSchema, userQuerySchema } from "./_schemas/user-schemas";
 
 export async function GET() {
+  const session = await auth();
+
+  if (!session) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const orgId = session.user.organizationId;
+
+  console.log(orgId);
+
+  if (!orgId) {
+    return new NextResponse("Organization not found", { status: 404 });
+  }
+
   try {
-    const session = await auth();
-    if (!session) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const orgId = session.user.organizationId;
-
     const users = await prisma.user.findMany({
       where: {
         organizationId: orgId,
@@ -36,10 +43,26 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(users);
+    // Normalize users for client
+    const normalizedUsers = users.map((user) => ({
+      ...user,
+      name: user.name ?? "",
+      whatsapp: user.whatsapp ?? "",
+      createdAt: user.createdAt?.toISOString?.() ?? "",
+      updatedAt: user.updatedAt?.toISOString?.() ?? "",
+      organization: user.organization
+        ? {
+          id: user.organization.id ?? "",
+          name: user.organization.name ?? "",
+          sigla: user.organization.sigla ?? "",
+        }
+        : { id: "", name: "", sigla: "" },
+    }));
+
+    return NextResponse.json(normalizedUsers);
   } catch (error) {
-    console.error("[USERS_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    console.error("Error fetching users:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
