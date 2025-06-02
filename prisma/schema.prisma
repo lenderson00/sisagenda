@@ -36,9 +36,10 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  organizationId     String?
-  organization       Organization?        @relation(fields: [organizationId], references: [id])
-  PasswordResetToken PasswordResetToken[]
+  organizationId        String?
+  organization          Organization?           @relation(fields: [organizationId], references: [id])
+  PasswordResetToken    PasswordResetToken[]
+  ScheduleStatusHistory ScheduleStatusHistory[]
 
   @@index([email])
   @@index([organizationId])
@@ -166,6 +167,8 @@ model Schedule {
 
   observations Json?
 
+  statusHistory ScheduleStatusHistory[]
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -182,6 +185,26 @@ enum ScheduleStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+/// Tracks the history of status changes and comments for schedules
+model ScheduleStatusHistory {
+  id      String         @id @default(cuid())
+  status  ScheduleStatus
+  comment String?
+
+  scheduleId String
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([scheduleId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 /// Represents different types of audit actions
