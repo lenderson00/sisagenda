@@ -1,30 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import OmSelection from "../../_component/om-selection";
 import { Stepper } from "../../_component/stepper";
-const oms = [
-  {
-    omName: "OM 1",
-    omSigla: "om-1",
-    omDescription: "OM 1",
-  },
-  {
-    omName: "OM 2",
-    omSigla: "om-2",
-    omDescription: "OM 2",
-  },
-  {
-    omName: "OM 3",
-    omSigla: "om-3",
-    omDescription: "OM 3",
-  },
-  {
-    omName: "OM 4",
-    omSigla: "om-4",
-    omDescription: "OM 4",
-  },
-];
 
-const AgendaPage = async () => {
+const AgendarOM = async () => {
   const oms = await prisma.organization.findMany({
     where: {
       isActive: true,
@@ -46,7 +24,7 @@ const AgendaPage = async () => {
       <div className="w-full flex flex-col">
         {oms.map((om, index) => (
           <OmSelection
-            key={`${om.id}`}
+            key={`${om.id}-${index}`}
             omName={om.name}
             omSigla={om.sigla}
             omDescription={om.description ?? ""}
@@ -64,4 +42,4 @@ const AgendaPage = async () => {
   );
 };
 
-export default AgendaPage;
+export default AgendarOM;

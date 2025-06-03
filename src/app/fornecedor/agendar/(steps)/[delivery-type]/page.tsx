@@ -26,7 +26,7 @@ export default function AgendarOM() {
       <div className="w-full flex flex-col">
         {transporteTypes.map((transporteType, index) => (
           <OmSelection
-            key={transporteType.name}
+            key={`${transporteType.name}-${index}`}
             omName={transporteType.name}
             omSigla={transporteType.name}
             omDescription={transporteType.description}
