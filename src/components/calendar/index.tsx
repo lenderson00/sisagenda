@@ -1,12 +1,12 @@
 "use client";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useMemo, useState, useCallback } from "react";
-import { CalendarHeader } from "./calendar-header";
-import { CalendarGrid } from "./calendar-grid";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { CalendarGrid } from "./calendar-grid";
+import { CalendarHeader } from "./calendar-header";
 
 interface CalendarWeek {
   week: number;
@@ -42,13 +42,13 @@ export function Calendar({
     const previousMonthDate = currentDate.subtract(1, "month");
     setCurrentDate(previousMonthDate);
     // TODO: Implement toast for previous month navigation
-  }, [currentDate, toast]);
+  }, [currentDate]);
 
   const handleNextMonth = useCallback(() => {
     const nextMonthDate = currentDate.add(1, "month");
     setCurrentDate(nextMonthDate);
     // TODO: Implement toast for next month navigation
-  }, [currentDate, toast]);
+  }, [currentDate]);
 
   const handleDateClick = useCallback(
     (date: dayjs.Dayjs) => {
@@ -58,7 +58,7 @@ export function Calendar({
       // Call the optional callback if provided
       onDateSelected?.(selectedDateObj);
     },
-    [toast, onDateSelected],
+    [onDateSelected],
   );
 
   const currentMonthName = currentDate.format("MMMM");
@@ -72,7 +72,10 @@ export function Calendar({
       currentDate.get("month"),
     ],
     queryFn: async () => {
-      return [] as any[];
+      return {
+        blockedWeekDays: [],
+        blockedDates: [],
+      } as BlockedDatesResponse;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
@@ -148,7 +151,7 @@ export function Calendar({
   }, [currentDate, blockedDates]);
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={1500}>
       <div className="p-6 flex flex-col gap-4 bg-white w-full h-full">
         <CalendarHeader
           currentMonth={currentMonthName}

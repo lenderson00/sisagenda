@@ -117,10 +117,6 @@ export default auth(async (req: NextAuthRequest) => {
     return response;
   }
 
-  console.log(
-    `Middleware: User is logged in with role ${role} on path ${pathname}.`,
-  );
-
   // If we're here, user is logged in, not on a special route handled above,
   // not root, and not a likely static asset. Proceed with role-based rewrite.
   if (role && typeof role === "string") {
