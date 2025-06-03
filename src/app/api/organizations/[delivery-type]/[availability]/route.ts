@@ -44,6 +44,20 @@ export async function GET(
   const rule = deliveryTypeAvailability.availabilityRule?.rule || [];
 
 
+  const blockedTimes = await prisma.appointment.findMany({
+    where: {
+      organizationId: deliveryTypeAvailability.organizationId,
+      deliveryTypeId: deliveryType,
+      date: {
+        gte: referenceDate.set('hour', startHour).toDate(),
+        lte: referenceDate.set('hour', endHour).toDate(),
+      },
+    },
+    select: {
+      date: true,
+    },
+  });
+
 
   return NextResponse.json({
     date,
