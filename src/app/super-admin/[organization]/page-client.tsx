@@ -1,13 +1,6 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Organization } from "@prisma/client";
 import { IconUser } from "@tabler/icons-react";
 import { AdminList } from "./_components/admin-list";

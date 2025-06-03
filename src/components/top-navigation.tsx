@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Bell, Calendar, ExternalLink, Search, Settings } from "lucide-react";
 import Link from "next/link";
 import { NavTabs, type Tab } from "./tabs";
+import { AccountAvatar } from "./account-avatar";
 
 type Props = {
   tabs: Tab[];
@@ -57,12 +58,7 @@ export function TopNavigation({ tabs }: Props) {
           >
             <Settings className="w-4 h-4" />
           </Button>
-          <Avatar className="w-8 h-8">
-            <AvatarImage src="/placeholder.svg?height=32&width=32" />
-            <AvatarFallback className="bg-gray-100 text-gray-700">
-              AD
-            </AvatarFallback>
-          </Avatar>
+          <AccountAvatar />
         </div>
       </div>
 

@@ -4,15 +4,25 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ deliveryType: string; id: string }> },
+  {
+    params,
+  }: {
+    params: Promise<{
+      deliveryType: string;
+      id: string;
+      organizationId: string;
+    }>;
+  },
 ) {
-  const { deliveryType, id: availabilityId } = await params;
+  const { deliveryType, id: availabilityId, organizationId } = await params;
 
   console.log(
     "Fetching availability for delivery type:",
     deliveryType,
     "and ID:",
     availabilityId,
+    "in organization:",
+    organizationId,
   );
 
   const searchParams = new URL(request.url).searchParams;

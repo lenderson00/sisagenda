@@ -66,7 +66,11 @@ export function AdminList({
 
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ admin }: { admin: UserType }) => {
-      const response = await fetch(`/api/users/${admin.id}/toggle-status`, {
+      const endPoint = admin.isActive
+        ? `/api/users/${admin.id}/deactivate`
+        : `/api/users/${admin.id}/activate`;
+
+      const response = await fetch(endPoint, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

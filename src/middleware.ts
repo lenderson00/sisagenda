@@ -40,10 +40,11 @@ export default auth(async (req: NextAuthRequest) => {
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-current-path", nextUrl.pathname);
 
-  const isLogged = !!req.auth;
+  const isLogged = !!req.auth
 
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-  const role = token?.role as UserRole;
+  const role = req.auth.user.role
+  const mustChangePassword = req.auth.user.mustChangePassword;
+
   // Check route types
   const isAuthRoute = authRoutes.includes(pathname);
   const isApiRoute = pathname.startsWith("/api/");
@@ -58,6 +59,7 @@ export default auth(async (req: NextAuthRequest) => {
 
   // Allow API routes to pass through
   if (isApiRoute) {
+    console.log(`Middleware: API route ${pathname} passed through.`);
     return response;
   }
 
@@ -79,7 +81,7 @@ export default auth(async (req: NextAuthRequest) => {
     );
   }
 
-  if (token?.mustChangePassword && !isNewPasswordRoute) {
+  if (mustChangePassword && !isNewPasswordRoute) {
     return NextResponse.redirect(new URL("/nova-senha", nextUrl));
   }
 
@@ -91,9 +93,14 @@ export default auth(async (req: NextAuthRequest) => {
   }
 
   const path = nextUrl.pathname;
+
+  if (isNewPasswordRoute) {
+    return response;
+  }
+
   // Handle root path
   if (path === "/") {
-    switch (token?.role) {
+    switch (role) {
       case UserRole.SUPER_ADMIN:
         return NextResponse.rewrite(new URL("/super-admin", nextUrl));
       case UserRole.ADMIN:
@@ -106,23 +113,17 @@ export default auth(async (req: NextAuthRequest) => {
   }
   // Allow access to protected routes for logged in users
 
-  if (isLogged && isNewPasswordRoute && token?.mustChangePassword) {
+  if (isLogged && isNewPasswordRoute && mustChangePassword) {
     return response;
   }
 
-  // Check for common static file extensions.
-  // This is to prevent rewriting URLs like /image.png to /[role]/image.png
-  // These assets are typically served directly from the public directory or by Next.js.
-  const looksLikeStaticAsset = /\.(jpg|jpeg|png|gif|svg|css|js|woff|woff2|ttf|eot)(\?.*)?$/i.test(pathname);
-
-  if (looksLikeStaticAsset) {
-    // console.log(`Middleware: Path ${pathname} identified as static asset. Passing through.`);
-    return response; // Pass through with existing headers (response object has them)
-  }
+  console.log(
+    `Middleware: User is logged in with role ${role} on path ${pathname}.`,
+  );
 
   // If we're here, user is logged in, not on a special route handled above,
   // not root, and not a likely static asset. Proceed with role-based rewrite.
-  if (role && typeof role === 'string') {
+  if (role && typeof role === "string") {
     const rolePrefix = role.toLowerCase().replace("_", "-");
 
     // Avoid re-prefixing if the path ALREADY starts with the correct role prefix.
@@ -134,7 +135,9 @@ export default auth(async (req: NextAuthRequest) => {
     // Ensure pathname is not "/" here, as root path rewrites are handled earlier.
     const newPath = `/${rolePrefix}${pathname === "/" ? "" : pathname}`;
     // console.log(`Middleware: Rewriting path ${pathname} to ${newPath} for role ${role}`);
-    return NextResponse.rewrite(new URL(newPath, nextUrl), { request: { headers: requestHeaders } });
+    return NextResponse.rewrite(new URL(newPath, nextUrl), {
+      request: { headers: requestHeaders },
+    });
   }
 
   // If role is not valid for a logged-in user reaching this point (which means isLogged is true).

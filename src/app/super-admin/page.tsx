@@ -12,8 +12,8 @@ import { CreateOrganizationDialog } from "./_components/create-organization-dial
 export default async function AdminPage() {
   const session = await auth();
 
-  if (!session?.user?.email) {
-    return redirect("/404");
+  if (!session || !session.user || session.user.role !== "SUPER_ADMIN") {
+    redirect("/entrar");
   }
 
   const queryClient = new QueryClient();

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { OrganizationAdminClient } from "./page-client";
+import { notFound } from "next/navigation";
 
 export default async function OrganizationAdminPage({
   params,
@@ -11,7 +12,7 @@ export default async function OrganizationAdminPage({
   const session = await auth();
 
   if (!session?.user?.email) {
-    return redirect("/404");
+    return notFound()
   }
 
   const nextParams = await params;
@@ -23,8 +24,8 @@ export default async function OrganizationAdminPage({
     },
   });
 
-  if (!organization) {
-    return redirect("/404");
+  if (!organization ) {
+    return notFound();
   }
 
   return <OrganizationAdminClient organization={organization} />;
