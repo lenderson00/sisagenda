@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Clock, Video, Globe, ChevronDown, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { ChevronDown, Clock, Globe, User, Video } from "lucide-react";
 
 interface MeetingInfoProps {
   profileName?: string;
@@ -18,7 +18,6 @@ export function MeetingInfo({
   meetingTitle = "30 Min Meeting",
   duration = 30,
   videoEnabled = true,
-  timezone = "America/Martinique",
   profileImage,
 }: MeetingInfoProps) {
   return (
@@ -72,19 +71,6 @@ export function MeetingInfo({
               <span className="text-sm font-medium">Cal Video</span>
             </div>
           )}
-
-          {/* Timezone */}
-          <div className="flex items-center gap-2 text-slate-600">
-            <Globe className="w-4 h-4" />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto p-0 text-sm font-medium text-slate-600 hover:text-slate-900"
-            >
-              {timezone}
-              <ChevronDown className="w-3 h-3 ml-1" />
-            </Button>
-          </div>
         </div>
       </div>
 
@@ -92,7 +78,7 @@ export function MeetingInfo({
       <div className="flex-1 space-y-4">
         <div className="border-t border-slate-100 pt-4">
           <h4 className="font-medium text-slate-900 mb-3">
-            Detalhes da Reunião
+            Detalhes da Entrega
           </h4>
           <div className="space-y-2 text-sm text-slate-600">
             <div className="flex justify-between">
@@ -100,29 +86,25 @@ export function MeetingInfo({
               <span className="font-medium">{duration} minutos</span>
             </div>
             <div className="flex justify-between">
-              <span>Tipo:</span>
-              <span className="font-medium">Videochamada</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Fuso horário:</span>
-              <span className="font-medium">{timezone.split("/")[1]}</span>
+              <span>Endereço:</span>
+              <span className="font-medium">Rua das Flores, 123</span>
             </div>
           </div>
         </div>
 
         <div className="border-t border-slate-100 pt-4">
-          <h4 className="font-medium text-slate-900 mb-3">Sobre a Reunião</h4>
+          <h4 className="font-medium text-slate-900 mb-3">Sobre a Entrega</h4>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Reunião de 30 minutos para discussão de projetos, alinhamento de
-            objetivos e esclarecimento de dúvidas. Ideal para consultas rápidas
-            e planejamento.
+            Entrega de 30 minutos de materiais simples.
           </p>
         </div>
       </div>
 
       {/* Footer */}
       <div className="flex-shrink-0 pt-4 border-t border-slate-100">
-        <p className="text-xs text-slate-400 text-center">Powered by Cal.com</p>
+        <p className="text-xs text-slate-400 text-center">
+          Powered by SisAgenda
+        </p>
       </div>
     </motion.div>
   );

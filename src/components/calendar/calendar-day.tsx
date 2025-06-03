@@ -1,15 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
-import type dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type dayjs from "dayjs";
+import { motion } from "framer-motion";
+import { CheckCircle, Clock, XCircle } from "lucide-react";
 
 interface CalendarDayProps {
   date: dayjs.Dayjs;
@@ -36,7 +36,7 @@ export function CalendarDay({
       return {
         icon: <Clock className="w-4 h-4 mr-2" />,
         text: "Fora do mês atual",
-        textColor: "text-slate-400",
+        textColor: "text-neutral-400",
       };
     }
 
@@ -58,12 +58,12 @@ export function CalendarDay({
   const { icon, text, textColor } = getTooltipContent();
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={1500}>
       <TooltipTrigger asChild>
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2, delay: Math.random() * 0.1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
           className="w-full h-full flex items-center justify-center"
         >
           <Button
@@ -71,24 +71,25 @@ export function CalendarDay({
             variant="ghost"
             className={cn(
               "w-9 h-9 p-0 text-center rounded-md text-sm font-medium transition-all duration-200",
-              "hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-sky-500",
+              "hover:bg-neutral-200 focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-sky-500",
               // Current month days
               isCurrentMonth &&
                 !disabled &&
-                "text-slate-900 hover:bg-slate-100",
+                "text-neutral-900 hover:bg-neutral-200",
               // Previous/next month days (faded)
-              !isCurrentMonth && "text-slate-400 hover:bg-slate-50",
+              !isCurrentMonth && "text-neutral-400 hover:bg-neutral-50",
               // Disabled days
-              disabled && "text-slate-300 cursor-default hover:bg-transparent",
+              disabled &&
+                "text-neutral-500 cursor-default hover:bg-transparent",
               // Selected day
               isSelected &&
                 !disabled &&
-                "bg-sky-500 text-white hover:bg-sky-600",
+                "bg-neutral-800 text-white hover:bg-neutral-900 hover:text-white hover:opacity/80",
               // Today highlight
               isToday &&
                 !disabled &&
                 !isSelected &&
-                "bg-slate-200 font-semibold",
+                "bg-neutral-200 hover:bg-neutral-300 font-semibold",
             )}
             onClick={() => !disabled && onClick(date)}
             disabled={disabled}
@@ -107,11 +108,11 @@ export function CalendarDay({
       <TooltipContent
         side="top"
         align="center"
-        className="bg-white border border-slate-200 shadow-md"
+        className="bg-white border border-neutral-200 shadow-md"
         sideOffset={5}
       >
         <div className="flex flex-col items-center">
-          <p className="text-xs text-slate-500 mb-1">{formattedDate}</p>
+          <p className="text-xs text-neutral-500 mb-1">{formattedDate}</p>
           <div className={cn("flex items-center font-medium", textColor)}>
             {icon}
             <span>{text}</span>

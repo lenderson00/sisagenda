@@ -151,24 +151,22 @@ export function Calendar({
   }, [currentDate, blockedDates]);
 
   return (
-    <TooltipProvider delayDuration={1500}>
-      <div className="p-6 flex flex-col gap-4 bg-white w-full h-full">
-        <CalendarHeader
-          currentMonth={currentMonthName}
-          currentYear={currentYear}
-          onPreviousMonth={handlePreviousMonth}
-          onNextMonth={handleNextMonth}
-          isLoading={isLoadingBlockedDates}
-        />
+    <div className="p-6 flex flex-col gap-4 bg-white w-full h-full">
+      <CalendarHeader
+        currentMonth={currentMonthName}
+        currentYear={currentYear}
+        onPreviousMonth={handlePreviousMonth}
+        onNextMonth={handleNextMonth}
+        isLoading={isLoadingBlockedDates}
+      />
 
-        <CalendarGrid
-          weeks={calendarWeeks}
-          selectedDate={selectedDate}
-          onDateClick={handleDateClick}
-          isLoading={isLoadingBlockedDates}
-          currentDate={currentDate}
-        />
-      </div>
-    </TooltipProvider>
+      <CalendarGrid
+        weeks={calendarWeeks}
+        selectedDate={selectedDate}
+        onDateClick={handleDateClick}
+        isLoading={isLoadingBlockedDates}
+        currentDate={currentDate}
+      />
+    </div>
   );
 }
