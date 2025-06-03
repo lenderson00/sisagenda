@@ -4,9 +4,16 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ deliveryType: string, availability: string }> }
+  { params }: { params: Promise<{ deliveryType: string; id: string }> },
 ) {
-  const { deliveryType, availability } = await params;
+  const { deliveryType, id: availabilityId } = await params;
+
+  console.log(
+    "Fetching availability for delivery type:",
+    deliveryType,
+    "and ID:",
+    availabilityId,
+  );
 
   const searchParams = new URL(request.url).searchParams;
   const date = searchParams.get("date");
@@ -43,21 +50,19 @@ export async function GET(
 
   const rule = deliveryTypeAvailability.availabilityRule?.rule || [];
 
-
   const blockedTimes = await prisma.appointment.findMany({
     where: {
       organizationId: deliveryTypeAvailability.organizationId,
       deliveryTypeId: deliveryType,
       date: {
-        gte: referenceDate.set('hour', startHour).toDate(),
-        lte: referenceDate.set('hour', endHour).toDate(),
+        gte: referenceDate.set("hour", startHour).toDate(),
+        lte: referenceDate.set("hour", endHour).toDate(),
       },
     },
     select: {
       date: true,
     },
   });
-
 
   return NextResponse.json({
     date,
