@@ -118,11 +118,12 @@ model DeliveryType {
 
 /// Represents availability slots for deliveries
 model Availability {
-  id        String   @id @default(cuid())
-  weekDay   Int      @db.SmallInt
-  startTime DateTime
-  endTime   DateTime
-  isActive  Boolean  @default(true)
+  id String @id @default(cuid())
+
+  weekDay   Int     @db.SmallInt
+  startTime Int
+  endTime   Int
+  isActive  Boolean @default(true)
 
   deliveryTypeId String       @unique
   deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])

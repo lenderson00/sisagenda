@@ -94,14 +94,26 @@ export function AppointmentsCalendarView({
     const apps = appointmentsByDate[dateStr] || [];
     setSelectedDateAppointments(apps);
     setModalTitle(
-      `Appointments for ${date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`,
+      `Agendamentos para ${date.toLocaleDateString("pt-BR", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })}`,
     );
     setIsModalOpen(true);
   };
 
   const getStatusColor = (deliveryTypeId: string) => {
-    // You might want to map deliveryTypeId to a status color
-    return "bg-gray-500";
+    switch (deliveryTypeId) {
+      case "1":
+        return "bg-blue-500";
+      case "2":
+        return "bg-green-500";
+      case "3":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
+    }
   };
 
   return (
@@ -234,7 +246,7 @@ export function AppointmentsCalendarView({
             ))}
             {selectedDateAppointments.length === 0 && (
               <div className="text-center py-4 text-gray-500">
-                No appointments scheduled for this date.
+                Nenhum agendamento agendado para esta data.
               </div>
             )}
           </div>
