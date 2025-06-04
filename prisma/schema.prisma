@@ -125,7 +125,10 @@ model DeliveryType {
   slug     String  @unique
   isActive Boolean @default(true)
 
-  availability Availability?
+  availability         Availability?
+  AvailabilityRule     AvailabilityRule?
+  AvailabilitySettings AvailabilitySettings?
+
   appointments Appointment[]
 
   organizationId String
@@ -142,10 +145,10 @@ model DeliveryType {
 model Availability {
   id String @id @default(cuid())
 
-  weekDay   Int   @db.SmallInt
-  duration  Int   @db.SmallInt
-  startTime Int[]
-  endTime   Int[]
+  weekDay   Int @db.SmallInt
+  duration  Int @db.SmallInt
+  startTime Int
+  endTime   Int
 
   isActive Boolean @default(true)
 
@@ -155,8 +158,6 @@ model Availability {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  availabilityRule AvailabilityRule?
-
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -165,19 +166,32 @@ model Availability {
   @@index([weekDay])
 }
 
+model AvailabilitySettings {
+  id String @id @default(cuid())
+
+  lunchTimeStart Int
+  lunchTimeEnd   Int
+
+  deliveryTypeId String       @unique
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 /// Stores rules for availability slots
 model AvailabilityRule {
   id String @id @default(cuid())
 
   rule Json
 
-  availabilityId String       @unique
-  availability   Availability @relation(fields: [availabilityId], references: [id])
+  deliveryTypeId String       @unique
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([availabilityId])
+  @@index([id])
 }
 
 /// Represents scheduled appointments
