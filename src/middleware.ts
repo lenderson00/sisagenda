@@ -42,8 +42,13 @@ export default auth(async (req: NextAuthRequest) => {
 
   const isLogged = !!req.auth
 
-  const role = req.auth.user.role
-  const mustChangePassword = req.auth.user.mustChangePassword;
+  let role = null;
+  let mustChangePassword = false;
+
+  if (req.auth) {
+    role = req.auth.user.role;
+    mustChangePassword = req.auth.user.mustChangePassword;
+  }
 
   // Check route types
   const isAuthRoute = authRoutes.includes(pathname);

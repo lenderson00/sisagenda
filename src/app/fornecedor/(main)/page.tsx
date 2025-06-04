@@ -35,7 +35,7 @@ export default function AppointmentsPage() {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50">
       <div className="container mx-auto py-8 space-y-4">
         <AppointmentsHeader
           viewMode={viewMode}
