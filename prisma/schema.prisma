@@ -90,8 +90,30 @@ model Organization {
   deletedAt    DateTime?
   Organization Organization[] @relation("ComimsupRelation")
   Availability Availability[]
+  Account      Account[]
 
   @@index([sigla])
+}
+
+model Account {
+  id                  String  @id @default(cuid())
+  organizationId      String
+  type                String
+  provider            String
+  provider_account_id String
+  refresh_token       String? @db.Text
+  access_token        String? @db.Text
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String? @db.Text
+  session_state       String?
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([provider, provider_account_id])
+  @@index([organizationId])
+  @@map("accounts")
 }
 
 /// Represents different types of deliveries
