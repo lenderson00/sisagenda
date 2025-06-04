@@ -10,7 +10,6 @@ import { z } from "zod";
 const weekDays = getWeekDays();
 
 const timeIntervalsFormSchema = z.object({
-  duration: z.number().min(30).max(120),
   intervals: z
     .array(
       z.object({
@@ -53,7 +52,6 @@ export const Availability = () => {
   } = useForm<TimeIntervalsFormInput>({
     resolver: zodResolver(timeIntervalsFormSchema),
     defaultValues: {
-      duration: 60,
       intervals: [
         {
           weekDay: 0,
@@ -124,10 +122,8 @@ export const Availability = () => {
 
         return {
           weekDay: interval.weekDay,
-          duration: data.duration,
-          startTime: [startTimeInMinutes],
-          endTime: [endTimeInMinutes],
-          isActive: true,
+          startTime: startTimeInMinutes,
+          endTime: endTimeInMinutes,
         };
       });
 
@@ -145,29 +141,6 @@ export const Availability = () => {
         handleSetTimeIntervals(data);
       })}
     >
-      <div className="mb-4">
-        <label
-          htmlFor="duration-input"
-          className="text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Duração (minutos)
-        </label>
-        <Input
-          id="duration-input"
-          type="number"
-          min={30}
-          max={120}
-          step={30}
-          className="w-50 mt-1"
-          {...register("duration", { valueAsNumber: true })}
-        />
-        {errors.duration && (
-          <p className="text-xs text-destructive mt-1">
-            {errors.duration.message}
-          </p>
-        )}
-      </div>
-
       <div className="mb-6 rounded-md border divide-y">
         {fields.map((field, index) => {
           const currentInterval = watchedIntervals?.[index];
