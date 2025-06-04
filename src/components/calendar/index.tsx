@@ -151,7 +151,7 @@ export function Calendar({
   }, [currentDate, blockedDates]);
 
   return (
-    <div className="p-6 flex flex-col gap-4 bg-white w-full h-full">
+    <div className="p-6  flex flex-col gap-4 bg-white w-full h-full">
       <CalendarHeader
         currentMonth={currentMonthName}
         currentYear={currentYear}

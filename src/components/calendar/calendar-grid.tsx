@@ -85,7 +85,7 @@ export function CalendarGrid({
                     duration: 0.3,
                     delay: index * 0.05,
                   }}
-                  className="h-10"
+                  className=""
                 >
                   {days.map(
                     ({

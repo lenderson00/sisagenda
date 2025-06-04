@@ -70,7 +70,7 @@ export function CalendarDay({
             type="button"
             variant="ghost"
             className={cn(
-              "w-9 h-9 p-0 text-center rounded-md text-sm font-medium transition-all duration-200",
+              "w-10 h-10 p-0 text-center rounded-md text-sm font-medium transition-all duration-200",
               "hover:bg-neutral-200 focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-sky-500",
               // Current month days
               isCurrentMonth &&
@@ -102,6 +102,9 @@ export function CalendarDay({
             <motion.span whileHover={!disabled ? { opacity: 0.85 } : {}}>
               {date.get("date")}
             </motion.span>
+            {isSelected && (
+              <div className="w-1 h-1  bg-white rounded-full text-green-500 absolute bottom-[5px]  -translate-x-1/2 left-1/2" />
+            )}
           </Button>
         </motion.div>
       </TooltipTrigger>

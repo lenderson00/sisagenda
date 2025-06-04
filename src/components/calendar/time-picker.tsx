@@ -1,12 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import dayjs from "dayjs";
-import { Clock, CalendarIcon, ArrowRight, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
+import { ArrowRight, CalendarIcon, Check, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface TimePickerProps {
@@ -28,7 +28,7 @@ export function TimePicker({ selectedDate, username }: TimePickerProps) {
   // Reset selected time when date changes
   useEffect(() => {
     setSelectedTime(null);
-  }, [dateKey]); // dateKey changes when selectedDate changes
+  }, []); // dateKey changes when selectedDate changes
 
   const { data: availability, isLoading } = useQuery({
     queryKey: ["availability", username, dateKey],
