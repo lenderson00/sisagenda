@@ -146,11 +146,8 @@ model Availability {
   id String @id @default(cuid())
 
   weekDay   Int @db.SmallInt
-  duration  Int @db.SmallInt
   startTime Int
   endTime   Int
-
-  isActive Boolean @default(true)
 
   deliveryTypeId String       @unique
   deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
@@ -169,6 +166,8 @@ model Availability {
 model AvailabilitySettings {
   id String @id @default(cuid())
 
+  duration       Int     @db.SmallInt
+  isActive       Boolean @default(true)
   lunchTimeStart Int
   lunchTimeEnd   Int
 
@@ -196,8 +195,9 @@ model AvailabilityRule {
 
 /// Represents scheduled appointments
 model Appointment {
-  id   String   @id @default(cuid())
-  date DateTime
+  id       String   @id @default(cuid())
+  date     DateTime
+  duration Int
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
