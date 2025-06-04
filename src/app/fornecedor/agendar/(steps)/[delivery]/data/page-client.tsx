@@ -6,20 +6,20 @@ import { TimePicker } from "@/components/calendar/time-picker";
 import dayjs from "dayjs";
 import { useState } from "react";
 import "dayjs/locale/pt-br";
-import { cn } from "@/lib/utils";
 
 dayjs.locale("pt-br");
 
 export function DataPageClient({
   organizationId,
   deliveryTypeId,
-  organizationName,
+  organizationName = "Organização",
 }: {
   organizationId: string;
   deliveryTypeId: string;
-  organizationName: string;
+  organizationName?: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [activeTab, setActiveTab] = useState<"weekly" | "rules">("weekly");
 
   const isDateSelected = selectedDate !== null;
 
@@ -31,7 +31,7 @@ export function DataPageClient({
     <div className=" flex flex-col items-center justify-center">
       {/* Three-column layout */}
       <div className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_320px] xl:grid-cols-[320px_1fr_340px] min-h-[600px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_420px] xl:grid-cols-[320px_1fr_440px] min-h-[600px]">
           {/* Meeting Info - Left Column */}
           <div className="border-r border-slate-200 bg-slate-50/30">
             <MeetingInfo profileName="Antoine Milkoff" duration={30} />
@@ -46,59 +46,23 @@ export function DataPageClient({
             />
           </div>
 
-          {/* Time Picker - Right Column */}
-          <div className="relative border-l border-slate-200 bg-slate-50/30">
-            <div
-              className={cn(
-                "absolute inset-0 transition-all duration-300 ease-in-out",
-                isDateSelected
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 translate-x-4 pointer-events-none",
-              )}
-            >
-              {selectedDate && (
-                <TimePicker
-                  key={selectedDate.toISOString()}
-                  selectedDate={selectedDate}
-                  organizationId={organizationId}
-                  deliveryTypeId={deliveryTypeId}
-                />
-              )}
-            </div>
-
-            {/* Placeholder content when no date is selected */}
-            <div
-              className={cn(
-                "absolute inset-0 flex items-center justify-center transition-all duration-300 ease-in-out",
-                isDateSelected
-                  ? "opacity-0 translate-x-4 pointer-events-none"
-                  : "opacity-100 translate-x-0",
-              )}
-            >
-              <div className="text-center p-6">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-slate-400"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <p className="text-slate-500 text-sm font-medium">
-                  Selecione uma data
-                </p>
-                <p className="text-slate-400 text-xs mt-1">
-                  para ver os horários disponíveis
-                </p>
-              </div>
+          {/* Right Column: Tabs for Weekly and Rules */}
+          <div className="relative border-l border-slate-200 bg-slate-50/30 p-4">
+            <div className="flex mb-4 gap-2">
+              <button
+                type="button"
+                className={`px-3 py-1 rounded font-medium ${activeTab === "weekly" ? "bg-slate-200" : "bg-white border"}`}
+                onClick={() => setActiveTab("weekly")}
+              >
+                Horários Semanais
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1 rounded font-medium ${activeTab === "rules" ? "bg-slate-200" : "bg-white border"}`}
+                onClick={() => setActiveTab("rules")}
+              >
+                Regras Avançadas
+              </button>
             </div>
           </div>
         </div>
