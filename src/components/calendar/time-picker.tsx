@@ -71,13 +71,10 @@ export function TimePicker({ selectedDate, username }: TimePickerProps) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 justify-between"
         >
-          <CalendarIcon className="w-4 h-4 text-slate-500" />
-          <div>
-            <p className="font-medium text-slate-900 capitalize">{weekDay}</p>
-            <p className="text-sm text-slate-500">{describedDate}</p>
-          </div>
+          <p className="font-medium text-slate-900 capitalize">{weekDay}</p>
+          <p className="text-sm text-slate-500">{describedDate}</p>
         </motion.div>
       </div>
 
