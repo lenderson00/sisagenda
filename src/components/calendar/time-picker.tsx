@@ -11,7 +11,8 @@ import { toast } from "sonner";
 
 interface TimePickerProps {
   selectedDate: Date;
-  username: string;
+  organizationId: string;
+  deliveryTypeId: string;
 }
 
 interface AvailabilityData {
@@ -19,7 +20,11 @@ interface AvailabilityData {
   availableTimes: number[];
 }
 
-export function TimePicker({ selectedDate, username }: TimePickerProps) {
+export function TimePicker({
+  selectedDate,
+  organizationId,
+  deliveryTypeId,
+}: TimePickerProps) {
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const dateKey = dayjs(selectedDate).format("YYYY-MM-DD");
   const weekDay = dayjs(selectedDate).format("dddd");
@@ -31,17 +36,19 @@ export function TimePicker({ selectedDate, username }: TimePickerProps) {
   }, []); // dateKey changes when selectedDate changes
 
   const { data: availability, isLoading } = useQuery({
-    queryKey: ["availability", username, dateKey],
+    queryKey: ["availability", organizationId, dateKey],
     queryFn: async () => {
       // TODO: Replace with actual API call
-      const data: AvailabilityData = {
-        possibleTimes: Array.from({ length: 15 }, (_, i) => i).filter(
-          (i) => i >= 8,
-        ), // 8 to 15
-        availableTimes: [9, 10, 11, 14, 15, 16], // Example available times
-      };
-
-      return data;
+      const response = await fetch(
+        `/api/organizations/${organizationId}/deliveries/${deliveryTypeId}/availability/${dateKey}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      return response.json();
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,

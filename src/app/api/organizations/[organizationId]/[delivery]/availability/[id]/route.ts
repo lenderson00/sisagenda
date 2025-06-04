@@ -1,80 +1,54 @@
-import { prisma } from "@/lib/prisma";
-import dayjs from "dayjs";
-import { NextResponse } from "next/server";
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { getCalculatedAvailability } from '@/lib/scheduling-engine';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  request: Request,
-  {
-    params,
-  }: {
-    params: Promise<{
-      deliveryType: string;
-      id: string;
-      organizationId: string;
-    }>;
-  },
+  request: NextRequest,
+  { params }: { params: { organizationId: string; delivery: string; id: string } }
 ) {
-  const { deliveryType, id: availabilityId, organizationId } = await params;
+  try {
+    const session = await auth();
 
-  console.log(
-    "Fetching availability for delivery type:",
-    deliveryType,
-    "and ID:",
-    availabilityId,
-    "in organization:",
-    organizationId,
-  );
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-  const searchParams = new URL(request.url).searchParams;
-  const date = searchParams.get("date");
+    const { organizationId, delivery: deliveryTypeId, id: date } = params;
 
-  const referenceDate = dayjs(String(date));
-  const isPastDate = referenceDate.endOf("day").isBefore(new Date());
-
-  if (isPastDate) {
-    return NextResponse.json({
-      availability: [],
+    // Verify if the organization exists
+    const organization = await prisma.organization.findUnique({
+      where: { id: organizationId },
     });
-  }
 
-  const deliveryTypeAvailability = await prisma.availability.findFirst({
-    where: {
-      deliveryTypeId: deliveryType,
-      weekDay: referenceDate.get("day"),
-    },
-    include: {
-      availabilityRule: true,
-    },
-  });
+    if (!organization) {
+      return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
+    }
 
-  if (!deliveryTypeAvailability) {
-    return NextResponse.json({
-      availability: [],
-    });
-  }
-
-  const { startTime, endTime } = deliveryTypeAvailability;
-
-  const startHour = startTime / 60;
-  const endHour = endTime / 60;
-
-  const rule = deliveryTypeAvailability.availabilityRule?.rule || [];
-
-  const blockedTimes = await prisma.appointment.findMany({
-    where: {
-      organizationId: deliveryTypeAvailability.organizationId,
-      deliveryTypeId: deliveryType,
-      date: {
-        gte: referenceDate.set("hour", startHour).toDate(),
-        lte: referenceDate.set("hour", endHour).toDate(),
+    // Verify if the delivery type exists and belongs to the organization
+    const deliveryType = await prisma.deliveryType.findFirst({
+      where: {
+        id: deliveryTypeId,
+        organizationId: organizationId,
       },
-    },
-    select: {
-      date: true,
-    },
-  });
+    });
 
-  return NextResponse.json({
-    date,
-  });
+    if (!deliveryType) {
+      return NextResponse.json({ error: 'Delivery type not found' }, { status: 404 });
+    }
+
+    // Get availability for the specific date
+    const availability = await getCalculatedAvailability({
+      deliveryTypeId,
+      date,
+    });
+
+    return NextResponse.json(availability);
+  } catch (error) {
+    console.error('Error fetching availability:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }

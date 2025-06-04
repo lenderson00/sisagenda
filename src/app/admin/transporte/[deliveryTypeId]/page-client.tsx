@@ -13,6 +13,7 @@ interface DeliveryType {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  organization: string;
 }
 
 interface DeliveryTypePageClientProps {

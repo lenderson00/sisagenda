@@ -10,9 +10,16 @@ import { cn } from "@/lib/utils";
 
 dayjs.locale("pt-br");
 
-export function DataPageClient() {
+export function DataPageClient({
+  organizationId,
+  deliveryTypeId,
+  organizationName,
+}: {
+  organizationId: string;
+  deliveryTypeId: string;
+  organizationName: string;
+}) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const username = "testuser";
 
   const isDateSelected = selectedDate !== null;
 
@@ -27,19 +34,13 @@ export function DataPageClient() {
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_320px] xl:grid-cols-[320px_1fr_340px] min-h-[600px]">
           {/* Meeting Info - Left Column */}
           <div className="border-r border-slate-200 bg-slate-50/30">
-            <MeetingInfo
-              profileName="Antoine Milkoff"
-              meetingTitle="30 Min Meeting"
-              duration={30}
-              videoEnabled={true}
-              timezone="America/Martinique"
-            />
+            <MeetingInfo profileName="Antoine Milkoff" duration={30} />
           </div>
 
           {/* Calendar - Center Column */}
           <div className="relative">
             <Calendar
-              username={username}
+              username={organizationName}
               selectedDate={selectedDate}
               onDateSelected={handleDateSelected}
             />
@@ -59,7 +60,8 @@ export function DataPageClient() {
                 <TimePicker
                   key={selectedDate.toISOString()}
                   selectedDate={selectedDate}
-                  username={username}
+                  organizationId={organizationId}
+                  deliveryTypeId={deliveryTypeId}
                 />
               )}
             </div>

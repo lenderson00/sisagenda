@@ -6,8 +6,9 @@ import { DeliveryTypePageClient } from "./page-client";
 const DeliveryTypePage = async ({
   params,
 }: {
-  params: { deliveryTypeId: string };
+  params: Promise<{ deliveryTypeId: string }>;
 }) => {
+  const { deliveryTypeId } = await params;
   const session = await auth();
 
   if (!session) {
@@ -22,15 +23,27 @@ const DeliveryTypePage = async ({
 
   const deliveryType = await prisma.deliveryType.findFirst({
     where: {
-      id: params.deliveryTypeId,
+      id: deliveryTypeId,
       organizationId: orgId,
       deletedAt: null,
+    },
+    include: {
+      organization: true,
     },
   });
 
   if (!deliveryType) {
     notFound();
   }
+
+  const mappedDeliveryType = {
+    ...deliveryType,
+    organization: deliveryType.organization.name,
+    organizationId: deliveryType.organizationId,
+    createdAt: deliveryType.createdAt.toISOString(),
+    updatedAt: deliveryType.updatedAt.toISOString(),
+    deletedAt: deliveryType.deletedAt?.toISOString() || null,
+  };
 
   return (
     <>
@@ -46,7 +59,7 @@ const DeliveryTypePage = async ({
           </div>
         </div>
       </div>
-      <DeliveryTypePageClient deliveryType={deliveryType} />
+      <DeliveryTypePageClient deliveryType={mappedDeliveryType} />
     </>
   );
 };
