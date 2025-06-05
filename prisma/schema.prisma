@@ -125,8 +125,8 @@ model DeliveryType {
   slug     String  @unique
   isActive Boolean @default(true)
 
-  availability         Availability?
-  AvailabilityRule     AvailabilityRule?
+  availability         Availability[]
+  availabilityRules    AvailabilityRule[]
   AvailabilitySettings AvailabilitySettings?
 
   appointments Appointment[]
@@ -149,15 +149,15 @@ model Availability {
   startTime Int
   endTime   Int
 
-  deliveryTypeId String       @unique
-  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
-
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  deliveryTypeId String
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
 
   @@index([organizationId])
   @@index([weekDay])
