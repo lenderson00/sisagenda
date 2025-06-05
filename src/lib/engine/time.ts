@@ -61,6 +61,7 @@ export function fitOnceInBlock(
   block: TimeBlock,
   duration: number
 ): TimeBlock | null {
+  console.log(block, duration, "block, duration")
   if (block.end - block.start >= duration) {
     return { start: block.start, end: block.start + duration };
   }
@@ -68,7 +69,34 @@ export function fitOnceInBlock(
 }
 
 /**
- * Para cada bloco em `freeBlocks`, aplica `fitOnceInBlock` e retorna lista de encaixes possíveis.
+ * Finds all possible fits within a single block in fixed intervals based on duration.
+ * For example, if duration is 30 minutes, it will find slots like 9:00, 9:30, 10:00, etc.
+ */
+function findFitsInBlock(block: TimeBlock, duration: number): TimeBlock[] {
+  const fits: TimeBlock[] = [];
+  const blockDuration = block.end - block.start;
+
+  // If block is too small, return empty array
+  if (blockDuration < duration) return fits;
+
+  // Calculate how many complete fits we can have in this block
+  const numberOfFits = Math.floor(blockDuration / duration);
+
+  // Create fits at fixed intervals
+  for (let i = 0; i < numberOfFits; i++) {
+    const start = block.start + (i * duration);
+    fits.push({
+      start: start,
+      end: start + duration
+    });
+  }
+
+  return fits;
+}
+
+/**
+ * Finds all possible time blocks where an activity of given duration can fit.
+ * Uses fixed intervals based on the duration (e.g., 30min slots: 9:00, 9:30, 10:00, etc.)
  */
 export function findFits(
   freeBlocks: TimeBlock[],
@@ -76,8 +104,11 @@ export function findFits(
 ): TimeBlock[] {
   const fits: TimeBlock[] = [];
   for (const block of freeBlocks) {
-    const fit = fitOnceInBlock(block, duration);
-    if (fit) fits.push(fit);
+    fits.push(...findFitsInBlock(block, duration));
   }
   return fits;
+}
+
+export const transformFitsToHH = (fits: TimeBlock[]): number[] => {
+  return fits.map((fit) => fit.start)
 }

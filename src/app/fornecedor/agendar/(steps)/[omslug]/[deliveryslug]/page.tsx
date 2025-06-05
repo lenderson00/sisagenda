@@ -18,11 +18,11 @@ export default async function DataPage({
     },
   });
 
-  const deliveryTypeId = deliverySlug;
+  const deliveryTypeId = deliveryType?.id;
   const organizationName = deliveryType?.organization.name;
   const organizationId = deliveryType?.organization.id;
 
-  if (!organizationId) {
+  if (!organizationId || !deliveryTypeId) {
     return <div>Organização não encontrada</div>;
   }
 

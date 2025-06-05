@@ -40,7 +40,7 @@ export function TimePicker({
     queryFn: async () => {
       // TODO: Replace with actual API call
       const response = await fetch(
-        `/api/delivery-types/${deliveryTypeId}/availability?date=${dateKey}`,
+        `/api/availability?date=${dateKey}&deliveryTypeId=${deliveryTypeId}&organizationId=${organizationId}`,
         {
           method: "GET",
           headers: {

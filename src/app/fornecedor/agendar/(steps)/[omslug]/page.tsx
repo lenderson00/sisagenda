@@ -7,7 +7,7 @@ import DeliveryTypeSelection from "../../_component/delivery-type-selection";
 export default async function AgendarOM({
   params,
 }: {
-  params: { omslug: string };
+  params: Promise<{ omslug: string }>;
 }) {
   const session = await auth();
 
@@ -15,7 +15,7 @@ export default async function AgendarOM({
     redirect("/");
   }
 
-  const { omslug: omSlug } = params;
+  const { omslug: omSlug } = await params;
 
   if (!omSlug) {
     console.log("OM slug is required");
