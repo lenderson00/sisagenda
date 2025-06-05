@@ -83,14 +83,18 @@ type TeamNameFormProps = {
   helpText: string;
   onSubmit?: (data: { startTime: string; endTime: string }) => void;
   className?: string;
+  initialStartTime?: string;
+  initialEndTime?: string;
 };
 
-export default function DurationForm({
+export default function LunchForm({
   title,
   description,
   helpText,
   onSubmit,
   className,
+  initialStartTime,
+  initialEndTime,
 }: TeamNameFormProps) {
   const {
     register,
@@ -99,8 +103,8 @@ export default function DurationForm({
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      startTime: "12:00",
-      endTime: "13:00",
+      startTime: initialStartTime || "12:00",
+      endTime: initialEndTime || "13:00",
     },
   });
 

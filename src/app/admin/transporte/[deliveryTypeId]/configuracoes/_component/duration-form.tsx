@@ -47,15 +47,16 @@ type TeamNameFormProps = {
   helpText: string;
   onSubmit?: (data: { [key: string]: string }) => void;
   className?: string;
+  initialDuration?: number;
 };
 
 export default function DurationForm({
   title,
   description,
   helpText,
-
   onSubmit,
   className,
+  initialDuration,
 }: TeamNameFormProps) {
   const {
     register,
@@ -65,7 +66,7 @@ export default function DurationForm({
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      value: "60",
+      value: initialDuration?.toString() || "60",
     },
   });
 
