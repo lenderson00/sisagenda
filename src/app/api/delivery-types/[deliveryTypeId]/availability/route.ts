@@ -46,7 +46,22 @@ export const GET = async (
       };
     });
 
-    return NextResponse.json(availabilityDTO);
+    const possibleTimes = [];
+    const availableTimes = [];
+
+    for (const availability of availabilityDTO) {
+      for (let i = availability.startTime; i < availability.endTime; i++) {
+        possibleTimes.push(i);
+        if (availability.weekDay === new Date().getDay()) {
+          availableTimes.push(i);
+        }
+      }
+    }
+
+    return NextResponse.json({
+      possibleTimes,
+      availableTimes,
+    });
   } catch (error) {
     console.error("[AVAILABILITY_GET]", error);
     return new NextResponse("Internal error", { status: 500 });

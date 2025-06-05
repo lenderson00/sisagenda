@@ -6,6 +6,7 @@ import { TimePicker } from "@/components/calendar/time-picker";
 import dayjs from "dayjs";
 import { useState } from "react";
 import "dayjs/locale/pt-br";
+import { cn } from "@/lib/utils";
 
 dayjs.locale("pt-br");
 
@@ -46,29 +47,64 @@ export function DataPageClient({
             />
           </div>
 
-          {/* Right Column: Tabs for Weekly and Rules */}
-          <div className="relative border-l border-slate-200 bg-slate-50/30 p-4">
-            <div className="flex mb-4 gap-2">
-              <button
-                type="button"
-                className={`px-3 py-1 rounded font-medium ${activeTab === "weekly" ? "bg-slate-200" : "bg-white border"}`}
-                onClick={() => setActiveTab("weekly")}
-              >
-                Horários Semanais
-              </button>
-              <button
-                type="button"
-                className={`px-3 py-1 rounded font-medium ${activeTab === "rules" ? "bg-slate-200" : "bg-white border"}`}
-                onClick={() => setActiveTab("rules")}
-              >
-                Regras Avançadas
-              </button>
+          {/* Time Picker - Right Column */}
+          <div className="relative border-l border-slate-200 bg-slate-50/30">
+            <div
+              className={cn(
+                "absolute inset-0 transition-all duration-300 ease-in-out",
+                isDateSelected
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-4 pointer-events-none",
+              )}
+            >
+              {selectedDate && (
+                <TimePicker
+                  key={selectedDate.toISOString()}
+                  selectedDate={selectedDate}
+                  deliveryTypeId={deliveryTypeId}
+                  organizationId={organizationId}
+                />
+              )}
+            </div>
+
+            {/* Placeholder content when no date is selected */}
+            <div
+              className={cn(
+                "absolute inset-0 flex items-center justify-center transition-all duration-300 ease-in-out",
+                isDateSelected
+                  ? "opacity-0 translate-x-4 pointer-events-none"
+                  : "opacity-100 translate-x-0",
+              )}
+            >
+              <div className="text-center p-6">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+                  <svg
+                    className="w-8 h-8 text-slate-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-slate-500 text-sm font-medium">
+                  Selecione uma data
+                </p>
+                <p className="text-slate-400 text-xs mt-1">
+                  para ver os horários disponíveis
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Responsive Mobile Layout */}
       <div className="lg:hidden mt-6">
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <h3 className="font-medium text-slate-900 mb-2">

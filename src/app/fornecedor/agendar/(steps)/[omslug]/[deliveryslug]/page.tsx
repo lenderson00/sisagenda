@@ -5,21 +5,26 @@ import { DataPageClient } from "./page-client";
 export default async function DataPage({
   params,
 }: {
-  params: Promise<{ organizationId: string; delivery: string }>;
+  params: Promise<{ omslug: string; deliveryslug: string }>;
 }) {
-  const { organizationId, delivery } = await params;
+  const { omslug: organizationSlug, deliveryslug: deliverySlug } = await params;
 
   const deliveryType = await prisma.deliveryType.findUnique({
     where: {
-      id: delivery,
+      slug: deliverySlug,
     },
     include: {
       organization: true,
     },
   });
 
-  const deliveryTypeId = delivery;
+  const deliveryTypeId = deliverySlug;
   const organizationName = deliveryType?.organization.name;
+  const organizationId = deliveryType?.organization.id;
+
+  if (!organizationId) {
+    return <div>Organização não encontrada</div>;
+  }
 
   return (
     <>
