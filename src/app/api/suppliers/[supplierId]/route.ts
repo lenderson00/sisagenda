@@ -16,7 +16,7 @@ const updateSupplierSchema = createSupplierSchema.partial();
 
 export async function PUT(
   req: Request,
-  { params }: { params: { supplierId: string } }
+  { params }: { params: Promise<{ supplierId: string }> }
 ) {
   try {
     const session = await auth();
@@ -42,9 +42,15 @@ export async function PUT(
       return new NextResponse("Invalid CNPJ", { status: 400 });
     }
 
+    const { supplierId } = await params;
+
+    if (!supplierId) {
+      return new NextResponse("Supplier ID is required", { status: 400 });
+    }
+
     const supplier = await prisma.user.update({
       where: {
-        id: params.supplierId,
+        id: supplierId,
         role: "FORNECEDOR",
       },
       data: {
@@ -65,7 +71,7 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { supplierId: string } }
+  { params }: { params: Promise<{ supplierId: string }> }
 ) {
   try {
     const session = await auth();
@@ -78,9 +84,15 @@ export async function DELETE(
       return new NextResponse("Forbidden", { status: 403 });
     }
 
+    const { supplierId } = await params;
+
+    if (!supplierId) {
+      return new NextResponse("Supplier ID is required", { status: 400 });
+    }
+
     const supplier = await prisma.user.delete({
       where: {
-        id: params.supplierId,
+        id: supplierId,
         role: "FORNECEDOR",
       },
     });
