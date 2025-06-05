@@ -23,13 +23,16 @@ export const useDeliveryTypeMutations = () => {
 
   const updateDuration = useMutation({
     mutationFn: async ({ deliveryTypeId, duration }: UpdateDurationParams) => {
-      const response = await fetch(`/api/delivery-types/${deliveryTypeId}/duration`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `/api/delivery-types/${deliveryTypeId}/duration`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ duration }),
         },
-        body: JSON.stringify({ duration }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update duration");
@@ -47,14 +50,21 @@ export const useDeliveryTypeMutations = () => {
   });
 
   const updateLunchTime = useMutation({
-    mutationFn: async ({ deliveryTypeId, startTime, endTime }: UpdateLunchTimeParams) => {
-      const response = await fetch(`/api/delivery-types/${deliveryTypeId}/lunch-time`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+    mutationFn: async ({
+      deliveryTypeId,
+      startTime,
+      endTime,
+    }: UpdateLunchTimeParams) => {
+      const response = await fetch(
+        `/api/delivery-types/${deliveryTypeId}/lunch-time`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ startTime, endTime }),
         },
-        body: JSON.stringify({ startTime, endTime }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update lunch time");

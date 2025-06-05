@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ supplierId: string }> }
+  { params }: { params: Promise<{ supplierId: string }> },
 ) {
   try {
     const session = await auth();

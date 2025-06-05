@@ -8,10 +8,7 @@ import type { TimeBlock } from "./time";
  * - Se block está no meio de freeBlock, devolve dois pedaços (antes e depois de block).
  * - Se block corta início ou fim de freeBlock, devolve o trecho restante.
  */
-function subtractOneBlock(
-  freeBlock: TimeBlock,
-  block: TimeBlock
-): TimeBlock[] {
+function subtractOneBlock(freeBlock: TimeBlock, block: TimeBlock): TimeBlock[] {
   const A = block;
   const B = freeBlock;
 
@@ -29,7 +26,7 @@ function subtractOneBlock(
   if (A.start > B.start && A.end < B.end) {
     return [
       { start: B.start, end: A.start },
-      { start: A.end, end: B.end }
+      { start: A.end, end: B.end },
     ];
   }
 
@@ -53,7 +50,7 @@ function subtractOneBlock(
  */
 export function subtractBlocksFromFree(
   freeBlocks: TimeBlock[],
-  blocks: TimeBlock[]
+  blocks: TimeBlock[],
 ): TimeBlock[] {
   let result: TimeBlock[] = [...freeBlocks];
 

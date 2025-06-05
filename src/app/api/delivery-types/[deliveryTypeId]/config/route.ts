@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS = {
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ deliveryTypeId: string }> }
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) {
   try {
     const session = await auth();
@@ -22,7 +22,9 @@ export async function GET(
     const { deliveryTypeId } = await params;
 
     if (!deliveryTypeId) {
-      return new NextResponse("ID do tipo de entrega é obrigatório", { status: 400 });
+      return new NextResponse("ID do tipo de entrega é obrigatório", {
+        status: 400,
+      });
     }
 
     const deliveryType = await prisma.deliveryType.findUnique({
@@ -46,7 +48,9 @@ export async function GET(
     });
 
     if (!deliveryType) {
-      return new NextResponse("Tipo de entrega não encontrado", { status: 404 });
+      return new NextResponse("Tipo de entrega não encontrado", {
+        status: 404,
+      });
     }
 
     let settings = deliveryType.AvailabilitySettings;

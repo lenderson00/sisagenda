@@ -3,7 +3,8 @@ import { toast } from "sonner";
 
 export const availabilityKeys = {
   all: ["availability"] as const,
-  list: (deliveryTypeId: string) => [...availabilityKeys.all, deliveryTypeId] as const,
+  list: (deliveryTypeId: string) =>
+    [...availabilityKeys.all, deliveryTypeId] as const,
 };
 
 interface TimeInterval {
@@ -16,7 +17,9 @@ export function useAvailability(deliveryTypeId: string) {
   return useQuery({
     queryKey: availabilityKeys.list(deliveryTypeId),
     queryFn: async () => {
-      const response = await fetch(`/api/delivery-types/${deliveryTypeId}/availability`);
+      const response = await fetch(
+        `/api/delivery-types/${deliveryTypeId}/availability`,
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch availability");
       }
@@ -30,13 +33,16 @@ export function useUpdateAvailability(deliveryTypeId: string) {
 
   return useMutation({
     mutationFn: async (intervals: TimeInterval[]) => {
-      const response = await fetch(`/api/delivery-types/${deliveryTypeId}/availability`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `/api/delivery-types/${deliveryTypeId}/availability`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ intervals }),
         },
-        body: JSON.stringify({ intervals }),
-      });
+      );
 
       if (!response.ok) {
         const error = await response.json();

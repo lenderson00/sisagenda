@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ deliveryTypeId: string }> }
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) {
   try {
     const session = await auth();

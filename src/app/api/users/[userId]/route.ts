@@ -136,12 +136,18 @@ export async function DELETE(
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    if (session.user.role === "ADMIN" && session.user.organizationId !== user.organizationId) {
+    if (
+      session.user.role === "ADMIN" &&
+      session.user.organizationId !== user.organizationId
+    ) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
     if (user.isActive) {
-      return new NextResponse("Cannot delete active user. Please deactivate first.", { status: 400 });
+      return new NextResponse(
+        "Cannot delete active user. Please deactivate first.",
+        { status: 400 },
+      );
     }
 
     await prisma.user.update({

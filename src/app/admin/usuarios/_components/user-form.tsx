@@ -1,6 +1,5 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { User } from "@prisma/client";
+import { useForm } from "react-hook-form";
 
 type UserData = {
   name: string;

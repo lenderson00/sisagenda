@@ -137,7 +137,6 @@ export function useDeleteUser(orgId: string) {
 
   return useMutation({
     mutationFn: async (id: string) => {
-
       const response = await fetch(`/api/users/${id}`, {
         method: "DELETE",
       });
@@ -153,8 +152,12 @@ export function useDeleteUser(orgId: string) {
       toast.success("Usuário excluído com sucesso");
     },
     onError: (error) => {
-      if (error.message === "Cannot delete active user. Please deactivate first.") {
-        toast.error("Não é possível excluir um usuário ativo. Desative-o primeiro.");
+      if (
+        error.message === "Cannot delete active user. Please deactivate first."
+      ) {
+        toast.error(
+          "Não é possível excluir um usuário ativo. Desative-o primeiro.",
+        );
       } else {
         toast.error("Falha ao excluir usuário");
       }

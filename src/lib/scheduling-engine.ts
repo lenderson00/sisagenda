@@ -5,14 +5,14 @@ import {
   Availability as PrismaAvailability,
   DeliveryType as PrismaDeliveryType,
   Organization as PrismaOrganization,
-} from '@prisma/client';
-import dayjs from 'dayjs';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import { RRule, RRuleSet, rrulestr } from 'rrule';
-import { prisma } from './prisma';
+} from "@prisma/client";
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { RRule, RRuleSet, rrulestr } from "rrule";
+import { prisma } from "./prisma";
 
 // Configure dayjs plugins
 dayjs.extend(utc);
@@ -20,50 +20,55 @@ dayjs.extend(timezone);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
-const ORGANIZATION_TIMEZONE = 'America/Sao_Paulo';
+const ORGANIZATION_TIMEZONE = "America/Sao_Paulo";
 
 // --- Type Definitions for Rules and Slots ---
 
 export interface TimeSlot {
   start: Date; // UTC Date object
-  end: Date;   // UTC Date object
+  end: Date; // UTC Date object
 }
 
 // Structure for a logical rule (to be stored in an array within AvailabilityRule.rule JSON field)
 interface RuleConditionDate {
-  type: 'date';
+  type: "date";
   date: string; // YYYY-MM-DD (interpreted in organization's timezone)
 }
 
 interface RuleConditionDateRange {
-  type: 'dateRange';
+  type: "dateRange";
   startDate: string; // YYYY-MM-DD
-  endDate: string;   // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
 }
 
 interface RuleConditionRRule {
-  type: 'rrule';
+  type: "rrule";
   rruleString: string; // iCalendar RRULE string
 }
 
-type RuleCondition = RuleConditionDate | RuleConditionDateRange | RuleConditionRRule;
+type RuleCondition =
+  | RuleConditionDate
+  | RuleConditionDateRange
+  | RuleConditionRRule;
 
 interface ActionSetUnavailable {
-  type: 'setUnavailable';
+  type: "setUnavailable";
 }
 
-interface TimeOfDay { // Represents time, e.g., "09:00"
+interface TimeOfDay {
+  // Represents time, e.g., "09:00"
   hours: number;
   minutes: number;
 }
 
-interface AvailabilityPeriod { // A continuous block of time, e.g., 9am to 5pm
+interface AvailabilityPeriod {
+  // A continuous block of time, e.g., 9am to 5pm
   startTime: TimeOfDay; // e.g., { hours: 9, minutes: 0 }
-  endTime: TimeOfDay;   // e.g., { hours: 17, minutes: 0 }
+  endTime: TimeOfDay; // e.g., { hours: 17, minutes: 0 }
 }
 
 interface ActionSetCustomSlots {
-  type: 'setCustomSlots';
+  type: "setCustomSlots";
   periods: AvailabilityPeriod[]; // Defines new availability periods for the day
   duration?: number; // Optional: overrides base duration for these slots (in minutes)
 }
@@ -94,14 +99,22 @@ function generateSlotsForPeriod(
   durationMinutes: number,
 ): TimeSlot[] {
   const slots: TimeSlot[] = [];
-  let currentSlotStart = dateObj.hour(period.startTime.hours).minute(period.startTime.minutes).second(0).millisecond(0);
-  const periodEnd = dateObj.hour(period.endTime.hours).minute(period.endTime.minutes).second(0).millisecond(0);
+  let currentSlotStart = dateObj
+    .hour(period.startTime.hours)
+    .minute(period.startTime.minutes)
+    .second(0)
+    .millisecond(0);
+  const periodEnd = dateObj
+    .hour(period.endTime.hours)
+    .minute(period.endTime.minutes)
+    .second(0)
+    .millisecond(0);
 
-  while (currentSlotStart.add(durationMinutes, 'minutes').isBefore(periodEnd)) {
-    const slotEnd = currentSlotStart.add(durationMinutes, 'minutes');
+  while (currentSlotStart.add(durationMinutes, "minutes").isBefore(periodEnd)) {
+    const slotEnd = currentSlotStart.add(durationMinutes, "minutes");
     slots.push({
       start: currentSlotStart.toDate(), // Convert to UTC Date
-      end: slotEnd.toDate(),         // Convert to UTC Date
+      end: slotEnd.toDate(), // Convert to UTC Date
     });
     currentSlotStart = slotEnd;
   }
@@ -122,7 +135,7 @@ export interface DailyAvailability {
 }
 
 export async function getCalculatedAvailability(
-  params: GetAvailabilityParams
+  params: GetAvailabilityParams,
 ): Promise<DailyAvailability> {
   const { deliveryTypeId, date } = params;
 
@@ -143,21 +156,26 @@ export async function getCalculatedAvailability(
   }
 
   if (!deliveryType.availability) {
-    console.warn(`No base availability found for DeliveryType ${deliveryTypeId}.`);
+    console.warn(
+      `No base availability found for DeliveryType ${deliveryTypeId}.`,
+    );
     return {
       date,
       slots: [],
-      isUnavailableDueToRule: false
+      isUnavailableDueToRule: false,
     };
   }
 
   const baseAvailability = deliveryType.availability;
-  const rules: SchedulingRule[] = (baseAvailability.availabilityRule?.rule as unknown as SchedulingRule[] || []).filter(rule => typeof rule === 'object' && rule !== null);
+  const rules: SchedulingRule[] = (
+    (baseAvailability.availabilityRule?.rule as unknown as SchedulingRule[]) ||
+    []
+  ).filter((rule) => typeof rule === "object" && rule !== null);
   rules.sort((a, b) => b.priority - a.priority);
 
   const targetDate = dayjs(date).tz(ORGANIZATION_TIMEZONE, true);
-  const startOfDay = targetDate.startOf('day');
-  const endOfDay = targetDate.endOf('day');
+  const startOfDay = targetDate.startOf("day");
+  const endOfDay = targetDate.endOf("day");
 
   const existingAppointments = await prisma.appointment.findMany({
     where: {
@@ -187,27 +205,40 @@ export async function getCalculatedAvailability(
         endTime: minutesToTimeOfDay(baseAvailability.endTime[i]),
       };
       calculatedSlotsForDay.push(
-        ...generateSlotsForPeriod(targetDate, period, baseDurationMinutes)
+        ...generateSlotsForPeriod(targetDate, period, baseDurationMinutes),
       );
     }
   }
 
   // Apply rules
-  for (const rule of rules.filter(r => r.isActive)) {
+  for (const rule of rules.filter((r) => r.isActive)) {
     let ruleApplies = false;
     const ruleCondition = rule.condition;
 
-    if (ruleCondition.type === 'date') {
-      if (dayjs(ruleCondition.date).tz(ORGANIZATION_TIMEZONE, true).isSame(targetDate, 'day')) {
+    if (ruleCondition.type === "date") {
+      if (
+        dayjs(ruleCondition.date)
+          .tz(ORGANIZATION_TIMEZONE, true)
+          .isSame(targetDate, "day")
+      ) {
         ruleApplies = true;
       }
-    } else if (ruleCondition.type === 'dateRange') {
-      const ruleStart = dayjs(ruleCondition.startDate).tz(ORGANIZATION_TIMEZONE, true);
-      const ruleEnd = dayjs(ruleCondition.endDate).tz(ORGANIZATION_TIMEZONE, true);
-      if (targetDate.isSameOrAfter(ruleStart, 'day') && targetDate.isSameOrBefore(ruleEnd, 'day')) {
+    } else if (ruleCondition.type === "dateRange") {
+      const ruleStart = dayjs(ruleCondition.startDate).tz(
+        ORGANIZATION_TIMEZONE,
+        true,
+      );
+      const ruleEnd = dayjs(ruleCondition.endDate).tz(
+        ORGANIZATION_TIMEZONE,
+        true,
+      );
+      if (
+        targetDate.isSameOrAfter(ruleStart, "day") &&
+        targetDate.isSameOrBefore(ruleEnd, "day")
+      ) {
         ruleApplies = true;
       }
-    } else if (ruleCondition.type === 'rrule') {
+    } else if (ruleCondition.type === "rrule") {
       try {
         const rruleObj = rrulestr(ruleCondition.rruleString, {
           dtstart: startOfDay.toDate(),
@@ -215,28 +246,31 @@ export async function getCalculatedAvailability(
         const occurrences = rruleObj.between(
           startOfDay.toDate(),
           endOfDay.toDate(),
-          true // inc = true
+          true, // inc = true
         );
         if (occurrences.length > 0) {
           ruleApplies = true;
         }
       } catch (e) {
-        console.error(`Error parsing rrule string for rule ${rule.id}: ${ruleCondition.rruleString}`, e);
+        console.error(
+          `Error parsing rrule string for rule ${rule.id}: ${ruleCondition.rruleString}`,
+          e,
+        );
       }
     }
 
     if (ruleApplies) {
-      if (rule.action.type === 'setUnavailable') {
+      if (rule.action.type === "setUnavailable") {
         calculatedSlotsForDay = [];
         dayMarkedUnavailableByRule = true;
         break;
       }
-      if (rule.action.type === 'setCustomSlots') {
+      if (rule.action.type === "setCustomSlots") {
         calculatedSlotsForDay = [];
         currentDuration = rule.action.duration ?? baseDurationMinutes;
         for (const period of rule.action.periods) {
           calculatedSlotsForDay.push(
-            ...generateSlotsForPeriod(targetDate, period, currentDuration)
+            ...generateSlotsForPeriod(targetDate, period, currentDuration),
           );
         }
       }
@@ -246,26 +280,26 @@ export async function getCalculatedAvailability(
   // Remove booked slots
   if (!dayMarkedUnavailableByRule) {
     const bookedStartsForDay = existingAppointments
-      .map(appt => dayjs(appt.date).tz(ORGANIZATION_TIMEZONE))
-      .filter(apptStart => apptStart.isSame(targetDate, 'day'))
-      .map(apptStart => apptStart.valueOf());
+      .map((appt) => dayjs(appt.date).tz(ORGANIZATION_TIMEZONE))
+      .filter((apptStart) => apptStart.isSame(targetDate, "day"))
+      .map((apptStart) => apptStart.valueOf());
 
-    calculatedSlotsForDay = calculatedSlotsForDay.filter(slot => {
+    calculatedSlotsForDay = calculatedSlotsForDay.filter((slot) => {
       const slotStartMs = dayjs(slot.start).valueOf();
       return !bookedStartsForDay.includes(slotStartMs);
     });
   }
 
   // Remove past slots for current day
-  if (targetDate.isSame(dayjs().tz(ORGANIZATION_TIMEZONE), 'day')) {
+  if (targetDate.isSame(dayjs().tz(ORGANIZATION_TIMEZONE), "day")) {
     const nowInOrgTz = dayjs().tz(ORGANIZATION_TIMEZONE);
-    calculatedSlotsForDay = calculatedSlotsForDay.filter(slot =>
-      dayjs(slot.start).isAfter(nowInOrgTz)
+    calculatedSlotsForDay = calculatedSlotsForDay.filter((slot) =>
+      dayjs(slot.start).isAfter(nowInOrgTz),
     );
   }
 
   return {
-    date: targetDate.format('YYYY-MM-DD'),
+    date: targetDate.format("YYYY-MM-DD"),
     slots: calculatedSlotsForDay,
     isUnavailableDueToRule: dayMarkedUnavailableByRule,
   };

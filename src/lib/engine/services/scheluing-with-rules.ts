@@ -6,17 +6,14 @@ import { getRules } from "./availability-rule";
 
 import { subtractBlocksFromFree } from "../intervals";
 import { getBlockedIntervalsForDate } from "../rule";
-import {
-  type TimeBlock as LunchTimeBlock,
-  splitByLunch,
-} from "../time";
+import { type TimeBlock as LunchTimeBlock, splitByLunch } from "../time";
 
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 
 export interface Slot {
   start: number; // minutos desde 00:00
-  end: number;   // minutos desde 00:00
+  end: number; // minutos desde 00:00
 }
 
 /**
@@ -50,10 +47,7 @@ export async function getAvailableSlotsForDate({
   const weekDay = dayjs(date).locale("pt-br").day();
 
   // 2) Busca Availability (horário padrão semanal)
-  const availability = await getAvailabilityByWeekday(
-    deliveryTypeId,
-    weekDay
-  );
+  const availability = await getAvailabilityByWeekday(deliveryTypeId, weekDay);
   if (!availability) {
     // Não há Availability cadastrado para este deliveryTypeId e weekday
     return [];
@@ -64,7 +58,7 @@ export async function getAvailableSlotsForDate({
     availability.startTime,
     availability.endTime,
     lunchStart,
-    lunchEnd
+    lunchEnd,
   );
   // Ex.: [ { start: 540, end: 720 }, { start: 780, end: 1020 } ]
 
@@ -88,10 +82,7 @@ export async function getAvailableSlotsForDate({
   }
 
   // 5) Aplica bloqueios baseados em Appointments agendados no dia
-  const apptBlocks = await getAppointmentBlocksForDate(
-    deliveryTypeId,
-    date
-  );
+  const apptBlocks = await getAppointmentBlocksForDate(deliveryTypeId, date);
   if (apptBlocks.length > 0) {
     freeBlocks = subtractBlocksFromFree(freeBlocks, apptBlocks);
     if (freeBlocks.length === 0) {

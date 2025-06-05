@@ -20,7 +20,7 @@ export type TimeBlock = { start: number; end: number };
  */
 export async function getAppointmentBlocksForDate(
   deliveryTypeId: string,
-  date: Date
+  date: Date,
 ): Promise<TimeBlock[]> {
   // 1) Define intervalo 00:00 até 23:59:59 desse dia
   const day = dayjs(date).locale("pt-br");

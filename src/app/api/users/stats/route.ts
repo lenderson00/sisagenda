@@ -17,15 +17,36 @@ export async function GET() {
 
   try {
     const [total, active, inactive, suspended] = await Promise.all([
-      prisma.user.count({ where: { deletedAt: null, organizationId: orgId, role: { in: ["USER", "ADMIN"] } } }),
       prisma.user.count({
-        where: { isActive: true, deletedAt: null, organizationId: orgId, role: { in: ["USER", "ADMIN"] } },
+        where: {
+          deletedAt: null,
+          organizationId: orgId,
+          role: { in: ["USER", "ADMIN"] },
+        },
       }),
       prisma.user.count({
-        where: { isActive: false, deletedAt: null, organizationId: orgId, role: { in: ["USER", "ADMIN"] } },
+        where: {
+          isActive: true,
+          deletedAt: null,
+          organizationId: orgId,
+          role: { in: ["USER", "ADMIN"] },
+        },
       }),
       prisma.user.count({
-        where: { isActive: false, deletedAt: { not: null }, organizationId: orgId, role: { in: ["USER", "ADMIN"] } },
+        where: {
+          isActive: false,
+          deletedAt: null,
+          organizationId: orgId,
+          role: { in: ["USER", "ADMIN"] },
+        },
+      }),
+      prisma.user.count({
+        where: {
+          isActive: false,
+          deletedAt: { not: null },
+          organizationId: orgId,
+          role: { in: ["USER", "ADMIN"] },
+        },
       }),
     ]);
 

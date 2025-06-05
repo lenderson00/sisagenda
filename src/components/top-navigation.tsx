@@ -4,8 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Bell, Calendar, ExternalLink, Search, Settings } from "lucide-react";
 import Link from "next/link";
-import { NavTabs, type Tab } from "./tabs";
 import { AccountAvatar } from "./account-avatar";
+import { NavTabs, type Tab } from "./tabs";
 
 type Props = {
   tabs: Tab[];

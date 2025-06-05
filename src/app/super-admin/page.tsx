@@ -1,13 +1,13 @@
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { OrganizationList } from "./page-client";
 import {
-  dehydrate,
   HydrationBoundary,
   QueryClient,
+  dehydrate,
 } from "@tanstack/react-query";
-import { getOrganizations } from "./_hooks/use-organizations";
+import { redirect } from "next/navigation";
 import { CreateOrganizationDialog } from "./_components/create-organization-dialog";
+import { getOrganizations } from "./_hooks/use-organizations";
+import { OrganizationList } from "./page-client";
 
 export default async function AdminPage() {
   const session = await auth();

@@ -38,10 +38,7 @@ function getWeekOfMonth(date: Date): number {
  *   • Compara date.getDay() === rule.weekDay.
  *   • Se rule.weekOfMonth existe, verifica FIRST ou LAST semana do mês.
  */
-function appliesBlockWholeDay(
-  rule: BlockWholeDayRule,
-  date: Date
-): boolean {
+function appliesBlockWholeDay(rule: BlockWholeDayRule, date: Date): boolean {
   // 1) Se houver rule.date
   if (rule.date) {
     if (rule.recurrence === "RECURRING") {
@@ -91,10 +88,7 @@ function appliesBlockWholeDay(
  *   • Senão: compara full "YYYY-MM-DD".
  * - Caso contrário, usa rule.weekDay + rule.weekOfMonth, como acima.
  */
-function appliesBlockTimeRange(
-  rule: BlockTimeRangeRule,
-  date: Date
-): boolean {
+function appliesBlockTimeRange(rule: BlockTimeRangeRule, date: Date): boolean {
   // 1) Se houver rule.date
   if (rule.date) {
     if (rule.recurrence === "RECURRING") {
@@ -134,7 +128,7 @@ function appliesBlockTimeRange(
  */
 function appliesBlockCurrentWeekDays(
   rule: BlockCurrentWeekDaysRule,
-  date: Date
+  date: Date,
 ): boolean {
   const hoje = new Date();
   if (!isSameWeek(date, hoje)) return false;
@@ -150,7 +144,7 @@ function appliesBlockCurrentWeekDays(
  */
 export function getBlockedIntervalsForDate(
   rule: AvailabilityExceptionRule,
-  date: Date
+  date: Date,
 ): Array<{ start: number; end: number }> {
   if (rule.type === "BLOCK_WHOLE_DAY") {
     if (appliesBlockWholeDay(rule, date)) {

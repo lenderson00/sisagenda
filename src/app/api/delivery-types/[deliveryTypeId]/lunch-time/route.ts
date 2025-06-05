@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ deliveryTypeId: string }> }
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) {
   try {
     const session = await auth();
@@ -20,14 +20,14 @@ export async function PATCH(
       return new NextResponse("Organização não encontrada", { status: 400 });
     }
 
-
     const body = await req.json();
     const { startTime, endTime } = body;
 
     if (!deliveryTypeId || !startTime || !endTime) {
-      return new NextResponse("Horário de almoço é obrigatório", { status: 400 });
+      return new NextResponse("Horário de almoço é obrigatório", {
+        status: 400,
+      });
     }
-
 
     const deliveryType = await prisma.availabilitySettings.upsert({
       where: {

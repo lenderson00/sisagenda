@@ -1,13 +1,13 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function validateCNPJ(cnpj: string): boolean {
   // Remove non-numeric characters
-  const cleanedCNPJ = cnpj.replace(/[^\d]/g, '');
+  const cleanedCNPJ = cnpj.replace(/[^\d]/g, "");
 
   // Check if CNPJ has 14 digits
   if (cleanedCNPJ.length !== 14) {
