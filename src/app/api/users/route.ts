@@ -13,7 +13,6 @@ export async function GET() {
 
   const orgId = session.user.organizationId;
 
-
   if (!orgId) {
     return new NextResponse("Organization not found", { status: 404 });
   }
@@ -55,10 +54,10 @@ export async function GET() {
       updatedAt: user.updatedAt?.toISOString?.() ?? "",
       organization: user.organization
         ? {
-          id: user.organization.id ?? "",
-          name: user.organization.name ?? "",
-          sigla: user.organization.sigla ?? "",
-        }
+            id: user.organization.id ?? "",
+            name: user.organization.name ?? "",
+            sigla: user.organization.sigla ?? "",
+          }
         : { id: "", name: "", sigla: "" },
     }));
 

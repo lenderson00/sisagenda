@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
  * Se não existir, devolve null.
  */
 export async function getRules(
-  deliveryTypeId: string
+  deliveryTypeId: string,
 ): Promise<AvailabilityExceptionRule[] | null> {
   const row = await prisma.availabilityRule.findUnique({
     where: { deliveryTypeId },
@@ -25,7 +25,7 @@ export async function getRules(
  */
 export async function upsertRules(
   deliveryTypeId: string,
-  rules: AvailabilityExceptionRule[]
+  rules: AvailabilityExceptionRule[],
 ): Promise<void> {
   await prisma.availabilityRule.upsert({
     where: { deliveryTypeId },

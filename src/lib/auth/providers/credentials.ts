@@ -15,7 +15,6 @@ export const Credentials: Provider = CredentialsProvider({
       password: string;
     };
 
-
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
@@ -39,8 +38,6 @@ export const Credentials: Provider = CredentialsProvider({
     if (!user) {
       return null;
     }
-
-
 
     const isPasswordValid = await compare(password, user.password);
 

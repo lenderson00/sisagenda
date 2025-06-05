@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { deliveryTypeId: string } }
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) {
   try {
     const session = await auth();
@@ -19,9 +19,11 @@ export async function GET(
       return new NextResponse("Organization ID is required", { status: 400 });
     }
 
+    const { deliveryTypeId } = await params;
+
     const deliveryType = await prisma.deliveryType.findFirst({
       where: {
-        id: params.deliveryTypeId,
+        id: deliveryTypeId,
         organizationId: orgId,
         deletedAt: null,
       },
@@ -40,7 +42,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { deliveryTypeId: string } }
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) {
   try {
     const session = await auth();
@@ -48,9 +50,11 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const { deliveryTypeId } = await params;
+
     const deliveryType = await prisma.deliveryType.delete({
       where: {
-        id: params.deliveryTypeId,
+        id: deliveryTypeId,
       },
     });
 

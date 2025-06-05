@@ -9,7 +9,10 @@ type DeliveryTypeData = {
   description?: string;
 };
 
-export function useCreateDeliveryType(orgId: string, onDialogClose?: () => void) {
+export function useCreateDeliveryType(
+  orgId: string,
+  onDialogClose?: () => void,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({

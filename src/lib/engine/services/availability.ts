@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
  */
 export async function getAvailabilityByWeekday(
   deliveryTypeId: string,
-  weekDay: number
+  weekDay: number,
 ): Promise<Availability | null> {
   return prisma.availability.findFirst({
     where: {

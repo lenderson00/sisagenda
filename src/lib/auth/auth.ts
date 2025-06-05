@@ -4,11 +4,11 @@ import NextAuth from "next-auth";
 import { prisma } from "../prisma";
 
 export const {
-	handlers: { GET, POST },
-	signIn,
-	signOut,
-	auth,
+  handlers: { GET, POST },
+  signIn,
+  signOut,
+  auth,
 } = NextAuth({
-	adapter: PrismaAdapter(prisma),
-	...authOptions,
+  adapter: PrismaAdapter(prisma),
+  ...authOptions,
 });

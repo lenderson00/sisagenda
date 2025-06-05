@@ -20,7 +20,10 @@ export async function GET() {
   });
 
   if (!organization) {
-    return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Organization not found" },
+      { status: 404 },
+    );
   }
 
   try {
@@ -44,7 +47,7 @@ export async function GET() {
     console.error("Failed to fetch appointments:", error);
     return NextResponse.json(
       { error: "Failed to fetch appointments" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

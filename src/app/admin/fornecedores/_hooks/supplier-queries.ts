@@ -28,7 +28,9 @@ export function useSuppliers(organizationId: string) {
   return useQuery<Supplier[]>({
     queryKey: supplierKeys.list(organizationId),
     queryFn: async () => {
-      const response = await fetch(`/api/suppliers?organizationId=${organizationId}`);
+      const response = await fetch(
+        `/api/suppliers?organizationId=${organizationId}`,
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch suppliers");
       }
@@ -41,7 +43,9 @@ export function useSupplierStats(organizationId: string) {
   return useQuery<SupplierStats>({
     queryKey: supplierKeys.stats(organizationId),
     queryFn: async () => {
-      const response = await fetch(`/api/suppliers/stats?organizationId=${organizationId}`);
+      const response = await fetch(
+        `/api/suppliers/stats?organizationId=${organizationId}`,
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch supplier stats");
       }

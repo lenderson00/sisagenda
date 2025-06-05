@@ -77,9 +77,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function DELETE(
-  request: Request
-) {
+export async function DELETE(request: Request) {
   try {
     const session = await auth();
     if (!session?.user) {

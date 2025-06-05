@@ -16,7 +16,7 @@ const updateSupplierSchema = createSupplierSchema.partial();
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ supplierId: string }> }
+  { params }: { params: Promise<{ supplierId: string }> },
 ) {
   try {
     const session = await auth();
@@ -71,7 +71,7 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ supplierId: string }> }
+  { params }: { params: Promise<{ supplierId: string }> },
 ) {
   try {
     const session = await auth();

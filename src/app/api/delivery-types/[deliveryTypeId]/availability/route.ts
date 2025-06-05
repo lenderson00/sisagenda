@@ -9,13 +9,13 @@ const timeIntervalsBodySchema = z.object({
       weekDay: z.number(),
       startTime: z.number(),
       endTime: z.number(),
-    })
+    }),
   ),
 });
 
 export const GET = async (
   req: Request,
-  { params }: { params: Promise<{ deliveryTypeId: string }> }
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) => {
   const session = await auth();
 
@@ -55,7 +55,7 @@ export const GET = async (
 
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ deliveryTypeId: string }> }
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) {
   try {
     const session = await auth();
@@ -99,7 +99,7 @@ export async function POST(
             ...value,
           },
         });
-      })
+      }),
     );
 
     return NextResponse.json({ success: true });

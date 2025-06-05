@@ -3,7 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function POST(request: Request, { params }: { params: Promise<{ userId: string }> }) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ userId: string }> },
+) {
   try {
     const session = await auth();
     if (!session?.user) {
@@ -27,7 +30,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ use
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    if (session.user.role === "ADMIN" && session.user.organizationId !== user.organizationId) {
+    if (
+      session.user.role === "ADMIN" &&
+      session.user.organizationId !== user.organizationId
+    ) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 

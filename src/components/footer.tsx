@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { ChevronDown, Circle, Github, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ChevronDown, Circle, Github, Moon, Sun } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (

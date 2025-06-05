@@ -28,7 +28,7 @@ export function splitByLunch(
   overallStart: number,
   overallEnd: number,
   lunchStart: number,
-  lunchEnd: number
+  lunchEnd: number,
 ): TimeBlock[] {
   if (overallStart >= overallEnd) return [];
 
@@ -59,9 +59,9 @@ export function splitByLunch(
  */
 export function fitOnceInBlock(
   block: TimeBlock,
-  duration: number
+  duration: number,
 ): TimeBlock | null {
-  console.log(block, duration, "block, duration")
+  console.log(block, duration, "block, duration");
   if (block.end - block.start >= duration) {
     return { start: block.start, end: block.start + duration };
   }
@@ -84,10 +84,10 @@ function findFitsInBlock(block: TimeBlock, duration: number): TimeBlock[] {
 
   // Create fits at fixed intervals
   for (let i = 0; i < numberOfFits; i++) {
-    const start = block.start + (i * duration);
+    const start = block.start + i * duration;
     fits.push({
       start: start,
-      end: start + duration
+      end: start + duration,
     });
   }
 
@@ -100,7 +100,7 @@ function findFitsInBlock(block: TimeBlock, duration: number): TimeBlock[] {
  */
 export function findFits(
   freeBlocks: TimeBlock[],
-  duration: number
+  duration: number,
 ): TimeBlock[] {
   const fits: TimeBlock[] = [];
   for (const block of freeBlocks) {
@@ -110,5 +110,5 @@ export function findFits(
 }
 
 export const transformFitsToHH = (fits: TimeBlock[]): number[] => {
-  return fits.map((fit) => fit.start)
-}
+  return fits.map((fit) => fit.start);
+};

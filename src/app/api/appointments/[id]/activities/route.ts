@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth();
 
@@ -36,7 +36,7 @@ export async function POST(
     console.error("Failed to create activity:", error);
     return NextResponse.json(
       { error: "Failed to create activity" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

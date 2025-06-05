@@ -1,20 +1,24 @@
-import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { getCalculatedAvailability } from '@/lib/scheduling-engine';
-import { type NextRequest, NextResponse } from 'next/server';
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { getCalculatedAvailability } from "@/lib/scheduling-engine";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { organizationId: string; delivery: string; id: string } }
+  {
+    params,
+  }: {
+    params: Promise<{ organizationId: string; delivery: string; id: string }>;
+  },
 ) {
   try {
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { organizationId, delivery: deliveryTypeId, id: date } = params;
+    const { organizationId, delivery: deliveryTypeId, id: date } = await params;
 
     // Verify if the organization exists
     const organization = await prisma.organization.findUnique({
@@ -22,7 +26,10 @@ export async function GET(
     });
 
     if (!organization) {
-      return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Organization not found" },
+        { status: 404 },
+      );
     }
 
     // Verify if the delivery type exists and belongs to the organization
@@ -34,7 +41,10 @@ export async function GET(
     });
 
     if (!deliveryType) {
-      return NextResponse.json({ error: 'Delivery type not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Delivery type not found" },
+        { status: 404 },
+      );
     }
 
     // Get availability for the specific date
@@ -45,10 +55,10 @@ export async function GET(
 
     return NextResponse.json(availability);
   } catch (error) {
-    console.error('Error fetching availability:', error);
+    console.error("Error fetching availability:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

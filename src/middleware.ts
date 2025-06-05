@@ -40,7 +40,7 @@ export default auth(async (req: NextAuthRequest) => {
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-current-path", nextUrl.pathname);
 
-  const isLogged = !!req.auth
+  const isLogged = !!req.auth;
 
   let role = null;
   let mustChangePassword = false;

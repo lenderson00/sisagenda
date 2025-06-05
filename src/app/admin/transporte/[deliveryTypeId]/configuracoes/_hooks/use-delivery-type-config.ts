@@ -14,7 +14,9 @@ export function useDeliveryTypeConfig(deliveryTypeId: string) {
   return useQuery({
     queryKey: ["delivery-type-config", deliveryTypeId],
     queryFn: async () => {
-      const response = await fetch(`/api/delivery-types/${deliveryTypeId}/config`);
+      const response = await fetch(
+        `/api/delivery-types/${deliveryTypeId}/config`,
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch delivery type configuration");
       }

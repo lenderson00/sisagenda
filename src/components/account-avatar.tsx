@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useUser } from "@/hooks/use-user";
 import {
-  User,
-  LogOut,
-  Settings,
-  UserCircle,
   CreditCard,
   HelpCircle,
+  LogOut,
+  Settings,
+  User,
+  UserCircle,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useUser } from "@/hooks/use-user";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export function AccountAvatar() {
   const [isOpen, setIsOpen] = useState(false);
