@@ -6,7 +6,7 @@ import { AppointmentDetailsCard } from "./_components/appointment-details-card";
 import { AppointmentFormDetailsSidebar } from "./_components/appointment-form-details-sidebar";
 
 interface AppointmentPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 async function getAppointment(id: string) {
@@ -41,7 +41,8 @@ async function getAppointment(id: string) {
 export default async function AppointmentPage({
   params,
 }: AppointmentPageProps) {
-  const appointment = await getAppointment(params.id);
+  const { id } = await params;
+  const appointment = await getAppointment(id);
 
   if (!appointment) {
     notFound();
@@ -54,7 +55,7 @@ export default async function AppointmentPage({
         <div className="lg:col-span-2 space-y-6">
           <AppointmentDetailsCard appointment={appointment} />
           <AppointmentActivityList
-            appointmentId={params.id}
+            appointmentId={id}
             initialActivities={appointment.activities}
             currentUser={{ name: appointment.user.name || "" }}
           />

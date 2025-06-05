@@ -143,13 +143,13 @@ export async function getCalculatedAvailability(
     where: { id: deliveryTypeId },
     include: {
       organization: true,
-      availability: {
-        include: {
-          availabilityRule: true,
-        },
-      },
+      availability: true,
+      availabilityRules: true,
+      AvailabilitySettings: true,
     },
   });
+
+  const availabilityRules = deliveryType?.availabilityRules[0]?.rule as unknown as SchedulingRule[] || []
 
   if (!deliveryType) {
     throw new Error(`DeliveryType with id ${deliveryTypeId} not found.`);
@@ -166,11 +166,9 @@ export async function getCalculatedAvailability(
     };
   }
 
-  const baseAvailability = deliveryType.availability;
-  const rules: SchedulingRule[] = (
-    (baseAvailability.availabilityRule?.rule as unknown as SchedulingRule[]) ||
-    []
-  ).filter((rule) => typeof rule === "object" && rule !== null);
+  const rules: SchedulingRule[] = availabilityRules.filter(
+    (rule) => typeof rule === "object" && rule !== null,
+  );
   rules.sort((a, b) => b.priority - a.priority);
 
   const targetDate = dayjs(date).tz(ORGANIZATION_TIMEZONE, true);
@@ -191,18 +189,25 @@ export async function getCalculatedAvailability(
     },
   });
 
-  const baseDurationMinutes = baseAvailability.duration;
+  const duration = deliveryType.AvailabilitySettings?.duration;
+  const availability = deliveryType.availability[0];
+
+  if (!duration || !availability) {
+    throw new Error(`Duration or availability not found for DeliveryType ${deliveryTypeId}.`);
+  }
+
+  const baseDurationMinutes = duration;
 
   let calculatedSlotsForDay: TimeSlot[] = [];
   let dayMarkedUnavailableByRule = false;
   let currentDuration = baseDurationMinutes;
 
   // Check if the day matches the base availability weekday
-  if (baseAvailability.weekDay === targetDate.day()) {
-    for (let i = 0; i < baseAvailability.startTime.length; i++) {
+  if (availability.weekDay === targetDate.day()) {
+    for (let i = 0; i < availability.startTime; i++) {
       const period: AvailabilityPeriod = {
-        startTime: minutesToTimeOfDay(baseAvailability.startTime[i]),
-        endTime: minutesToTimeOfDay(baseAvailability.endTime[i]),
+        startTime: minutesToTimeOfDay(availability.startTime),
+        endTime: minutesToTimeOfDay(availability.endTime),
       };
       calculatedSlotsForDay.push(
         ...generateSlotsForPeriod(targetDate, period, baseDurationMinutes),
