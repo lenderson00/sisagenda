@@ -6,7 +6,7 @@ import { updateUserSchema, userIdParamSchema } from "../_schemas/user-schemas";
 
 export async function GET(
   request: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const session = await auth();
@@ -14,7 +14,9 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const validatedParams = userIdParamSchema.safeParse(params);
+    const awaitedParams = await params;
+
+    const validatedParams = userIdParamSchema.safeParse(awaitedParams);
     if (!validatedParams.success) {
       return new NextResponse("Invalid user ID", { status: 400 });
     }
@@ -53,7 +55,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const session = await auth();
@@ -61,7 +63,8 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const validatedParams = userIdParamSchema.safeParse(params);
+    const awaitedParams = await params;
+    const validatedParams = userIdParamSchema.safeParse(awaitedParams);
     if (!validatedParams.success) {
       return new NextResponse("Invalid user ID", { status: 400 });
     }

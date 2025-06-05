@@ -7,7 +7,9 @@ export async function GET(
   request: NextRequest,
   {
     params,
-  }: { params: { organizationId: string; delivery: string; id: string } },
+  }: {
+    params: Promise<{ organizationId: string; delivery: string; id: string }>;
+  },
 ) {
   try {
     const session = await auth();
@@ -16,7 +18,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { organizationId, delivery: deliveryTypeId, id: date } = params;
+    const { organizationId, delivery: deliveryTypeId, id: date } = await params;
 
     // Verify if the organization exists
     const organization = await prisma.organization.findUnique({
