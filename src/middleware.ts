@@ -64,7 +64,6 @@ export default auth(async (req: NextAuthRequest) => {
 
   // Allow API routes to pass through
   if (isApiRoute) {
-    console.log(`Middleware: API route ${pathname} passed through.`);
     return response;
   }
 

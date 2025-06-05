@@ -16,7 +16,6 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
   const pathname = usePathname();
   const segments = useSelectedLayoutSegments();
-  console.log(segments, pathname);
 
   return (
     <nav
@@ -30,7 +29,6 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
         const isActive =
           pathname === item.href || segments?.includes(item.href);
 
-        console.log(isActive);
         return (
           <Link
             key={item.href}

@@ -19,7 +19,6 @@ export default function DeleteResourceForm({
     <form
       action={async (data: FormData) => {
         window.confirm("Você tem certeza que quer deletar esse resource?");
-        console.log(data);
       }}
       className="rounded-lg border border-zinc-200 dark:border-zinc-800 transition-all duration-500 ease-in-out hover:border-red-600 dark:hover:border-red-500 bg-white dark:bg-black"
     >

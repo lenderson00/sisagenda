@@ -64,7 +64,6 @@ export async function POST(req: Request) {
     return NextResponse.json(organization);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error.errors);
       return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
 

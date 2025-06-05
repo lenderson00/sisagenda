@@ -20,8 +20,12 @@ export function memo<TDeps extends readonly any[], TResult>(
       // console.log(`[memo] Cache HIT - ${options.key}`)
     }
 
-    return cachedResult!
-  }
+    if (!cachedResult) {
+      throw new Error("Cached result is undefined");
+    }
+
+    return cachedResult;
+  };
 }
 
 function shallowEqual<T>(arr1: readonly T[], arr2: readonly T[]): boolean {

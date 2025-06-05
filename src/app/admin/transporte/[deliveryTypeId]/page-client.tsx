@@ -212,7 +212,7 @@ export function DeliveryTypePageClient() {
                     {weekDays[field.weekDay]}
                   </label>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-fit">
                   <Input
                     aria-label={`Horário inicial para ${weekDays[field.weekDay]}`}
                     type="time"

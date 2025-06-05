@@ -166,10 +166,10 @@ model Availability {
 model AvailabilitySettings {
   id String @id @default(cuid())
 
-  duration       Int     @db.SmallInt
+  duration       Int     @default(60) @db.SmallInt
   isActive       Boolean @default(true)
-  lunchTimeStart Int
-  lunchTimeEnd   Int
+  lunchTimeStart Int     @default(720) @db.SmallInt
+  lunchTimeEnd   Int     @default(780) @db.SmallInt
 
   deliveryTypeId String       @unique
   deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
