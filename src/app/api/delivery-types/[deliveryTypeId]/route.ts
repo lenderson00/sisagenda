@@ -4,11 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-<<<<<<< HEAD
-  { params }: { { deliveryTypeId: string } },
-=======
   { params }: { params: Promise<{ deliveryTypeId: string }> },
->>>>>>> ddf3741e253085216df2ed9c21e8f4336b478209
 ) {
   try {
     const session = await auth();
