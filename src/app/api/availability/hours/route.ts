@@ -133,10 +133,10 @@ export async function GET(request: Request) {
         (blockedTime) => blockedTime.date.getHours() === time / 60,
       );
       return !isTimeBlocked;
-    });
+    }).map((time) => formatHHMM(time));
 
+    console.log(possibleTimes, "possibleTimes");
     console.log(availableTimes, "availableTimes");
-    // 5) Retorna { times: ["08:00", "09:00", …] }
     return NextResponse.json({ possibleTimes, availableTimes });
   } catch (err) {
     console.error(err);

@@ -15,9 +15,11 @@ import {
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconCalendar } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Users } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 type FormType = "text" | "time";
@@ -96,11 +98,8 @@ export default function LunchForm({
   initialStartTime,
   initialEndTime,
 }: TeamNameFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-  } = useForm<FormValues>({
+  const queryClient = useQueryClient();
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       startTime: initialStartTime || "12:00",
@@ -108,83 +107,87 @@ export default function LunchForm({
     },
   });
 
-  const onSubmitForm = async (data: FormValues) => {
-    onSubmit?.({ startTime: data.startTime, endTime: data.endTime });
+  const handleSubmit = async (data: { startTime: string; endTime: string }) => {
+    try {
+      await onSubmit?.(data);
+      await queryClient.invalidateQueries({ queryKey: ["deliveryTypeConfig"] });
+      toast.success("Lunch time updated successfully");
+    } catch (error) {
+      toast.error("Failed to update lunch time");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className={cn(className)}>
-      <Card className="w-full  pb-0 gap-0 overflow-hidden">
-        <CardHeader className="pb-4">
-          <div className="space-y-2">
-            <Label className="text-lg font-semibold text-foreground">
-              {title}
-            </Label>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-2">
-              {description}
-            </p>
-          </div>
-          <div className="relative flex items-center gap-6 justify-between">
-            <div className="flex items-center gap-4 w-full">
-              <div className="flex-1">
-                <Label
-                  htmlFor="startTime"
-                  className="text-sm font-medium mb-2 block"
-                >
-                  Início do Almoço
-                </Label>
-                <Input
-                  type="time"
-                  id="startTime"
-                  {...register("startTime")}
-                  className={cn(
-                    "w-full h-10",
-                    errors.startTime && "border-red-500",
-                  )}
-                />
-                <div className="h-5">
-                  {errors.startTime && (
-                    <p className="text-xs text-red-500 mt-1">
-                      {errors.startTime.message}
-                    </p>
-                  )}
-                </div>
+    <Card className="w-full  pb-0 gap-0 overflow-hidden">
+      <CardHeader className="pb-4">
+        <div className="space-y-2">
+          <Label className="text-lg font-semibold text-foreground">
+            {title}
+          </Label>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+            {description}
+          </p>
+        </div>
+        <div className="relative flex items-center gap-6 justify-between">
+          <div className="flex items-center gap-4 w-full">
+            <div className="flex-1">
+              <Label
+                htmlFor="startTime"
+                className="text-sm font-medium mb-2 block"
+              >
+                Início do Almoço
+              </Label>
+              <Input
+                type="time"
+                id="startTime"
+                {...form.register("startTime")}
+                className={cn(
+                  "w-full h-10",
+                  form.formState.errors.startTime && "border-red-500",
+                )}
+              />
+              <div className="h-5">
+                {form.formState.errors.startTime && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {form.formState.errors.startTime.message}
+                  </p>
+                )}
               </div>
-              <div className="flex-1">
-                <Label
-                  htmlFor="endTime"
-                  className="text-sm font-medium mb-2 block"
-                >
-                  Final do Almoço
-                </Label>
-                <Input
-                  type="time"
-                  id="endTime"
-                  {...register("endTime")}
-                  className={cn(
-                    "w-full h-10",
-                    errors.endTime && "border-red-500",
-                  )}
-                />
-                <div className="h-5">
-                  {errors.endTime && (
-                    <p className="text-xs text-red-500 mt-1">
-                      {errors.endTime.message}
-                    </p>
-                  )}
-                </div>
+            </div>
+            <div className="flex-1">
+              <Label
+                htmlFor="endTime"
+                className="text-sm font-medium mb-2 block"
+              >
+                Final do Almoço
+              </Label>
+              <Input
+                type="time"
+                id="endTime"
+                {...form.register("endTime")}
+                className={cn(
+                  "w-full h-10",
+                  form.formState.errors.endTime && "border-red-500",
+                )}
+              />
+              <div className="h-5">
+                {form.formState.errors.endTime && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {form.formState.errors.endTime.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="flex justify-between items-center bg-neutral-100 h-14 mt-2 border-t">
-          <p className="text-xs text-muted-foreground">{helpText}</p>
-          <div className="flex justify-end">
-            <FormButton isSubmitting={isSubmitting} />
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+        </div>
+      </CardHeader>
+      <CardContent className="flex justify-between items-center bg-neutral-100 h-14 mt-2 border-t">
+        <p className="text-xs text-muted-foreground">{helpText}</p>
+        <div className="flex justify-end">
+          <FormButton isSubmitting={form.formState.isSubmitting} />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
