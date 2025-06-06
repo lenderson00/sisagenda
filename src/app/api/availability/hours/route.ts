@@ -104,8 +104,7 @@ export async function GET(request: Request) {
 
     const possibleTimes = possibleTimesResult.map((time) => formatHHMM(time));
 
-    const availabilityRule =
-      availabilityForDay.deliveryType.availabilityRules;
+    const availabilityRule = availabilityForDay.deliveryType.availabilityRules;
 
     let rules: AvailabilityExceptionRule[] = [];
 

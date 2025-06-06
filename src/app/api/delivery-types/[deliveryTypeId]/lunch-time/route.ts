@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { deliveryTypeId: string } },
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
 ) {
   try {
     const session = await auth();
@@ -12,7 +12,7 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { deliveryTypeId } = params;
+    const { deliveryTypeId } = await params;
 
     const organizationId = session.user.organizationId;
 
