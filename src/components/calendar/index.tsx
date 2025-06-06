@@ -18,19 +18,21 @@ interface CalendarWeek {
 
 type CalendarWeeks = CalendarWeek[];
 
-interface BlockedDatesResponse {
-  blockedWeekDays: number[];
-  blockedDates: number[];
+interface AvailabilityResponse {
+  disabledDays: number[];
+  availableWeekDays: number[];
 }
 
 interface CalendarProps {
-  username: string;
+  organizationId: string;
+  deliveryTypeId: string;
   selectedDate?: Date | null;
   onDateSelected?: (date: Date) => void;
 }
 
 export function Calendar({
-  username,
+  organizationId,
+  deliveryTypeId,
   selectedDate,
   onDateSelected,
 }: CalendarProps) {
@@ -64,25 +66,34 @@ export function Calendar({
   const currentMonthName = currentDate.format("MMMM");
   const currentYear = currentDate.format("YYYY");
 
-  const { data: blockedDates, isLoading: isLoadingBlockedDates } = useQuery({
-    queryKey: [
-      "blocked-dates",
-      username,
-      currentDate.get("year"),
-      currentDate.get("month"),
-    ],
-    queryFn: async () => {
-      return {
-        blockedWeekDays: [],
-        blockedDates: [],
-      } as BlockedDatesResponse;
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
+  const { data: availabilityData, isLoading: isLoadingAvailability } =
+    useQuery<AvailabilityResponse>({
+      queryKey: [
+        "availability",
+        organizationId,
+        deliveryTypeId,
+        currentDate.get("year"),
+        currentDate.get("month") + 1,
+      ],
+      queryFn: async () => {
+        const year = currentDate.get("year");
+        const month = currentDate.get("month") + 1; // dayjs month is 0-indexed
+
+        const response = await fetch(
+          `/api/availability/days?organizationId=${organizationId}&deliveryTypeId=${deliveryTypeId}&year=${year}&month=${month}`,
+        );
+        if (!response.ok) {
+          toast.error("Failed to fetch availability");
+          return { disabledDays: [], availableWeekDays: [] };
+        }
+        return response.json();
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    });
 
   const calendarWeeks = useMemo(() => {
-    if (!blockedDates) {
+    if (!availabilityData) {
       return [];
     }
 
@@ -125,10 +136,7 @@ export function Calendar({
           date,
           disabled:
             date.endOf("day").isBefore(today) ||
-            // @ts-ignore
-            blockedDates.blockedWeekDays.includes(date.get("day")) ||
-            // @ts-ignore
-            blockedDates.blockedDates.includes(date.get("date")),
+            availabilityData.disabledDays.includes(date.get("date")),
         };
       }),
       ...nextMonthFillArray.map((date) => ({
@@ -148,7 +156,7 @@ export function Calendar({
       });
     }
     return weeks;
-  }, [currentDate, blockedDates]);
+  }, [currentDate, availabilityData]);
 
   return (
     <div className="p-6  flex flex-col gap-4 bg-white w-full h-full">
@@ -157,14 +165,14 @@ export function Calendar({
         currentYear={currentYear}
         onPreviousMonth={handlePreviousMonth}
         onNextMonth={handleNextMonth}
-        isLoading={isLoadingBlockedDates}
+        isLoading={isLoadingAvailability}
       />
 
       <CalendarGrid
         weeks={calendarWeeks}
         selectedDate={selectedDate}
         onDateClick={handleDateClick}
-        isLoading={isLoadingBlockedDates}
+        isLoading={isLoadingAvailability}
         currentDate={currentDate}
       />
     </div>

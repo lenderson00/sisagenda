@@ -41,7 +41,8 @@ export function DataPageClient({
           {/* Calendar - Center Column */}
           <div className="relative">
             <Calendar
-              username={organizationName}
+              organizationId={organizationId}
+              deliveryTypeId={deliveryTypeId}
               selectedDate={selectedDate}
               onDateSelected={handleDateSelected}
             />
