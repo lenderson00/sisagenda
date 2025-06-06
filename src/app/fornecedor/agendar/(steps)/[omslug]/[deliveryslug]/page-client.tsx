@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import "dayjs/locale/pt-br";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 dayjs.locale("pt-br");
 
@@ -26,6 +27,11 @@ export function DataPageClient({
 
   const handleDateSelected = (date: Date) => {
     setSelectedDate(date);
+  };
+
+  const handleTimeSelected = (time: Date) => {
+    //TODO: Save time to store
+    toast.success(`Horário selecionado: ${time}`);
   };
 
   return (
@@ -64,6 +70,7 @@ export function DataPageClient({
                   selectedDate={selectedDate}
                   deliveryTypeId={deliveryTypeId}
                   organizationId={organizationId}
+                  onTimeSelected={handleTimeSelected}
                 />
               )}
             </div>

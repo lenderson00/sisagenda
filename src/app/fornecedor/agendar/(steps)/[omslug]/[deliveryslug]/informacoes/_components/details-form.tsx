@@ -9,8 +9,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { useCreateAppointment } from "@/app/fornecedor/agendar/_hooks/use-create-appointment";
-import { useScheduleData } from "@/app/fornecedor/agendar/_hooks/use-schedule-data";
-import { useSchedulingStore } from "@/app/fornecedor/agendar/_hooks/use-scheduling-store";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -61,7 +59,6 @@ const steps = [
 export function DetailsForm() {
   const router = useRouter();
   const params = useParams();
-  const store = useSchedulingStore();
   const [currentStep, setCurrentStep] = useState(0);
 
   const orgSlug = Array.isArray(params.omslug)
@@ -71,56 +68,15 @@ export function DetailsForm() {
     ? params.deliveryslug[0]
     : params.deliveryslug;
 
-  const { organization, deliveryType, isLoading, isError } = useScheduleData(
-    orgSlug,
-    deliverySlug,
-  );
-
-  useEffect(() => {
-    if (organization) store.setOrganization(organization.id);
-    if (deliveryType) store.setDeliveryType(deliveryType.id);
-  }, [organization, deliveryType, store]);
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (isError) {
-      toast.error("Erro ao carregar dados. Redirecionando...");
-      router.push("/fornecedor/agendar");
-      return;
-    }
-
-    if (!organization || !deliveryType) {
-      toast.error("Dados de agendamento inválidos. Redirecionando...");
-      router.push("/fornecedor/agendar");
-      return;
-    }
-
-    if (!store.selectedDate || !store.selectedTime) {
-      toast.error("Selecione uma data e hora primeiro. Redirecionando...");
-      router.push(`/fornecedor/agendar/${orgSlug}/${deliverySlug}`);
-    }
-  }, [
-    isLoading,
-    isError,
-    organization,
-    deliveryType,
-    store.selectedDate,
-    store.selectedTime,
-    router,
-    orgSlug,
-    deliverySlug,
-  ]);
-
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsFormSchema),
     defaultValues: {
-      ordemDeCompra: store.ordemDeCompra || "",
-      notaFiscal: store.observations?.notaFiscal || "",
-      motorista: store.observations?.motorista || "",
-      placaVeiculo: store.observations?.placaVeiculo || "",
-      observacoesGerais: store.observations?.observacoesGerais || "",
-      items: store.observations?.items || [],
+      ordemDeCompra: "",
+      notaFiscal: "",
+      motorista: "",
+      placaVeiculo: "",
+      observacoesGerais: "",
+      items: [],
     },
   });
 
@@ -128,32 +84,17 @@ export function DetailsForm() {
 
   useEffect(() => {
     if (createAppointmentMutation.isSuccess) {
-      store.reset();
       router.push("/fornecedor/agendar/sucesso");
     }
-  }, [createAppointmentMutation.isSuccess, router, store]);
+  }, [createAppointmentMutation.isSuccess, router]);
 
   async function onSubmit(values: DetailsFormValues) {
     const { ordemDeCompra, ...observations } = values;
 
-    if (
-      !store.selectedDate ||
-      !store.selectedTime ||
-      !organization?.id ||
-      !deliveryType?.id
-    ) {
-      toast.error("Faltando dados do agendamento. Tente novamente.");
-      return console.error("Missing data from scheduling store");
-    }
-
-    const [hours, minutes] = store.selectedTime.split(":").map(Number);
-    const appointmentDateTime = new Date(store.selectedDate);
-    appointmentDateTime.setHours(hours, minutes, 0, 0);
-
     createAppointmentMutation.mutate({
-      organizationId: organization.id,
-      deliveryTypeId: deliveryType.id,
-      dateTime: appointmentDateTime.toISOString(),
+      organizationId: "",
+      deliveryTypeId: "",
+      dateTime: "",
       ordemDeCompra,
       observations,
     });
@@ -169,24 +110,6 @@ export function DetailsForm() {
 
   function prevStep() {
     setCurrentStep((prev) => prev - 1);
-  }
-
-  if (isLoading) {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <Skeleton className="mx-auto h-8 w-1/2" />
-        </CardHeader>
-        <CardContent className="space-y-4 py-6">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-20 w-full" />
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Skeleton className="h-10 w-24" />
-        </CardFooter>
-      </Card>
-    );
   }
 
   return (

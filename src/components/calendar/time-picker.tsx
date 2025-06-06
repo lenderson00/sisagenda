@@ -6,28 +6,28 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { ArrowRight, CalendarIcon, Check, Clock } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useDateStore } from "@/hooks/use-selected-date";
 
 interface TimePickerProps {
   selectedDate: Date;
   organizationId: string;
   deliveryTypeId: string;
+  onTimeSelected: (time: Date) => void;
 }
 
 export function TimePicker({
   selectedDate,
   organizationId,
   deliveryTypeId,
+  onTimeSelected,
 }: TimePickerProps) {
-  const [selectedTime, setSelectedTime] = useState<number | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const dateKey = dayjs(selectedDate).format("YYYY-MM-DD");
   const weekDay = dayjs(selectedDate).format("dddd");
   const describedDate = dayjs(selectedDate).format("DD[ de ]MMMM");
   const router = useRouter();
-  const { setDate } = useDateStore();
   // Reset selected time when date changes
   useEffect(() => {
     setSelectedTime(null);
@@ -52,17 +52,16 @@ export function TimePicker({
     refetchOnWindowFocus: false,
   });
 
-  const handleSelectTime = (hour: number) => {
+  const handleSelectTime = (hour: string) => {
     setSelectedTime(hour);
   };
 
   const handleContinue = () => {
     if (selectedTime) {
-      setDate(dayjs(selectedDate).hour(selectedTime).toDate()); // Store the selected date with time
-      router.push(`/agendar/${organizationId}/${deliveryTypeId}/informacoes`);
-      toast.success(
-        `Horário ${String(selectedTime).padStart(2, "0")}:00 selecionado`,
-      );
+      const [hour, minute] = selectedTime.split(":").map(Number);
+      const date = new Date(selectedDate);
+      date.setHours(hour, minute, 0, 0);
+      onTimeSelected(date);
     }
   };
 
@@ -186,9 +185,7 @@ export function TimePicker({
                                   : "bg-slate-300",
                             )}
                           />
-                          <span className="font-mono">
-                            {String(hour).padStart(2, "0")}:00
-                          </span>
+                          <span className="font-mono">{hour}</span>
                         </div>
 
                         <div className="flex items-center gap-2">
