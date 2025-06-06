@@ -8,16 +8,13 @@ import { motion } from "framer-motion";
 import { ArrowRight, CalendarIcon, Check, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useDateStore } from "@/hooks/use-selected-date";
 
 interface TimePickerProps {
   selectedDate: Date;
   organizationId: string;
   deliveryTypeId: string;
-}
-
-interface AvailabilityData {
-  possibleTimes: number[];
-  availableTimes: number[];
 }
 
 export function TimePicker({
@@ -29,7 +26,8 @@ export function TimePicker({
   const dateKey = dayjs(selectedDate).format("YYYY-MM-DD");
   const weekDay = dayjs(selectedDate).format("dddd");
   const describedDate = dayjs(selectedDate).format("DD[ de ]MMMM");
-
+  const router = useRouter();
+  const { setDate } = useDateStore();
   // Reset selected time when date changes
   useEffect(() => {
     setSelectedTime(null);
@@ -56,13 +54,12 @@ export function TimePicker({
 
   const handleSelectTime = (hour: number) => {
     setSelectedTime(hour);
-    // TODO: Implement logic to save selected time if needed
-    toast.success("Horário Selecionado");
   };
 
   const handleContinue = () => {
     if (selectedTime) {
-      // TODO: Implement continue logic here
+      setDate(dayjs(selectedDate).hour(selectedTime).toDate()); // Store the selected date with time
+      router.push(`/agendar/${organizationId}/${deliveryTypeId}/informacoes`);
       toast.success(
         `Horário ${String(selectedTime).padStart(2, "0")}:00 selecionado`,
       );
@@ -294,26 +291,6 @@ export function TimePicker({
               )}
             </Button>
           </motion.div>
-
-          {/* Selected time summary */}
-          {selectedTime && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="mt-3 p-3 bg-sky-50 rounded-lg border border-sky-100"
-            >
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-sky-700 font-medium">
-                  Horário selecionado:
-                </span>
-                <span className="text-sky-900 font-mono">
-                  {String(selectedTime).padStart(2, "0")}:00
-                </span>
-              </div>
-            </motion.div>
-          )}
         </motion.div>
       )}
     </div>
