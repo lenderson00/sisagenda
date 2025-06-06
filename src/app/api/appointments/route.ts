@@ -1,6 +1,16 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { z } from 'zod'
+
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import { NextResponse } from "next/server";
+
+const createAppointmentInput = z.object({
+  organizationId: z.string(),
+  deliveryTypeId: z.string(),
+  dateTime: z.string().datetime(),
+  ordemDeCompra: z.string(),
+  observations: z.record(z.any()),
+})
 
 export async function GET() {
   const session = await auth();
@@ -49,5 +59,60 @@ export async function GET() {
       { error: "Failed to fetch appointments" },
       { status: 500 },
     );
+  }
+}
+
+export async function POST(req: Request) {
+  const session = await auth()
+
+  if (!session?.user?.id) {
+    return new Response(JSON.stringify({ error: 'Usuário não autenticado.' }), {
+      status: 401,
+    })
+  }
+
+  try {
+    const json = await req.json()
+    const validatedInput = createAppointmentInput.parse(json)
+
+    const deliverySettings = await prisma.availabilitySettings.findUnique({
+      where: {
+        deliveryTypeId: validatedInput.deliveryTypeId,
+      },
+    })
+
+    if (!deliverySettings) {
+      return new Response(
+        JSON.stringify({
+          error:
+            'Configurações de agendamento não encontradas para este tipo de entrega.',
+        }),
+        { status: 404 },
+      )
+    }
+
+    const appointment = await prisma.appointment.create({
+      data: {
+        organizationId: validatedInput.organizationId,
+        deliveryTypeId: validatedInput.deliveryTypeId,
+        date: new Date(validatedInput.dateTime),
+        duration: deliverySettings.duration,
+        ordemDeCompra: validatedInput.ordemDeCompra,
+        observations: validatedInput.observations,
+        userId: session.user.id,
+        status: 'PENDING_CONFIRMATION',
+      },
+    })
+
+    return new Response(JSON.stringify(appointment), { status: 201 })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return new Response(JSON.stringify(error.issues), { status: 400 })
+    }
+
+    return new Response(
+      JSON.stringify({ error: 'Ocorreu um erro ao criar o agendamento.' }),
+      { status: 500 },
+    )
   }
 }

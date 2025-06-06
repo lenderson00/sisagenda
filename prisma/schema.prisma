@@ -193,6 +193,23 @@ model AvailabilityRule {
   @@index([id])
 }
 
+/// Represents all possible statuses for an appointment.
+/// The initial status is PENDING_CONFIRMATION.
+enum AppointmentStatus {
+  PENDING_CONFIRMATION // Pendente de Confirmação
+  CONFIRMED // Confirmado
+  REJECTED // Rejeitado
+  CANCELLATION_REQUESTED // Pedido de Cancelamento
+  CANCELLATION_REJECTED // Pedido de Cancelamento Rejeitado
+  CANCELLED // Cancelado
+  RESCHEDULE_REQUESTED // Reagendamento Solicitado
+  RESCHEDULE_CONFIRMED // Reagendamento Confirmado
+  RESCHEDULE_REJECTED // Reagendamento Rejeitado
+  RESCHEDULED // Reagendado
+  COMPLETED // Concluído
+  SUPPLIER_NO_SHOW // Fornecedor Não Compareceu
+}
+
 /// Represents scheduled appointments
 model Appointment {
   id       String   @id @default(cuid())
@@ -208,7 +225,10 @@ model Appointment {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  observations Json?
+  ordemDeCompra String @unique
+  observations  Json?
+
+  status AppointmentStatus @default(PENDING_CONFIRMATION)
 
   activities AppointmentActivity[]
 
