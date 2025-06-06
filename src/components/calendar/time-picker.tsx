@@ -9,7 +9,7 @@ import { ArrowRight, CalendarIcon, Check, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useDateStore } from "@/hooks/use-selected-date";
+import { useScheduleStore } from "@/hooks/use-selected-date";
 
 interface TimePickerProps {
   selectedDate: Date;
@@ -27,7 +27,7 @@ export function TimePicker({
   const weekDay = dayjs(selectedDate).format("dddd");
   const describedDate = dayjs(selectedDate).format("DD[ de ]MMMM");
   const router = useRouter();
-  const { setDate } = useDateStore();
+  const { setDate } = useScheduleStore();
   // Reset selected time when date changes
   useEffect(() => {
     setSelectedTime(null);

@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 
 import { Step1BasicInfo } from "./step-1-basic-info";
 import { Step2Items } from "./step-2-items";
+import { useScheduleStore } from "@/hooks/use-selected-date";
 
 const itemSchema = z.object({
   name: z.string().min(1, "Nome do item é obrigatório."),
@@ -60,67 +61,35 @@ const steps = [
 
 export function DetailsForm() {
   const router = useRouter();
-  const params = useParams();
-  const store = useSchedulingStore();
   const [currentStep, setCurrentStep] = useState(0);
-
-  const orgSlug = Array.isArray(params.omslug)
-    ? params.omslug[0]
-    : params.omslug;
-  const deliverySlug = Array.isArray(params.deliveryslug)
-    ? params.deliveryslug[0]
-    : params.deliveryslug;
-
-  const { organization, deliveryType, isLoading, isError } = useScheduleData(
-    orgSlug,
-    deliverySlug,
-  );
+  const {
+    date,
+    organizationId: organization,
+    deliveryTypeId: deliveryType,
+    clearSchedule,
+  } = useScheduleStore();
 
   useEffect(() => {
-    if (organization) store.setOrganization(organization.id);
-    if (deliveryType) store.setDeliveryType(deliveryType.id);
-  }, [organization, deliveryType, store]);
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (isError) {
-      toast.error("Erro ao carregar dados. Redirecionando...");
-      router.push("/fornecedor/agendar");
-      return;
-    }
-
     if (!organization || !deliveryType) {
       toast.error("Dados de agendamento inválidos. Redirecionando...");
-      router.push("/fornecedor/agendar");
       return;
     }
 
-    if (!store.selectedDate || !store.selectedTime) {
+    if (!!date) {
       toast.error("Selecione uma data e hora primeiro. Redirecionando...");
-      router.push(`/fornecedor/agendar/${orgSlug}/${deliverySlug}`);
+      router.push(`/agendar/${organization}/${deliveryType}`);
     }
-  }, [
-    isLoading,
-    isError,
-    organization,
-    deliveryType,
-    store.selectedDate,
-    store.selectedTime,
-    router,
-    orgSlug,
-    deliverySlug,
-  ]);
+  }, [organization, deliveryType, date, router]);
 
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsFormSchema),
     defaultValues: {
-      ordemDeCompra: store.ordemDeCompra || "",
-      notaFiscal: store.observations?.notaFiscal || "",
-      motorista: store.observations?.motorista || "",
-      placaVeiculo: store.observations?.placaVeiculo || "",
-      observacoesGerais: store.observations?.observacoesGerais || "",
-      items: store.observations?.items || [],
+      ordemDeCompra: "",
+      notaFiscal: "",
+      motorista: "",
+      placaVeiculo: "",
+      observacoesGerais: "",
+      items: [],
     },
   });
 
@@ -128,32 +97,23 @@ export function DetailsForm() {
 
   useEffect(() => {
     if (createAppointmentMutation.isSuccess) {
-      store.reset();
-      router.push("/fornecedor/agendar/sucesso");
+      clearSchedule();
+      router.push("/agendar/sucesso");
     }
-  }, [createAppointmentMutation.isSuccess, router, store]);
+  }, [createAppointmentMutation.isSuccess, router]);
 
   async function onSubmit(values: DetailsFormValues) {
     const { ordemDeCompra, ...observations } = values;
 
-    if (
-      !store.selectedDate ||
-      !store.selectedTime ||
-      !organization?.id ||
-      !deliveryType?.id
-    ) {
+    if (!date || !organization || !deliveryType) {
       toast.error("Faltando dados do agendamento. Tente novamente.");
       return console.error("Missing data from scheduling store");
     }
 
-    const [hours, minutes] = store.selectedTime.split(":").map(Number);
-    const appointmentDateTime = new Date(store.selectedDate);
-    appointmentDateTime.setHours(hours, minutes, 0, 0);
-
     createAppointmentMutation.mutate({
-      organizationId: organization.id,
-      deliveryTypeId: deliveryType.id,
-      dateTime: appointmentDateTime.toISOString(),
+      organizationId: organization,
+      deliveryTypeId: deliveryType,
+      dateTime: date,
       ordemDeCompra,
       observations,
     });
@@ -170,6 +130,8 @@ export function DetailsForm() {
   function prevStep() {
     setCurrentStep((prev) => prev - 1);
   }
+
+  const isLoading = false;
 
   if (isLoading) {
     return (

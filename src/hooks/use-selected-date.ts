@@ -1,14 +1,29 @@
-// src/hooks/useDataStore.ts
+// src/hooks/useScheduleStore.ts
 import { create } from "zustand";
 
-type DateStore = {
-  data: Date | null;
-  setDate: (newDate: Date) => void;
-  clearDate: () => void;
+type ScheduleState = {
+  date: Date | null;
+  organizationId: string | null;
+  deliveryTypeId: string | null;
+  setDate: (date: Date) => void;
+  setOrganizationId: (id: string) => void;
+  setDeliveryTypeId: (id: string) => void;
+  clearSchedule: () => void;
 };
 
-export const useDateStore = create<DateStore>((set) => ({
-  data: null,
-  setDate: (newDate) => set({ data: newDate }),
-  clearDate: () => set({ data: null }),
+export const useScheduleStore = create<ScheduleState>((set) => ({
+  date: null,
+  organizationId: null,
+  deliveryTypeId: null,
+
+  setDate: (date) => set({ date }),
+  setOrganizationId: (id) => set({ organizationId: id }),
+  setDeliveryTypeId: (id) => set({ deliveryTypeId: id }),
+
+  clearSchedule: () =>
+    set({
+      date: null,
+      organizationId: null,
+      deliveryTypeId: null,
+    }),
 }));

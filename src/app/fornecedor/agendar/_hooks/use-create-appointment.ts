@@ -1,46 +1,46 @@
-'use client'
+"use client";
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type AppointmentInput = {
-  organizationId: string
-  deliveryTypeId: string
-  dateTime: string
-  ordemDeCompra: string
-  observations: Record<string, any>
-}
+  organizationId: string;
+  deliveryTypeId: string;
+  dateTime: Date;
+  ordemDeCompra: string;
+  observations: Record<string, any>;
+};
 
 async function createAppointment(input: AppointmentInput) {
-  const response = await fetch('/api/appointments', {
-    method: 'POST',
+  const response = await fetch("/api/appointments", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(input),
-  })
+  });
 
   if (!response.ok) {
-    const errorData = await response.json()
+    const errorData = await response.json();
     throw new Error(
-      errorData.error || 'Ocorreu um erro ao criar o agendamento.',
-    )
+      errorData.error || "Ocorreu um erro ao criar o agendamento.",
+    );
   }
 
-  return response.json()
+  return response.json();
 }
 
 export function useCreateAppointment() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createAppointment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
-      toast.success('Agendamento solicitado com sucesso!')
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      toast.success("Agendamento solicitado com sucesso!");
     },
     onError: (error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
-  })
+  });
 }
