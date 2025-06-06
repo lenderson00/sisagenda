@@ -231,7 +231,7 @@ export function AppointmentsCalendarView({
                     {appointment.deliveryType?.name || "Unknown Type"}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {appointment.date.toLocaleTimeString()}
+                    {String(appointment.date)}
                   </div>
                   <div className="text-sm text-gray-600">
                     User: {appointment.userId}

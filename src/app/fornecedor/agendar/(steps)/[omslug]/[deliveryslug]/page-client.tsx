@@ -38,6 +38,7 @@ export function DataPageClient({
       organizationId,
       deliveryTypeId,
       dateTime: time,
+      lastUpdated: Date.now(),
     });
     router.push(`/agendar/${organizationId}/${deliveryTypeId}/informacoes`);
   };

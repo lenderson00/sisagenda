@@ -62,7 +62,7 @@ export function DetailsForm() {
   const router = useRouter();
   const params = useParams();
   const [currentStep, setCurrentStep] = useState(0);
-  const { schedule } = useScheduleStore();
+  const { schedule, isStale, clearSchedule } = useScheduleStore();
 
   const orgSlug = Array.isArray(params.omslug)
     ? params.omslug[0]
@@ -94,6 +94,14 @@ export function DetailsForm() {
 
   const createAppointmentMutation = useCreateAppointment();
 
+  // Check for stale schedule data
+  useEffect(() => {
+    if (isStale) {
+      clearSchedule();
+      router.push("/agendar");
+    }
+  }, [isStale, clearSchedule, router]);
+
   // Load saved form data on mount
   useEffect(() => {
     const savedData = loadFormData(safeOrgSlug, safeDeliverySlug);
@@ -114,8 +122,9 @@ export function DetailsForm() {
 
   useEffect(() => {
     if (createAppointmentMutation.isSuccess) {
-      // Clear saved form data on successful submission
+      // Clear saved form data and schedule on successful submission
       clearFormData(safeOrgSlug, safeDeliverySlug);
+      clearSchedule();
       router.push("/agendar/sucesso");
     }
   }, [
@@ -123,14 +132,33 @@ export function DetailsForm() {
     router,
     safeOrgSlug,
     safeDeliverySlug,
+    clearSchedule,
   ]);
 
+  const items = form.watch("items");
+
   async function onSubmit(values: DetailsFormValues) {
-    toast.custom((t) => (
-      <div className="bg-green-500 text-white p-4 rounded-lg">
-        <pre>{JSON.stringify({ values, schedule }, null, 2)}</pre>
-      </div>
-    ));
+    if (!schedule) {
+      toast.error(
+        "Dados do agendamento não encontrados. Por favor, selecione um novo horário.",
+      );
+      router.push("/agendar");
+      return;
+    }
+
+    if (isStale) {
+      clearSchedule();
+      router.push("/agendar");
+      return;
+    }
+
+    createAppointmentMutation.mutate({
+      organizationId: schedule.organizationId,
+      deliveryTypeId: schedule.deliveryTypeId,
+      dateTime: schedule.dateTime.toISOString(),
+      ordemDeCompra: values.ordemDeCompra,
+      observations: values,
+    });
   }
 
   async function nextStep() {
@@ -210,11 +238,20 @@ export function DetailsForm() {
                 {currentStep === steps.length - 1 && (
                   <Button
                     type="submit"
-                    disabled={createAppointmentMutation.isPending}
+                    disabled={
+                      createAppointmentMutation.isPending ||
+                      !form.formState.isValid ||
+                      items?.length === 0 ||
+                      isStale
+                    }
                   >
                     {createAppointmentMutation.isPending
                       ? "Agendando..."
-                      : "Finalizar Agendamento"}
+                      : items?.length === 0
+                        ? "Adicione itens para finalizar o agendamento"
+                        : isStale
+                          ? "Dados do agendamento expirados"
+                          : "Finalizar Agendamento"}
                   </Button>
                 )}
               </div>

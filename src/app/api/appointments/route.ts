@@ -65,7 +65,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const session = await auth()
 
-  if (!session?.user?.id) {
+  if (!session || !session.user.email) {
     return new Response(JSON.stringify({ error: 'Usuário não autenticado.' }), {
       status: 401,
     })
@@ -91,6 +91,16 @@ export async function POST(req: Request) {
       )
     }
 
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+    })
+
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Usuário não encontrado.' }), { status: 404 })
+    }
+
     const appointment = await prisma.appointment.create({
       data: {
         organizationId: validatedInput.organizationId,
@@ -99,13 +109,14 @@ export async function POST(req: Request) {
         duration: deliverySettings.duration,
         ordemDeCompra: validatedInput.ordemDeCompra,
         observations: validatedInput.observations,
-        userId: session.user.id,
+        userId: user.id,
         status: 'PENDING_CONFIRMATION',
       },
     })
 
     return new Response(JSON.stringify(appointment), { status: 201 })
   } catch (error) {
+    console.error('Error creating appointment:', error)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 400 })
     }

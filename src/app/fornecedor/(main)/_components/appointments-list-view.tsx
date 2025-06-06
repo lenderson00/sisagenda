@@ -22,6 +22,7 @@ import type {
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
+import dayjs from "dayjs";
 import {
   AlertTriangle,
   Calendar,
@@ -65,11 +66,7 @@ export function AppointmentsListView({
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
+    return dayjs(date).format("DD/MM/YYYY HH:mm");
   };
 
   const toggleSelectAll = () => {
@@ -139,7 +136,7 @@ export function AppointmentsListView({
                     </div>
                     <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-1">
                       <Clock className="h-3.5 w-3.5" />
-                      <span>{appointment.date.toLocaleTimeString()}</span>
+                      <span>{String(appointment.date)}</span>
                     </div>
                   </div>
                 </TableCell>
@@ -177,7 +174,7 @@ export function AppointmentsListView({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
                         <Link
-                          href={`/appointments/${appointment.id}`}
+                          href={`/agendamento/${appointment.id}`}
                           className="flex items-center"
                         >
                           <Eye className="mr-2 h-4 w-4" />
