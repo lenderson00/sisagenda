@@ -384,14 +384,6 @@ export function AppointmentsList({
           )}
         </>
       )}
-
-      {filteredAppointments.length === 0 && (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-gray-500">No appointments found.</p>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
