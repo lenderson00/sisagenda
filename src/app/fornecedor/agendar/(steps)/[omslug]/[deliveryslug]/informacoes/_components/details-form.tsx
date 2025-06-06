@@ -18,8 +18,10 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { clearFormData, loadFormData, saveFormData } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
+import { useScheduleStore } from "../../_store";
 import { Step1BasicInfo } from "./step-1-basic-info";
 import { Step2Items } from "./step-2-items";
 
@@ -60,6 +62,7 @@ export function DetailsForm() {
   const router = useRouter();
   const params = useParams();
   const [currentStep, setCurrentStep] = useState(0);
+  const { schedule } = useScheduleStore();
 
   const orgSlug = Array.isArray(params.omslug)
     ? params.omslug[0]
@@ -67,6 +70,15 @@ export function DetailsForm() {
   const deliverySlug = Array.isArray(params.deliveryslug)
     ? params.deliveryslug[0]
     : params.deliveryslug;
+
+  // Early return if slugs are undefined
+  if (!orgSlug || !deliverySlug) {
+    return null;
+  }
+
+  // Assert types after early return
+  const safeOrgSlug: string = orgSlug;
+  const safeDeliverySlug: string = deliverySlug;
 
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsFormSchema),
@@ -82,22 +94,43 @@ export function DetailsForm() {
 
   const createAppointmentMutation = useCreateAppointment();
 
+  // Load saved form data on mount
+  useEffect(() => {
+    const savedData = loadFormData(safeOrgSlug, safeDeliverySlug);
+    if (savedData) {
+      form.reset(savedData);
+    }
+  }, [safeOrgSlug, safeDeliverySlug, form]);
+
+  // Save form data on changes
+  useEffect(() => {
+    const subscription = form.watch((data) => {
+      if (data) {
+        saveFormData(safeOrgSlug, safeDeliverySlug, data as DetailsFormValues);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, safeOrgSlug, safeDeliverySlug]);
+
   useEffect(() => {
     if (createAppointmentMutation.isSuccess) {
-      router.push("/fornecedor/agendar/sucesso");
+      // Clear saved form data on successful submission
+      clearFormData(safeOrgSlug, safeDeliverySlug);
+      router.push("/agendar/sucesso");
     }
-  }, [createAppointmentMutation.isSuccess, router]);
+  }, [
+    createAppointmentMutation.isSuccess,
+    router,
+    safeOrgSlug,
+    safeDeliverySlug,
+  ]);
 
   async function onSubmit(values: DetailsFormValues) {
-    const { ordemDeCompra, ...observations } = values;
-
-    createAppointmentMutation.mutate({
-      organizationId: "",
-      deliveryTypeId: "",
-      dateTime: "",
-      ordemDeCompra,
-      observations,
-    });
+    toast.custom((t) => (
+      <div className="bg-green-500 text-white p-4 rounded-lg">
+        <pre>{JSON.stringify({ values, schedule }, null, 2)}</pre>
+      </div>
+    ));
   }
 
   async function nextStep() {
