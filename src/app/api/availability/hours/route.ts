@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 import "dayjs/locale/pt-br";
 
 import { auth } from "@/lib/auth";
+import type { AvailabilityExceptionRule } from "@/lib/engine/availability";
+import { applyRulesToPossibleTimes } from "@/lib/engine/services/rules";
 import { getAvailableSlotsForDate } from "@/lib/engine/services/scheluing-with-rules";
 import {
   findFits,
@@ -44,7 +46,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ possibleTimes: [], availableTimes: [] });
     }
 
-    // 1) Converte “dd-mm-yyyy” para Date usando dayjs e locale pt-br
+    // 1) Converte "dd-mm-yyyy" para Date usando dayjs e locale pt-br
     const parsed = dayjs(dateStr, "DD-MM-YYYY", "pt-br");
 
     if (!parsed.isValid()) {
@@ -103,15 +105,19 @@ export async function GET(request: Request) {
     const possibleTimes = possibleTimesResult.map((time) => formatHHMM(time));
 
     const availabilityRule =
-      availabilityForDay.deliveryType.availabilityRules[0];
+      availabilityForDay.deliveryType.availabilityRules;
 
-    let rule: any[] = [];
+    let rules: AvailabilityExceptionRule[] = [];
 
-    if (availabilityRule) {
-      rule = availabilityRule.rule as any[];
+    if (availabilityRule && Array.isArray(availabilityRule.rule)) {
+      rules = availabilityRule.rule as unknown as AvailabilityExceptionRule[];
     }
 
-    console.log(rule, "rule");
+    const timesAfterRules = applyRulesToPossibleTimes(
+      possibleTimesResult,
+      rules,
+      referenceDate.toDate(),
+    );
 
     const blockedTimes = await prisma.appointment.findMany({
       select: {
@@ -120,23 +126,23 @@ export async function GET(request: Request) {
       where: {
         organizationId,
         date: {
-          gte: referenceDate.set("hour", startHour / 60).toDate(),
-          lte: referenceDate.set("hour", endHour / 60).toDate(),
+          gte: referenceDate.startOf("day").toDate(),
+          lte: referenceDate.endOf("day").toDate(),
         },
       },
     });
 
-    console.log(blockedTimes, "blockedTimes");
+    const blockedMinutes = blockedTimes.map((bt) => {
+      const d = dayjs(bt.date);
+      return d.hour() * 60 + d.minute();
+    });
 
-    const availableTimes = possibleTimesResult.filter((time) => {
-      const isTimeBlocked = blockedTimes.some(
-        (blockedTime) => blockedTime.date.getHours() === time / 60,
-      );
-      return !isTimeBlocked;
-    }).map((time) => formatHHMM(time));
+    const availableTimes = timesAfterRules
+      .filter((time) => {
+        return !blockedMinutes.includes(time);
+      })
+      .map((time) => formatHHMM(time));
 
-    console.log(possibleTimes, "possibleTimes");
-    console.log(availableTimes, "availableTimes");
     return NextResponse.json({ possibleTimes, availableTimes });
   } catch (err) {
     console.error(err);

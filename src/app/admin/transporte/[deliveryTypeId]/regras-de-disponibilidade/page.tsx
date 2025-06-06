@@ -1,3 +1,5 @@
+import RegrasDeDisponibilidadePageClient from "./page-client";
+
 export default function RegrasDeDisponibilidadePage() {
-  return <div>RegrasDeDisponibilidadePage </div>;
+  return <RegrasDeDisponibilidadePageClient />;
 }

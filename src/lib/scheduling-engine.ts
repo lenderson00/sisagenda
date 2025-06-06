@@ -149,7 +149,7 @@ export async function getCalculatedAvailability(
     },
   });
 
-  const availabilityRules = deliveryType?.availabilityRules[0]?.rule as unknown as SchedulingRule[] || []
+  const availabilityRules = deliveryType?.availabilityRules?.rule as unknown as SchedulingRule[] || []
 
   if (!deliveryType) {
     throw new Error(`DeliveryType with id ${deliveryTypeId} not found.`);

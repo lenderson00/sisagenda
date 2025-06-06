@@ -45,69 +45,29 @@ export async function GET(request: Request) {
       select: {
         weekDay: true,
       },
-    })
-
-    const blockedWeekDays = [0, 1, 2, 3, 4, 5, 6].filter((weekDay) => {
-      return !availableWeekDays.some(
-        (availableWeekDay) => availableWeekDay.weekDay === weekDay,
-      );
     });
 
-    const blockedDatesRaw: Array<{ date: number }> = await prisma.$queryRaw`
-    WITH daily_slots AS (
-      SELECT
-        EXTRACT(DAY FROM S.date) AS date,
-        COUNT(S.id) AS scheduled_count,
-        SUM(S.duration) AS total_scheduled_minutes
-      FROM "Appointment" S
-      WHERE S.organizationId = ${organizationId}
-        AND S.deliveryTypeId = ${deliveryTypeId}
-        AND DATE_FORMAT(S.date, "%Y-%m") = ${`${year}-${month}`}
-        AND S.deletedAt IS NULL
-      GROUP BY EXTRACT(DAY FROM S.date)
-    ),
-    daily_availability AS (
-      SELECT
-        A.weekDay,
-        SUM(
-          CASE
-            WHEN A.startTime[i] < (SELECT "lunchTimeStart" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId})
-              AND A.endTime[i] > (SELECT "lunchTimeEnd" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId})
-            THEN
-              ((SELECT "lunchTimeStart" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId}) - A.startTime[i] +
-               A.endTime[i] - (SELECT "lunchTimeEnd" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId}))
-            WHEN A.startTime[i] < (SELECT "lunchTimeStart" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId})
-              AND A.endTime[i] <= (SELECT "lunchTimeEnd" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId})
-            THEN
-              ((SELECT "lunchTimeStart" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId}) - A.startTime[i])
-            WHEN A.startTime[i] >= (SELECT "lunchTimeStart" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId})
-              AND A.endTime[i] > (SELECT "lunchTimeEnd" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId})
-            THEN
-              (A.endTime[i] - (SELECT "lunchTimeEnd" FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId}))
-            ELSE
-              (A.endTime[i] - A.startTime[i])
-          END /
-          (SELECT duration FROM "AvailabilitySettings" WHERE "deliveryTypeId" = ${deliveryTypeId})
-        ) AS available_slots
-      FROM "Availability" A
-      CROSS JOIN LATERAL generate_series(1, array_length(A.startTime, 1)) AS i
-      WHERE A.organizationId = ${organizationId}
-        AND A.deliveryTypeId = ${deliveryTypeId}
-        AND A.deletedAt IS NULL
-      GROUP BY A.weekDay
-    )
-    SELECT
-      ds.date
-    FROM daily_slots ds
-    JOIN daily_availability da ON da.weekDay = WEEKDAY(DATE_ADD(STR_TO_DATE(${`${year}-${month}-01`}, '%Y-%m-%d'), INTERVAL ds.date - 1 DAY))
-    WHERE ds.scheduled_count >= da.available_slots
-  `
-    const blockedDates = blockedDatesRaw.map((item) => item.date)
+    const availableWeekDaysInMonth = availableWeekDays.map(
+      (day) => day.weekDay,
+    );
 
-    console.log(blockedDates, "blockedDates");
+    const yearMonth = dayjs(`${year}-${month}`);
+    const daysInMonth = yearMonth.daysInMonth();
+    const disabledDays: number[] = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const currentDate = yearMonth.date(day);
+      const weekDay = currentDate.day();
+      if (!availableWeekDaysInMonth.includes(weekDay)) {
+        disabledDays.push(day);
+      }
+    }
 
     // 5) Retorna { times: ["08:00", "09:00", …] }
-    return NextResponse.json({ blockedWeekDays, blockedDates });
+    return NextResponse.json({
+      disabledDays: disabledDays,
+      availableWeekDays: availableWeekDaysInMonth,
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

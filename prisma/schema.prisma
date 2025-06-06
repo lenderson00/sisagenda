@@ -126,7 +126,7 @@ model DeliveryType {
   isActive Boolean @default(true)
 
   availability         Availability[]
-  availabilityRules    AvailabilityRule[]
+  availabilityRules    AvailabilityRule?
   AvailabilitySettings AvailabilitySettings?
 
   appointments Appointment[]
