@@ -99,12 +99,12 @@ export const AppointmentHeader: React.FC<AppointmentHeaderProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border  overflow-hidden">
       {/* Header principal com status */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-4">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
+            <div className="bg-white rounded-lg p-3 ">
               <Package className="w-6 h-6 text-blue-600" />
             </div>
             <div>

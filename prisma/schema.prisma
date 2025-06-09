@@ -212,7 +212,9 @@ enum AppointmentStatus {
 
 /// Represents scheduled appointments
 model Appointment {
-  id       String   @id @default(cuid())
+  id         String @id @default(cuid())
+  internalId String @unique
+
   date     DateTime
   duration Int
 
@@ -240,6 +242,7 @@ model Appointment {
   @@index([organizationId])
   @@index([deliveryTypeId])
   @@index([date])
+  @@index([internalId])
 }
 
 /// Represents different types of activities that can be performed on an appointment
