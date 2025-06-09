@@ -27,6 +27,7 @@ import {
   BarChart2,
   Calendar,
   Clock,
+  Eye,
   MapPin,
   MoreHorizontal,
   User,
@@ -144,7 +145,7 @@ export function AppointmentsList({
                 {getAppointmentIcon(appointment)}
                 <div>
                   <Link
-                    href={`/appointments/${appointment.id}`}
+                    href={`/agendamento/${appointment.id}`}
                     className="hover:underline"
                   >
                     <h3 className="text-sm font-semibold text-gray-900">
@@ -176,8 +177,9 @@ export function AppointmentsList({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href={`/appointments/${appointment.id}`}>
-                        View Details
+                      <Link href={`/agendamento/${appointment.id}`}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>View Details</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>Edit Appointment</DropdownMenuItem>
@@ -383,14 +385,6 @@ export function AppointmentsList({
             </div>
           )}
         </>
-      )}
-
-      {filteredAppointments.length === 0 && (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-gray-500">No appointments found.</p>
-          </CardContent>
-        </Card>
       )}
     </div>
   );

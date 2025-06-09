@@ -7,6 +7,9 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import "dayjs/locale/pt-br";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useScheduleStore } from "./_store";
 
 dayjs.locale("pt-br");
 
@@ -21,11 +24,23 @@ export function DataPageClient({
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState<"weekly" | "rules">("weekly");
+  const { setSchedule } = useScheduleStore();
+  const router = useRouter();
 
   const isDateSelected = selectedDate !== null;
 
   const handleDateSelected = (date: Date) => {
     setSelectedDate(date);
+  };
+
+  const handleTimeSelected = (time: Date) => {
+    setSchedule({
+      organizationId,
+      deliveryTypeId,
+      dateTime: time,
+      lastUpdated: Date.now(),
+    });
+    router.push(`/agendar/${organizationId}/${deliveryTypeId}/informacoes`);
   };
 
   return (
@@ -64,6 +79,7 @@ export function DataPageClient({
                   selectedDate={selectedDate}
                   deliveryTypeId={deliveryTypeId}
                   organizationId={organizationId}
+                  onTimeSelected={handleTimeSelected}
                 />
               )}
             </div>

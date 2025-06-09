@@ -2,6 +2,7 @@
 
 import { getQueryClient } from "@/lib/react-query";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider as JotaiProvider } from "jotai";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
@@ -17,8 +18,12 @@ export function Providers({ children, session }: Props) {
 
   return (
     <SessionProvider session={session} refetchOnWindowFocus={false}>
-      <Toaster />
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <JotaiProvider>
+        <Toaster />
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </JotaiProvider>
     </SessionProvider>
   );
 }

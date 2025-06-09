@@ -12,8 +12,14 @@ type AppointmentInput = {
 };
 
 async function createAppointment(input: AppointmentInput) {
+<<<<<<< HEAD
   const response = await fetch("/api/appointments", {
     method: "POST",
+=======
+  console.log(input)
+  const response = await fetch('/api/appointments', {
+    method: 'POST',
+>>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
     headers: {
       "Content-Type": "application/json",
     },

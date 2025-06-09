@@ -11,7 +11,6 @@ import {
   FormProvider,
 } from "@/components/ui/form-skeleton";
 import { Input } from "@/components/ui/input";
-import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@tabler/icons-react";

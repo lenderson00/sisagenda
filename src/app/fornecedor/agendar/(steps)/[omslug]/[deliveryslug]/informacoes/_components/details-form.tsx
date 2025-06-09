@@ -9,8 +9,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { useCreateAppointment } from "@/app/fornecedor/agendar/_hooks/use-create-appointment";
-import { useScheduleData } from "@/app/fornecedor/agendar/_hooks/use-schedule-data";
-import { useSchedulingStore } from "@/app/fornecedor/agendar/_hooks/use-scheduling-store";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,8 +18,10 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { clearFormData, loadFormData, saveFormData } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
+import { useScheduleStore } from "../../_store";
 import { Step1BasicInfo } from "./step-1-basic-info";
 import { Step2Items } from "./step-2-items";
 import { useScheduleStore } from "@/hooks/use-selected-date";
@@ -61,6 +61,7 @@ const steps = [
 
 export function DetailsForm() {
   const router = useRouter();
+<<<<<<< HEAD
   const [currentStep, setCurrentStep] = useState(0);
   const {
     date,
@@ -80,6 +81,27 @@ export function DetailsForm() {
       router.push(`/agendar/${organization}/${deliveryType}`);
     }
   }, [organization, deliveryType, date, router]);
+=======
+  const params = useParams();
+  const [currentStep, setCurrentStep] = useState(0);
+  const { schedule, isStale, clearSchedule } = useScheduleStore();
+
+  const orgSlug = Array.isArray(params.omslug)
+    ? params.omslug[0]
+    : params.omslug;
+  const deliverySlug = Array.isArray(params.deliveryslug)
+    ? params.deliveryslug[0]
+    : params.deliveryslug;
+
+  // Early return if slugs are undefined
+  if (!orgSlug || !deliverySlug) {
+    return null;
+  }
+
+  // Assert types after early return
+  const safeOrgSlug: string = orgSlug;
+  const safeDeliverySlug: string = deliverySlug;
+>>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
 
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsFormSchema),
@@ -95,8 +117,35 @@ export function DetailsForm() {
 
   const createAppointmentMutation = useCreateAppointment();
 
+  // Check for stale schedule data
+  useEffect(() => {
+    if (isStale) {
+      clearSchedule();
+      router.push("/agendar");
+    }
+  }, [isStale, clearSchedule, router]);
+
+  // Load saved form data on mount
+  useEffect(() => {
+    const savedData = loadFormData(safeOrgSlug, safeDeliverySlug);
+    if (savedData) {
+      form.reset(savedData);
+    }
+  }, [safeOrgSlug, safeDeliverySlug, form]);
+
+  // Save form data on changes
+  useEffect(() => {
+    const subscription = form.watch((data) => {
+      if (data) {
+        saveFormData(safeOrgSlug, safeDeliverySlug, data as DetailsFormValues);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, safeOrgSlug, safeDeliverySlug]);
+
   useEffect(() => {
     if (createAppointmentMutation.isSuccess) {
+<<<<<<< HEAD
       clearSchedule();
       router.push("/agendar/sucesso");
     }
@@ -116,6 +165,44 @@ export function DetailsForm() {
       dateTime: date,
       ordemDeCompra,
       observations,
+=======
+      // Clear saved form data and schedule on successful submission
+      clearFormData(safeOrgSlug, safeDeliverySlug);
+      clearSchedule();
+      router.push("/agendar/sucesso");
+    }
+  }, [
+    createAppointmentMutation.isSuccess,
+    router,
+    safeOrgSlug,
+    safeDeliverySlug,
+    clearSchedule,
+  ]);
+
+  const items = form.watch("items");
+
+  async function onSubmit(values: DetailsFormValues) {
+    if (!schedule) {
+      toast.error(
+        "Dados do agendamento não encontrados. Por favor, selecione um novo horário.",
+      );
+      router.push("/agendar");
+      return;
+    }
+
+    if (isStale) {
+      clearSchedule();
+      router.push("/agendar");
+      return;
+    }
+
+    createAppointmentMutation.mutate({
+      organizationId: schedule.organizationId,
+      deliveryTypeId: schedule.deliveryTypeId,
+      dateTime: schedule.dateTime.toISOString(),
+      ordemDeCompra: values.ordemDeCompra,
+      observations: values,
+>>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
     });
   }
 
@@ -131,6 +218,7 @@ export function DetailsForm() {
     setCurrentStep((prev) => prev - 1);
   }
 
+<<<<<<< HEAD
   const isLoading = false;
 
   if (isLoading) {
@@ -151,6 +239,8 @@ export function DetailsForm() {
     );
   }
 
+=======
+>>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
   return (
     <FormProvider {...form}>
       <Form {...form}>
@@ -216,11 +306,20 @@ export function DetailsForm() {
                 {currentStep === steps.length - 1 && (
                   <Button
                     type="submit"
-                    disabled={createAppointmentMutation.isPending}
+                    disabled={
+                      createAppointmentMutation.isPending ||
+                      !form.formState.isValid ||
+                      items?.length === 0 ||
+                      isStale
+                    }
                   >
                     {createAppointmentMutation.isPending
                       ? "Agendando..."
-                      : "Finalizar Agendamento"}
+                      : items?.length === 0
+                        ? "Adicione itens para finalizar o agendamento"
+                        : isStale
+                          ? "Dados do agendamento expirados"
+                          : "Finalizar Agendamento"}
                   </Button>
                 )}
               </div>

@@ -15,10 +15,10 @@ export default function SchedulingSuccessPage() {
         </p>
         <div className="mt-6 flex justify-center gap-4">
           <Button asChild>
-            <Link href="/fornecedor/agendamentos">Ver meus agendamentos</Link>
+            <Link href="/">Ver meus agendamentos</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/fornecedor/agendar">Agendar outro horário</Link>
+            <Link href="/agendar">Agendar outro horário</Link>
           </Button>
         </div>
       </div>
