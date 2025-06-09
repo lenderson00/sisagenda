@@ -1,6 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +20,17 @@ import { z } from "zod";
 
 const schema = z
   .object({
-    password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres"),
+    password: z
+      .string()
+      .min(8, "A senha deve ter pelo menos 8 caracteres")
+      .regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
+      .regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula")
+      .regex(/[0-9]/, "A senha deve conter pelo menos um número")
+      .regex(
+        /[^A-Za-z0-9]/,
+        "A senha deve conter pelo menos um caractere especial",
+      )
+      .max(30, "A senha não pode ter mais de 30 caracteres"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -46,19 +63,13 @@ export function NovaSenhaForm({ email }: NovaSenhaFormProps) {
 
       if (res.ok) {
         toast.success("Senha alterada com sucesso!");
-        // Sign in again with the new password
-        const result = await signIn("credentials", {
+
+        await signIn("credentials", {
           email,
           password: values.password,
-          redirect: false,
+          redirect: true,
+          callbackUrl: "/",
         });
-
-        if (result?.error) {
-          toast.error("Erro ao fazer login com a nova senha");
-          router.push("/entrar");
-        } else {
-          router.push("/");
-        }
       } else {
         toast.error("Erro ao alterar a senha");
       }
@@ -70,22 +81,44 @@ export function NovaSenhaForm({ email }: NovaSenhaFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          type="password"
-          placeholder="Nova senha"
-          {...form.register("password")}
-        />
-        <Input
-          type="password"
-          placeholder="Confirme a nova senha"
-          {...form.register("confirmPassword")}
-        />
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Salvando..." : "Salvar nova senha"}
-        </Button>
-      </form>
-    </Form>
+    <Card className="w-full max-w-sm pb-2">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl">Defina uma nova senha</CardTitle>
+        <CardDescription>Defina uma nova senha para sua conta</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Input
+              type="password"
+              placeholder="Nova senha"
+              {...form.register("password")}
+              className={form.formState.errors.password ? "border-red-500" : ""}
+            />
+            {form.formState.errors.password && (
+              <p className="text-sm text-red-500 mt-1">
+                {form.formState.errors.password.message}
+              </p>
+            )}
+            <Input
+              type="password"
+              placeholder="Confirme a nova senha"
+              {...form.register("confirmPassword")}
+              className={
+                form.formState.errors.confirmPassword ? "border-red-500" : ""
+              }
+            />
+            {form.formState.errors.confirmPassword && (
+              <p className="text-sm text-red-500 mt-1">
+                {form.formState.errors.confirmPassword.message}
+              </p>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Salvando..." : "Salvar nova senha"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
