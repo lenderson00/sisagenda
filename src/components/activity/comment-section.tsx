@@ -28,8 +28,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         ))}
       </div>
 
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
+      <div className="rounded-lg border bg-white">
+        <div className="border-b p-4">
           <h3 className="font-medium text-gray-900">Adicionar comentário</h3>
         </div>
         <CommentEditor onSubmit={(content) => onAddComment(content)} />
