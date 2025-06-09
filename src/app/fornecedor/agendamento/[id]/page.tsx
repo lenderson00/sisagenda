@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { AppointmentHeader } from "./_component/header";
 
 export default async function AgendamentoPage({
   params,
@@ -14,8 +15,13 @@ export default async function AgendamentoPage({
     include: {
       deliveryType: true,
       activities: true,
+      user: true,
     },
   });
 
-  return <div>AgendamentoPage {JSON.stringify(appointment)}</div>;
+  return (
+    <div>
+      <AppointmentHeader appointment={appointment} />
+    </div>
+  );
 }
