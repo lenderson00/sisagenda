@@ -17,14 +17,12 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { Skeleton } from "@/components/ui/skeleton";
 import { clearFormData, loadFormData, saveFormData } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
 import { useScheduleStore } from "../../_store";
 import { Step1BasicInfo } from "./step-1-basic-info";
 import { Step2Items } from "./step-2-items";
-import { useScheduleStore } from "@/hooks/use-selected-date";
 
 const itemSchema = z.object({
   name: z.string().min(1, "Nome do item é obrigatório."),
@@ -61,27 +59,6 @@ const steps = [
 
 export function DetailsForm() {
   const router = useRouter();
-<<<<<<< HEAD
-  const [currentStep, setCurrentStep] = useState(0);
-  const {
-    date,
-    organizationId: organization,
-    deliveryTypeId: deliveryType,
-    clearSchedule,
-  } = useScheduleStore();
-
-  useEffect(() => {
-    if (!organization || !deliveryType) {
-      toast.error("Dados de agendamento inválidos. Redirecionando...");
-      return;
-    }
-
-    if (!!date) {
-      toast.error("Selecione uma data e hora primeiro. Redirecionando...");
-      router.push(`/agendar/${organization}/${deliveryType}`);
-    }
-  }, [organization, deliveryType, date, router]);
-=======
   const params = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const { schedule, isStale, clearSchedule } = useScheduleStore();
@@ -101,7 +78,6 @@ export function DetailsForm() {
   // Assert types after early return
   const safeOrgSlug: string = orgSlug;
   const safeDeliverySlug: string = deliverySlug;
->>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
 
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsFormSchema),
@@ -145,27 +121,6 @@ export function DetailsForm() {
 
   useEffect(() => {
     if (createAppointmentMutation.isSuccess) {
-<<<<<<< HEAD
-      clearSchedule();
-      router.push("/agendar/sucesso");
-    }
-  }, [createAppointmentMutation.isSuccess, router]);
-
-  async function onSubmit(values: DetailsFormValues) {
-    const { ordemDeCompra, ...observations } = values;
-
-    if (!date || !organization || !deliveryType) {
-      toast.error("Faltando dados do agendamento. Tente novamente.");
-      return console.error("Missing data from scheduling store");
-    }
-
-    createAppointmentMutation.mutate({
-      organizationId: organization,
-      deliveryTypeId: deliveryType,
-      dateTime: date,
-      ordemDeCompra,
-      observations,
-=======
       // Clear saved form data and schedule on successful submission
       clearFormData(safeOrgSlug, safeDeliverySlug);
       clearSchedule();
@@ -199,10 +154,9 @@ export function DetailsForm() {
     createAppointmentMutation.mutate({
       organizationId: schedule.organizationId,
       deliveryTypeId: schedule.deliveryTypeId,
-      dateTime: schedule.dateTime.toISOString(),
+      dateTime: new Date(schedule.dateTime),
       ordemDeCompra: values.ordemDeCompra,
       observations: values,
->>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
     });
   }
 
@@ -218,29 +172,6 @@ export function DetailsForm() {
     setCurrentStep((prev) => prev - 1);
   }
 
-<<<<<<< HEAD
-  const isLoading = false;
-
-  if (isLoading) {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <Skeleton className="mx-auto h-8 w-1/2" />
-        </CardHeader>
-        <CardContent className="space-y-4 py-6">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-20 w-full" />
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Skeleton className="h-10 w-24" />
-        </CardFooter>
-      </Card>
-    );
-  }
-
-=======
->>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
   return (
     <FormProvider {...form}>
       <Form {...form}>
@@ -251,78 +182,81 @@ export function DetailsForm() {
                 {steps.map((step, index) => (
                   <div
                     key={step.id}
-                    className="flex items-center gap-2 text-sm"
+                    className="flex flex-col items-center gap-2"
                   >
                     <div
                       className={cn(
-                        "flex h-6 w-6 items-center justify-center rounded-full text-xs",
-                        index === currentStep
-                          ? "bg-primary text-primary-foreground"
-                          : index < currentStep
-                            ? "bg-green-500 text-white"
-                            : "bg-muted text-muted-foreground",
+                        "flex h-8 w-8 items-center justify-center rounded-full border-2",
+                        currentStep >= index
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-muted-foreground",
                       )}
                     >
-                      {index < currentStep ? (
+                      {currentStep > index ? (
                         <Check className="h-4 w-4" />
                       ) : (
-                        index + 1
+                        <span
+                          className={cn(
+                            currentStep === index
+                              ? "text-primary-foreground"
+                              : "text-muted-foreground",
+                          )}
+                        >
+                          {index + 1}
+                        </span>
                       )}
                     </div>
-                    <span
+                    <p
                       className={cn(
-                        index === currentStep
-                          ? "font-semibold text-primary"
+                        "text-sm",
+                        currentStep >= index
+                          ? "text-primary"
                           : "text-muted-foreground",
                       )}
                     >
                       {step.name}
-                    </span>
-                    {index < steps.length - 1 && (
-                      <div className="h-0.5 w-16 bg-border" />
-                    )}
+                    </p>
                   </div>
                 ))}
               </div>
             </CardHeader>
-            <CardContent className="py-6">
+
+            <CardContent>
               {currentStep === 0 && <Step1BasicInfo />}
               {currentStep === 1 && <Step2Items />}
             </CardContent>
+
             <CardFooter className="flex justify-between">
-              <div>
-                {currentStep > 0 && (
-                  <Button type="button" onClick={prevStep} variant="outline">
-                    Voltar
-                  </Button>
-                )}
-              </div>
-              <div className="flex items-center gap-4">
-                {currentStep < steps.length - 1 && (
-                  <Button type="button" onClick={nextStep}>
-                    Próximo
-                  </Button>
-                )}
-                {currentStep === steps.length - 1 && (
-                  <Button
-                    type="submit"
-                    disabled={
-                      createAppointmentMutation.isPending ||
-                      !form.formState.isValid ||
-                      items?.length === 0 ||
-                      isStale
-                    }
-                  >
-                    {createAppointmentMutation.isPending
-                      ? "Agendando..."
-                      : items?.length === 0
-                        ? "Adicione itens para finalizar o agendamento"
-                        : isStale
-                          ? "Dados do agendamento expirados"
-                          : "Finalizar Agendamento"}
-                  </Button>
-                )}
-              </div>
+              {currentStep > 0 && (
+                <Button type="button" variant="secondary" onClick={prevStep}>
+                  Anterior
+                </Button>
+              )}
+
+              {currentStep < steps.length - 1 && (
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={nextStep}
+                  className="ml-auto"
+                >
+                  Próximo
+                </Button>
+              )}
+
+              {currentStep === steps.length - 1 && (
+                <Button
+                  type="submit"
+                  disabled={
+                    createAppointmentMutation.isPending || !items?.length
+                  }
+                  className="ml-auto"
+                >
+                  {createAppointmentMutation.isPending
+                    ? "Agendando..."
+                    : "Confirmar Agendamento"}
+                </Button>
+              )}
             </CardFooter>
           </Card>
         </form>

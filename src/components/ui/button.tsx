@@ -38,6 +38,7 @@ const buttonVariants = cva(
 export type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    isLoading?: boolean;
   };
 
 function Button({
@@ -45,6 +46,7 @@ function Button({
   variant,
   size,
   asChild = false,
+  isLoading = false,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
@@ -54,6 +56,7 @@ function Button({
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
+      disabled={isLoading || props.disabled}
     />
   );
 }

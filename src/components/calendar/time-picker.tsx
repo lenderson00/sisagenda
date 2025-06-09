@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useScheduleStore } from "@/hooks/use-selected-date";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -8,12 +9,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, CalendarIcon, Check, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-<<<<<<< HEAD
-import { useRouter } from "next/navigation";
-import { useScheduleStore } from "@/hooks/use-selected-date";
-=======
->>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
 
 interface TimePickerProps {
   selectedDate: Date;
@@ -33,10 +28,7 @@ export function TimePicker({
   const weekDay = dayjs(selectedDate).format("dddd");
   const describedDate = dayjs(selectedDate).format("DD[ de ]MMMM");
   const router = useRouter();
-<<<<<<< HEAD
   const { setDate } = useScheduleStore();
-=======
->>>>>>> 5deecee57f0abe7d2284ad4814b3a09cff51a570
   // Reset selected time when date changes
   useEffect(() => {
     setSelectedTime(null);
