@@ -252,6 +252,12 @@ enum ActivityType {
   STATUS_CHANGE
   ASSIGNED
   UNASSIGNED
+  RESCHEDULE_REQUESTED
+  RESCHEDULE_CONFIRMED
+  RESCHEDULE_REJECTED
+  SUPPLIER_NO_SHOW
+  DELIVERY_CONFIRMED
+  DELIVERY_REJECTED
   OTHER
 }
 
@@ -263,19 +269,38 @@ model AppointmentActivity {
   content  String?
   metadata Json? // Additional data specific to the activity type
 
+  // Appointment relationship
   appointmentId String
   appointment   Appointment @relation(fields: [appointmentId], references: [id])
 
+  // User who performed the activity
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
+  // Additional fields for better tracking
+  previousStatus AppointmentStatus? // Previous status before the change
+  newStatus      AppointmentStatus? // New status after the change
+  priority       Int?               @default(0) // Priority level of the activity
+  isInternal     Boolean            @default(false) // Whether this is an internal note
+  isVisible      Boolean            @default(true) // Whether this should be visible to users
+
+  // Self-referencing relationship for replies
+  parentId String?
+  parent   AppointmentActivity?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  AppointmentActivity[] @relation("Replies")
+
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Indexes for better query performance
   @@index([appointmentId])
   @@index([userId])
   @@index([createdAt])
   @@index([type])
+  @@index([isInternal])
+  @@index([isVisible])
+  @@index([parentId])
 }
 
 /// Represents different types of audit actions
