@@ -31,10 +31,10 @@ export function useCreateUser(orgId: string, onDialogClose?: () => void) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.list(orgId) });
       if (onDialogClose) onDialogClose();
-      toast.success("Usuário criado com sucesso");
+      toast.success("Militar adicionado com sucesso");
     },
     onError: (error) => {
-      toast.error("Failed to create user");
+      toast.error("Falha ao adicionar militar");
       console.error("Create user error:", error);
     },
   });
@@ -63,10 +63,10 @@ export function useUpdateUser(orgId: string) {
         userKeys.detail(orgId, updatedUser.id),
         updatedUser,
       );
-      toast.success("User updated successfully");
+      toast.success("Militar atualizado com sucesso");
     },
     onError: (error) => {
-      toast.error("Failed to update user");
+      toast.error("Falha ao atualizar militar");
       console.error("Update user error:", error);
     },
   });
@@ -93,10 +93,10 @@ export function useActivateUser(orgId: string) {
         userKeys.detail(orgId, updatedUser.id),
         updatedUser,
       );
-      toast.success("Usuário ativado com sucesso");
+      toast.success("Militar ativado com sucesso");
     },
     onError: (error) => {
-      toast.error("Falha ao ativar usuário");
+      toast.error("Falha ao ativar militar");
       console.error("Activate user error:", error);
     },
   });
@@ -123,10 +123,10 @@ export function useDeactivateUser(orgId: string) {
         userKeys.detail(orgId, updatedUser.id),
         updatedUser,
       );
-      toast.success("Usuário desativado com sucesso");
+      toast.success("Militar desativado com sucesso");
     },
     onError: (error) => {
-      toast.error("Falha ao desativar usuário");
+      toast.error("Falha ao desativar militar");
       console.error("Deactivate user error:", error);
     },
   });

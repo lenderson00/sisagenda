@@ -8,6 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DrawerDialog } from "@/components/ui/dialog-drawer";
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,27 +18,20 @@ import { UserForm } from "./user-form";
 
 export const CreateUserDialog = ({ orgId }: { orgId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
 
   const { mutate: createUser } = useCreateUser(orgId, () => {
     setIsOpen(false);
-    router.refresh();
   });
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-gray-900 hover:bg-gray-800 text-white">
-          <Plus className="mr-2 h-4 w-4" />
-          Add User
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-gray-900">Create New User</DialogTitle>
-        </DialogHeader>
-        <UserForm onSubmit={createUser} onCancel={() => setIsOpen(false)} />
-      </DialogContent>
-    </Dialog>
+    <DrawerDialog
+      title="Adicionar Militar"
+      description="Adicione um novo militar a sua OM"
+      action="Adicionar Militar"
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+    >
+      <UserForm onSubmit={createUser} onCancel={() => setIsOpen(false)} />
+    </DrawerDialog>
   );
 };

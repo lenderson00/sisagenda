@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import type { User } from "@prisma/client";
 import { useForm } from "react-hook-form";
 
@@ -39,19 +40,24 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
     onSubmit(data);
   };
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-6 px-4 md:px-0"
+      >
+        <div className="grid gap-4 md:grid-cols-2 md:gap-6 ">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-900">Full Name</FormLabel>
+                <FormLabel className="text-gray-900">Nome Completo</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter full name"
+                    placeholder="Digite o nome completo"
                     {...field}
                     className="border-gray-300"
                   />
@@ -70,7 +76,7 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
                 <FormControl>
                   <Input
                     type="email"
-                    placeholder="Enter email"
+                    placeholder="Digite o email"
                     {...field}
                     className="border-gray-300"
                   />
@@ -90,7 +96,7 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
                 <FormLabel className="text-gray-900">WhatsApp</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter phone number"
+                    placeholder="Digite o número de WhatsApp"
                     {...field}
                     className="border-gray-300"
                   />
@@ -102,19 +108,22 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
         </div>
 
         <div className="flex justify-end space-x-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            className="border-gray-300 text-gray-700 hover:bg-gray-50"
-          >
-            Cancel
-          </Button>
+          {!isMobile && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              Cancelar
+            </Button>
+          )}
+
           <Button
             type="submit"
-            className="bg-gray-900 hover:bg-gray-800 text-white"
+            className="bg-gray-900 hover:bg-gray-800 text-white w-full md:w-auto"
           >
-            {initialData ? "Update" : "Create"}
+            {initialData ? "Atualizar" : "Adicionar Militar"}
           </Button>
         </div>
       </form>

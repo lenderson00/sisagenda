@@ -26,7 +26,6 @@ import {
   IconMail,
   IconUser,
 } from "@tabler/icons-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   Key,
@@ -78,7 +77,6 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const queryClient = useQueryClient();
 
   const { data: users = [], isLoading: isLoadingUsers } =
     useUsers(organizationId);
@@ -124,7 +122,7 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
 
   return (
     <div className="min-h-[80vh]">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto md:px-6 px-4 md:py-8 py-6">
         {/* Stats Cards */}
         <div className="grid gap-6 md:grid-cols-4 mb-8">
           <Card className="border-gray-200 shadow-none">
@@ -187,10 +185,7 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
         {/* Users Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
           {users.map((user: User) => (
-            <Card
-              key={user.id}
-              className="relative"
-            >
+            <Card key={user.id} className="relative">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
