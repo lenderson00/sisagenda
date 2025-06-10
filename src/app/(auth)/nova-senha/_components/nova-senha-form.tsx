@@ -11,7 +11,7 @@ import {
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/lib/actions/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -63,12 +63,10 @@ export function NovaSenhaForm({ email }: NovaSenhaFormProps) {
 
       if (res.ok) {
         toast.success("Senha alterada com sucesso!");
-
-        await signIn("credentials", {
+        await signIn( {
           email,
           password: values.password,
-          redirect: true,
-          callbackUrl: "/",
+          redirectTo: "/?bem-vindo=true",
         });
       } else {
         toast.error("Erro ao alterar a senha");

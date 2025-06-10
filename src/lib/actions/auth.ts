@@ -3,13 +3,13 @@
 import { signIn as signInAction, signOut as signOutAction } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
-export const signIn = async (credentials: { email: string; password: string }) => {
+export const signIn = async (credentials: { email: string; password: string, redirectTo?: string }) => {
   try {
     await signInAction("credentials", {
       email: credentials.email,
       password: credentials.password,
       redirect: true,
-      redirectTo: "/",
+      redirectTo: credentials.redirectTo || "/",
     });
     revalidatePath("/");
   } catch (error) {
@@ -19,10 +19,10 @@ export const signIn = async (credentials: { email: string; password: string }) =
 
 };
 
-export const signOut = async () => {
+export const signOut = async ({ redirectTo }: { redirectTo?: string }) => {
   await signOutAction({
     redirect: true,
-    redirectTo: "/",
+    redirectTo: redirectTo || "/",
   });
   revalidatePath("/");
 };
