@@ -2,10 +2,11 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import type { Organization } from "@prisma/client";
-import { IconUser } from "@tabler/icons-react";
+import { IconPlus, IconUser } from "@tabler/icons-react";
 import { AdminList } from "./_components/admin-list";
-import { CreateAdminDialog } from "./_components/create-admin-dialog";
 import { useAdmins } from "./_hooks/use-admins";
+import { DrawerDialog } from "@/components/ui/dialog-drawer";
+import { AdminForm } from "./_components/admin-form";
 
 interface OrganizationAdminClientProps {
   organization: Organization;
@@ -18,11 +19,11 @@ export function OrganizationAdminClient({
 
   return (
     <div className="h-full">
-      <div className="border-b bg-gray-50 py-8 px-8">
+      <div className="border-b bg-gray-50 py-4 md:py-8 px-4 md:px-0 ">
         <div className="container mx-auto flex items-center justify-between mt-4">
           <div>
             <div className="flex gap-2">
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-xl md:max-w-xl text-balance md:text-3xl font-bold tracking-tight text-gray-900">
                 {organization.name}
               </h1>
             </div>
@@ -31,7 +32,7 @@ export function OrganizationAdminClient({
         </div>
       </div>
 
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4 md:px-0">
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">Loading...</p>
@@ -55,7 +56,9 @@ export function OrganizationAdminClient({
                     Adicione um administrador para gerenciar esta organização.
                   </p>
                 </div>
-                <CreateAdminDialog organizationId={organization.id} />
+                <DrawerDialog action="Adicionar Administrador" icon={IconPlus} title="Adicionar Administrador" description="Adicione um administrador para gerenciar esta organização.">
+                  <AdminForm organizationId={organization.id} />
+                </DrawerDialog>
               </div>
             </CardContent>
           </Card>
