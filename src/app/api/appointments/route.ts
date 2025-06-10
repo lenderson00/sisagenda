@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { auth } from '@/lib/auth'
+import { generateInternalId } from '@/lib/nanoid';
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from "next/server";
 
@@ -111,6 +112,7 @@ export async function POST(req: Request) {
         observations: validatedInput.observations,
         userId: user.id,
         status: 'PENDING_CONFIRMATION',
+        internalId: generateInternalId(),
       },
     })
 

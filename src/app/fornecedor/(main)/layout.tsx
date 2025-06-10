@@ -1,4 +1,5 @@
 import Footer from "@/components/footer";
+import { TopBar } from "@/components/top-bar";
 import { TopNavigation } from "@/components/top-navigation";
 
 const tabs = [
@@ -9,8 +10,8 @@ const tabs = [
 const FornecedorLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col">
-      <TopNavigation tabs={tabs} />
-      <div className="min-h-[60vh] bg-neutral-50">{children}</div>
+      <TopBar className="border-b" />
+      <div className="min-h-[60vh] bg-neutral-50 px-4 ">{children}</div>
       <Footer />
     </div>
   );

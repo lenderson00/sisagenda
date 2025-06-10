@@ -67,7 +67,7 @@ export async function POST(req: Request) {
         description: validatedData.description,
         role: validatedData.role,
         isActive: validatedData.isActive,
-        comimsupId: validatedData.role === "DEPOSITO" ? validatedData.comimsupId : null,
+        comimsupId: validatedData.role === "DEPOSITO" && validatedData.comimsupId !== "" ? validatedData.comimsupId : null,
       },
     });
 

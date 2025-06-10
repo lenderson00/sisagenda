@@ -79,7 +79,10 @@ export function SupplierForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 px-4 md:px-0"
+      >
         <FormField
           control={form.control}
           name="name"

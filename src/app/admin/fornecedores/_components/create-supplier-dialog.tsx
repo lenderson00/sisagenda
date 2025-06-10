@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DrawerDialog } from "@/components/ui/dialog-drawer";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { SupplierForm } from "./supplier-form";
@@ -20,19 +21,14 @@ export function CreateSupplierDialog({ orgId }: CreateSupplierDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Novo Fornecedor
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Novo Fornecedor</DialogTitle>
-        </DialogHeader>
-        <SupplierForm organizationId={orgId} onSuccess={() => setOpen(false)} />
-      </DialogContent>
-    </Dialog>
+    <DrawerDialog
+      action="Adicionar Fornecedor"
+      isOpen={open}
+      setIsOpen={setOpen}
+      title="Novo Fornecedor"
+      description="Adicione um novo fornecedor para gerenciar suas operações."
+    >
+      <SupplierForm organizationId={orgId} onSuccess={() => setOpen(false)} />
+    </DrawerDialog>
   );
 }
