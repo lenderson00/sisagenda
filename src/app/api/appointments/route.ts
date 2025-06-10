@@ -1,8 +1,8 @@
-import { z } from 'zod'
+import { z } from "zod";
 
-import { auth } from '@/lib/auth'
-import { generateInternalId } from '@/lib/nanoid';
-import { prisma } from '@/lib/prisma'
+import { auth } from "@/lib/auth";
+import { generateInternalId } from "@/lib/nanoid";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 const createAppointmentInput = z.object({
@@ -11,7 +11,7 @@ const createAppointmentInput = z.object({
   dateTime: z.string().datetime(),
   ordemDeCompra: z.string(),
   observations: z.record(z.any()),
-})
+});
 
 export async function GET() {
   const session = await auth();
@@ -64,42 +64,45 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || !session.user.email) {
-    return new Response(JSON.stringify({ error: 'Usuário não autenticado.' }), {
+    return new Response(JSON.stringify({ error: "Usuário não autenticado." }), {
       status: 401,
-    })
+    });
   }
 
   try {
-    const json = await req.json()
-    const validatedInput = createAppointmentInput.parse(json)
+    const json = await req.json();
+    const validatedInput = createAppointmentInput.parse(json);
 
     const deliverySettings = await prisma.availabilitySettings.findUnique({
       where: {
         deliveryTypeId: validatedInput.deliveryTypeId,
       },
-    })
+    });
 
     if (!deliverySettings) {
       return new Response(
         JSON.stringify({
           error:
-            'Configurações de agendamento não encontradas para este tipo de entrega.',
+            "Configurações de agendamento não encontradas para este tipo de entrega.",
         }),
         { status: 404 },
-      )
+      );
     }
 
     const user = await prisma.user.findUnique({
       where: {
         email: session.user.email,
       },
-    })
+    });
 
     if (!user) {
-      return new Response(JSON.stringify({ error: 'Usuário não encontrado.' }), { status: 404 })
+      return new Response(
+        JSON.stringify({ error: "Usuário não encontrado." }),
+        { status: 404 },
+      );
     }
 
     const appointment = await prisma.appointment.create({
@@ -111,21 +114,20 @@ export async function POST(req: Request) {
         ordemDeCompra: validatedInput.ordemDeCompra,
         observations: validatedInput.observations,
         userId: user.id,
-        status: 'PENDING_CONFIRMATION',
+        status: "PENDING_CONFIRMATION",
         internalId: generateInternalId(),
       },
-    })
+    });
 
-    return new Response(JSON.stringify(appointment), { status: 201 })
+    return new Response(JSON.stringify(appointment), { status: 201 });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify(error.issues), { status: 400 })
+      return new Response(JSON.stringify(error.issues), { status: 400 });
     }
 
     return new Response(
-      JSON.stringify({ error: 'Ocorreu um erro ao criar o agendamento.' }),
+      JSON.stringify({ error: "Ocorreu um erro ao criar o agendamento." }),
       { status: 500 },
-    )
+    );
   }
 }

@@ -18,7 +18,7 @@ export function useRouterStuff() {
     opts?: {
       include?: string[];
       exclude?: string[];
-    }
+    },
   ) => {
     let newParams = new URLSearchParams(searchParams);
     if (opts?.include && Array.isArray(opts.include)) {
@@ -86,7 +86,7 @@ export function useRouterStuff() {
         router.push(newPath, { scroll });
       }
     },
-    [searchParams, pathname, router]
+    [searchParams, pathname, router],
   );
 
   return {

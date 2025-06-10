@@ -12,7 +12,7 @@ export const GET = async () => {
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
     include: {
-      organization: true
+      organization: true,
     },
   });
 

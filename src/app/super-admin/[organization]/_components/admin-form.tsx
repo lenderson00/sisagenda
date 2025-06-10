@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateAdmin } from "../_hooks/use-create-admin";
-import { useQueryClient } from "@tanstack/react-query";
 
 const adminFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
@@ -47,7 +47,9 @@ export function AdminForm({ organizationId }: AdminFormProps) {
       {
         onSuccess: () => {
           form.reset();
-          queryClient.invalidateQueries({ queryKey: ["admins", organizationId] });
+          queryClient.invalidateQueries({
+            queryKey: ["admins", organizationId],
+          });
         },
       },
     );
@@ -87,7 +89,11 @@ export function AdminForm({ organizationId }: AdminFormProps) {
         />
 
         <div className="flex justify-end gap-2 mt-4">
-          <Button type="submit" disabled={createAdmin.isPending} className="w-full">
+          <Button
+            type="submit"
+            disabled={createAdmin.isPending}
+            className="w-full"
+          >
             {createAdmin.isPending ? "Criando..." : "Criar Administrador"}
           </Button>
         </div>

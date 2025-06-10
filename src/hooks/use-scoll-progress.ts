@@ -17,7 +17,6 @@ export function useScrollProgress(ref: RefObject<HTMLElement | null>) {
     );
   }, [ref]);
 
-
   const resizeObserverEntry = useResizeObserver(ref);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

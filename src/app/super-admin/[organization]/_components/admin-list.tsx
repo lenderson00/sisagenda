@@ -150,10 +150,7 @@ export function AdminList({
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
         {initialAdmins.map((admin) => (
-          <Card
-            key={admin.id}
-            className="relative"
-          >
+          <Card key={admin.id} className="relative">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">

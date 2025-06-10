@@ -21,9 +21,7 @@ export function Providers({ children, session }: Props) {
       <JotaiProvider>
         <Toaster />
         <QueryClientProvider client={queryClient}>
-          <ModalProvider>
-            {children}
-          </ModalProvider>
+          <ModalProvider>{children}</ModalProvider>
         </QueryClientProvider>
       </JotaiProvider>
     </SessionProvider>

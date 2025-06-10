@@ -6,7 +6,7 @@ type ScheduleStore = {
   deliveryTypeId: string;
   dateTime: Date;
   lastUpdated: number; // timestamp for data freshness
-}
+};
 
 const STORAGE_KEY = "schedule_store";
 const MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -14,10 +14,10 @@ const MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
 // Validate schedule data
 const isValidSchedule = (data: any): data is ScheduleStore => {
   if (!data) return false;
-  if (typeof data.organizationId !== 'string') return false;
-  if (typeof data.deliveryTypeId !== 'string') return false;
+  if (typeof data.organizationId !== "string") return false;
+  if (typeof data.deliveryTypeId !== "string") return false;
   if (!(data.dateTime instanceof Date)) return false;
-  if (typeof data.lastUpdated !== 'number') return false;
+  if (typeof data.lastUpdated !== "number") return false;
   return true;
 };
 
@@ -45,21 +45,21 @@ export const scheduleStore = atomWithStorage<ScheduleStore | null>(
 
         // Validate data structure
         if (!isValidSchedule(parsed)) {
-          console.warn('Invalid schedule data found in storage');
+          console.warn("Invalid schedule data found in storage");
           localStorage.removeItem(key);
           return null;
         }
 
         // Check if data is stale
         if (isStale(parsed)) {
-          console.warn('Stale schedule data found in storage');
+          console.warn("Stale schedule data found in storage");
           localStorage.removeItem(key);
           return null;
         }
 
         return parsed;
       } catch (error) {
-        console.error('Error reading schedule from storage:', error);
+        console.error("Error reading schedule from storage:", error);
         localStorage.removeItem(key);
         return null;
       }
@@ -70,29 +70,29 @@ export const scheduleStore = atomWithStorage<ScheduleStore | null>(
           // Add timestamp when saving
           const dataToStore = {
             ...value,
-            lastUpdated: Date.now()
+            lastUpdated: Date.now(),
           };
           localStorage.setItem(key, JSON.stringify(dataToStore));
         } else {
           localStorage.removeItem(key);
         }
       } catch (error) {
-        console.error('Error saving schedule to storage:', error);
+        console.error("Error saving schedule to storage:", error);
       }
     },
     removeItem: (key) => {
       try {
         localStorage.removeItem(key);
       } catch (error) {
-        console.error('Error removing schedule from storage:', error);
+        console.error("Error removing schedule from storage:", error);
       }
     },
-  }
+  },
 );
 
 // Listen for storage changes across tabs
-if (typeof window !== 'undefined') {
-  window.addEventListener('storage', (event) => {
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
     if (event.key === STORAGE_KEY) {
       // Force a re-render when storage changes in another tab
       window.location.reload();
@@ -107,7 +107,7 @@ export const useScheduleStore = () => {
     if (newSchedule) {
       setSchedule({
         ...newSchedule,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       });
     } else {
       setSchedule(null);
@@ -122,6 +122,6 @@ export const useScheduleStore = () => {
     schedule,
     setSchedule: updateSchedule,
     clearSchedule,
-    isStale: schedule ? isStale(schedule) : true
+    isStale: schedule ? isStale(schedule) : true,
   };
 };

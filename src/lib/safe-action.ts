@@ -63,12 +63,16 @@ export const authActionClient = actionClient.use(async ({ next }) => {
       militares: {
         where: {
           id: sessionUser.id,
-        }
-      }
+        },
+      },
     },
   });
 
-  if (!organization || !organization.militares || organization.militares.length === 0) {
+  if (
+    !organization ||
+    !organization.militares ||
+    organization.militares.length === 0
+  ) {
     throw new Error("Unauthorized: Organization required.");
   }
 
@@ -80,10 +84,12 @@ export const authActionClient = actionClient.use(async ({ next }) => {
   });
 });
 
-export const authSuperAdminActionClient = authUserActionClient.use(async ({ next, ctx }) => {
-  if (ctx.user.role !== "SUPER_ADMIN") {
-    throw new Error("Unauthorized: Super admin required.");
-  }
+export const authSuperAdminActionClient = authUserActionClient.use(
+  async ({ next, ctx }) => {
+    if (ctx.user.role !== "SUPER_ADMIN") {
+      throw new Error("Unauthorized: Super admin required.");
+    }
 
-  return next();
-});
+    return next();
+  },
+);

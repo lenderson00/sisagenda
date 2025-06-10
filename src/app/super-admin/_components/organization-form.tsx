@@ -23,8 +23,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateOrganization } from "../_hooks/use-create-organization";
-import { useUpdateOrganization } from "../_hooks/use-update-organization";
 import { useOrganizationsByRole } from "../_hooks/use-organizations";
+import { useUpdateOrganization } from "../_hooks/use-update-organization";
 
 const organizationFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
@@ -82,7 +82,7 @@ export function OrganizationForm({
             form.reset();
             onSuccess?.();
           },
-        }
+        },
       );
     } else {
       createOrganization.mutate(values, {
@@ -94,7 +94,8 @@ export function OrganizationForm({
     }
   }
 
-  const isLoading = createOrganization.isPending || updateOrganization.isPending;
+  const isLoading =
+    createOrganization.isPending || updateOrganization.isPending;
 
   return (
     <Form {...form}>
@@ -170,40 +171,42 @@ export function OrganizationForm({
           )}
         />
         {/* TODO: Add comimsupId field - it should be a select showing other organizations with role COMIMSUP. Hide if current role is COMIMSUP */}
-        {form.watch("role") === "DEPOSITO" && comimsups.data && comimsups.data.length > 0 && (
-          <FormField
-            control={form.control}
-            name="comimsupId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>COMIMSUP</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a COMIMSUP" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {comimsups.data?.map((comimsup) => (
-                        <SelectItem key={comimsup.id} value={comimsup.id}>
-                          {comimsup.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+        {form.watch("role") === "DEPOSITO" &&
+          comimsups.data &&
+          comimsups.data.length > 0 && (
+            <FormField
+              control={form.control}
+              name="comimsupId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>COMIMSUP</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a COMIMSUP" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {comimsups.data?.map((comimsup) => (
+                          <SelectItem key={comimsup.id} value={comimsup.id}>
+                            {comimsup.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
         {/* TODO: Add isActive field - it should be a switch */}
 
-
-
         <div className="flex w-full flex-1">
-
           <Button type="submit" disabled={isLoading} className="w-full mt-2">
             {isLoading
               ? isEditing

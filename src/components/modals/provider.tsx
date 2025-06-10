@@ -12,7 +12,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
   useEffect(
     () => setShowWelcomeModal(searchParams.has("bem-vindo")),
-    [searchParams, setShowWelcomeModal]
+    [searchParams, setShowWelcomeModal],
   );
 
   return (

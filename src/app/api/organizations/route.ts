@@ -21,7 +21,11 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
-    const role = searchParams.get("role") as "COMIMSUP" | "DEPOSITO" | "COMRJ" | undefined;
+    const role = searchParams.get("role") as
+      | "COMIMSUP"
+      | "DEPOSITO"
+      | "COMRJ"
+      | undefined;
 
     const organizations = await prisma.organization.findMany({
       where: {
@@ -67,7 +71,10 @@ export async function POST(req: Request) {
         description: validatedData.description,
         role: validatedData.role,
         isActive: validatedData.isActive,
-        comimsupId: validatedData.role === "DEPOSITO" && validatedData.comimsupId !== "" ? validatedData.comimsupId : null,
+        comimsupId:
+          validatedData.role === "DEPOSITO" && validatedData.comimsupId !== ""
+            ? validatedData.comimsupId
+            : null,
       },
     });
 

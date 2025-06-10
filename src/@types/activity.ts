@@ -1,4 +1,4 @@
-import type { AppointmentActivity, User } from '@prisma/client';
+import type { AppointmentActivity, User } from "@prisma/client";
 
 export type ActivityComment = AppointmentActivity & {
   user: User;

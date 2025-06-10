@@ -149,7 +149,9 @@ export async function getCalculatedAvailability(
     },
   });
 
-  const availabilityRules = deliveryType?.availabilityRules?.rule as unknown as SchedulingRule[] || []
+  const availabilityRules =
+    (deliveryType?.availabilityRules?.rule as unknown as SchedulingRule[]) ||
+    [];
 
   if (!deliveryType) {
     throw new Error(`DeliveryType with id ${deliveryTypeId} not found.`);
@@ -193,7 +195,9 @@ export async function getCalculatedAvailability(
   const availability = deliveryType.availability[0];
 
   if (!duration || !availability) {
-    throw new Error(`Duration or availability not found for DeliveryType ${deliveryTypeId}.`);
+    throw new Error(
+      `Duration or availability not found for DeliveryType ${deliveryTypeId}.`,
+    );
   }
 
   const baseDurationMinutes = duration;

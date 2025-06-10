@@ -1,15 +1,21 @@
 "use server";
 
-import { auth, signIn as signInAction, signOut as signOutAction } from "@/lib/auth";
+import {
+  auth,
+  signIn as signInAction,
+  signOut as signOutAction,
+} from "@/lib/auth";
+import { unstable_update } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { unstable_update } from "@/lib/auth";
 
-export const baseSignIn = async (credentials: { email: string; password: string }) => {
-
+export const baseSignIn = async (credentials: {
+  email: string;
+  password: string;
+}) => {
   try {
     await signInAction("credentials", {
       email: credentials.email,
@@ -24,7 +30,10 @@ export const baseSignIn = async (credentials: { email: string; password: string 
   }
 };
 
-export const signIn = async (credentials: { email: string; password: string }) => {
+export const signIn = async (credentials: {
+  email: string;
+  password: string;
+}) => {
   const result = await baseSignIn(credentials);
   if (result.error) {
     return result;

@@ -22,7 +22,6 @@ export const TopBar = ({ className }: { className?: string }) => {
       </div>
 
       <div className="flex items-center gap-4">
-
         <AccountAvatar />
       </div>
     </div>

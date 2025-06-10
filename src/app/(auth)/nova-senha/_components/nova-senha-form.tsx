@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPassword, signIn } from "@/lib/actions/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

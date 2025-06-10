@@ -17,13 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form-skeleton";
 import { Input } from "@/components/ui/input";
+import { signIn } from "@/lib/actions/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@tabler/icons-react";
 import type React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { signIn } from "@/lib/actions/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Por favor, insira um email válido"),

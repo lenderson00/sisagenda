@@ -171,10 +171,7 @@ export function SuppliersPageClient({
         {/* Suppliers Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
           {suppliers.map((supplier: Supplier) => (
-            <Card
-              key={supplier.id}
-              className="relative transition-shadow"
-            >
+            <Card key={supplier.id} className="relative transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">

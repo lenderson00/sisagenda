@@ -2,9 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
 
   if (!session) {

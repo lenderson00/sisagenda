@@ -17,15 +17,19 @@ export const useUser = () => {
     refetchIntervalInBackground: false,
   });
 
-
-  if (!session || !session.user || userResult.isLoading || userResult.isError || !userResult.data) {
+  if (
+    !session ||
+    !session.user ||
+    userResult.isLoading ||
+    userResult.isError ||
+    !userResult.data
+  ) {
     return {
       user: null,
       isAuthenticated: false,
       isLoading: true,
     };
   }
-
 
   return {
     user: userResult.data,

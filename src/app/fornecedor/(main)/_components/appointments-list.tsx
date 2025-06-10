@@ -135,10 +135,7 @@ export function AppointmentsList({
   const renderGridView = () => (
     <div className="grid gap-6 md:grid-cols-2">
       {paginatedAppointments.map((appointment) => (
-        <Card
-          key={appointment.id}
-          className="bg-white border-gray-200"
-        >
+        <Card key={appointment.id} className="bg-white border-gray-200">
           <div className="p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">

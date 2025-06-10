@@ -6,12 +6,19 @@ export function getStorageKey(orgSlug: string, deliverySlug: string) {
   return `${STORAGE_KEY_PREFIX}${orgSlug}_${deliverySlug}`;
 }
 
-export function saveFormData(orgSlug: string, deliverySlug: string, data: DetailsFormValues) {
+export function saveFormData(
+  orgSlug: string,
+  deliverySlug: string,
+  data: DetailsFormValues,
+) {
   const key = getStorageKey(orgSlug, deliverySlug);
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-export function loadFormData(orgSlug: string, deliverySlug: string): DetailsFormValues | null {
+export function loadFormData(
+  orgSlug: string,
+  deliverySlug: string,
+): DetailsFormValues | null {
   const key = getStorageKey(orgSlug, deliverySlug);
   const data = localStorage.getItem(key);
   if (!data) return null;

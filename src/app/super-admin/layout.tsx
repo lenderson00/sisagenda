@@ -1,7 +1,6 @@
 import Footer from "@/components/footer";
 import { TopBar } from "@/components/top-bar";
 
-
 const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col">

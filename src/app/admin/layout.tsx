@@ -35,7 +35,7 @@ const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </header>
             <div className="min-h-[60vh] pt-16 bg-background">{children}</div>
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </ScrollArea>
       </SidebarInset>

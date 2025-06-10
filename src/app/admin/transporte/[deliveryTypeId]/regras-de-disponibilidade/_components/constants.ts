@@ -1,4 +1,11 @@
-import { Calendar, CalendarDays, CalendarOff, CalendarX, Clock, Repeat } from "lucide-react";
+import {
+  Calendar,
+  CalendarDays,
+  CalendarOff,
+  CalendarX,
+  Clock,
+  Repeat,
+} from "lucide-react";
 import { WeekOfMonth } from "./types";
 
 export const ruleTypeOptions = [
@@ -19,10 +26,11 @@ export const ruleTypeOptions = [
   {
     value: "BLOCK_SPECIFIC_WEEK_DAYS",
     label: "Bloquear Dias Específicos da Semana",
-    description: "Bloqueia dias específicos de uma semana (ex: todas as Segundas)",
+    description:
+      "Bloqueia dias específicos de uma semana (ex: todas as Segundas)",
     icon: CalendarDays,
     color: "bg-blue-50 border-blue-200 text-blue-700",
-  }
+  },
 ];
 
 export const weekDayOptions = [
@@ -44,13 +52,15 @@ export const recurrenceOptions = [
   {
     value: "ONE_TIME",
     label: "Uma vez",
-    description: "Aplica-se apenas à ocorrência atual (ex: esta data, esta semana)",
+    description:
+      "Aplica-se apenas à ocorrência atual (ex: esta data, esta semana)",
     icon: CalendarX,
   },
   {
     value: "RECURRING",
     label: "Recorrente",
-    description: "Aplica-se à ocorrência atual e todas as futuras (ex: toda Segunda, toda semana)",
+    description:
+      "Aplica-se à ocorrência atual e todas as futuras (ex: toda Segunda, toda semana)",
     icon: Repeat,
   },
 ];

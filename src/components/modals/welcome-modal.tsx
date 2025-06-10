@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
+import { useRouterStuff } from "@/hooks/use-router-stuffs";
+import { cn } from "@/lib/utils";
 import {
   type Dispatch,
   type SetStateAction,
@@ -7,8 +9,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { cn } from "@/lib/utils";
-import { useRouterStuff } from "@/hooks/use-router-stuffs";
 
 function WelcomeModal({
   showWelcomeModal,
@@ -76,6 +76,6 @@ export function useWelcomeModal() {
       setShowWelcomeModal,
       WelcomeModal: WelcomeModalCallback,
     }),
-    [WelcomeModalCallback]
+    [WelcomeModalCallback],
   );
 }

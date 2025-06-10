@@ -9,7 +9,9 @@ export async function getOrganizations() {
   return response.json();
 }
 
-export async function getOrganizationsByRole(role: "COMIMSUP" | "DEPOSITO" | "COMRJ") {
+export async function getOrganizationsByRole(
+  role: "COMIMSUP" | "DEPOSITO" | "COMRJ",
+) {
   const response = await fetch(`/api/organizations?role=${role}`);
   if (!response.ok) {
     throw new Error("Failed to fetch organizations");
@@ -24,10 +26,11 @@ export function useOrganizations() {
   });
 }
 
-export function useOrganizationsByRole(role: "COMIMSUP" | "DEPOSITO" | "COMRJ") {
+export function useOrganizationsByRole(
+  role: "COMIMSUP" | "DEPOSITO" | "COMRJ",
+) {
   return useQuery<Organization[]>({
     queryKey: ["organizations", role],
     queryFn: () => getOrganizationsByRole(role),
   });
 }
-

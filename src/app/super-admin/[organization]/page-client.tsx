@@ -1,12 +1,12 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { DrawerDialog } from "@/components/ui/dialog-drawer";
 import type { Organization } from "@prisma/client";
 import { IconPlus, IconUser } from "@tabler/icons-react";
+import { AdminForm } from "./_components/admin-form";
 import { AdminList } from "./_components/admin-list";
 import { useAdmins } from "./_hooks/use-admins";
-import { DrawerDialog } from "@/components/ui/dialog-drawer";
-import { AdminForm } from "./_components/admin-form";
 
 interface OrganizationAdminClientProps {
   organization: Organization;
@@ -56,7 +56,12 @@ export function OrganizationAdminClient({
                     Adicione um administrador para gerenciar esta organização.
                   </p>
                 </div>
-                <DrawerDialog action="Adicionar Administrador" icon={IconPlus} title="Adicionar Administrador" description="Adicione um administrador para gerenciar esta organização.">
+                <DrawerDialog
+                  action="Adicionar Administrador"
+                  icon={IconPlus}
+                  title="Adicionar Administrador"
+                  description="Adicione um administrador para gerenciar esta organização."
+                >
                   <AdminForm organizationId={organization.id} />
                 </DrawerDialog>
               </div>

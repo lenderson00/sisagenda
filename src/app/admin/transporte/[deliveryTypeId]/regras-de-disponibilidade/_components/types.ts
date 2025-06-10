@@ -28,11 +28,10 @@ export interface BlockSpecificWeekDaysRule {
   comment: string;
 }
 
-
 export type AvailabilityExceptionRule =
   | BlockWholeDayRule
   | BlockTimeRangeRule
-  | BlockSpecificWeekDaysRule
+  | BlockSpecificWeekDaysRule;
 
 export interface RulesSidebarProps {
   open: boolean;
