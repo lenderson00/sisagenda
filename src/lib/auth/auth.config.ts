@@ -9,9 +9,7 @@ export const authOptions: NextAuthConfig = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    jwt: async ({ token, user, trigger, session }) => {
-      updateTokenIfValid(trigger, session, token);
-
+    jwt: async ({ token, user }) => {
       if (user) {
         const u = user as User;
         token.role = u.role;
@@ -40,21 +38,3 @@ export const authOptions: NextAuthConfig = {
     signOut: "/entrar?deslogado=true",
   },
 };
-
-
-function updateTokenIfValid(trigger: any, session: any, token: any) {
-  // Verifica se o gatilho é 'update'
-  if (trigger !== "update") {
-    return; // Sai da função se não for o caso
-  }
-
-  // Valida e atualiza a imagem, se presente
-  if (
-    session.user.mustChangePassword &&
-    typeof session.user.mustChangePassword === "boolean" &&
-    session.user.mustChangePassword === true
-  ) {
-    token.mustChangePassword = session.user.mustChangePassword;
-  }
-
-}
