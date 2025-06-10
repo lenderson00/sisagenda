@@ -55,9 +55,11 @@ const configMain = [
   },
 ];
 
-export const AdminSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
+export const AdminSidebar = ({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) => {
   return (
-    <Sidebar collapsible="icon" variant="inset"  {...props}>
+    <Sidebar collapsible="icon" variant="inset" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -81,15 +83,8 @@ export const AdminSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>)
         <NavMain items={configMain} title="" className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser
-          user={{
-            name: "John Doe",
-            email: "john.doe@example.com",
-            image: "https://github.com/shadcn.png",
-          }}
-        />
+        <NavUser />
       </SidebarFooter>
-
     </Sidebar>
   );
 };
