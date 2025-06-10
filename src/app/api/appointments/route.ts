@@ -118,7 +118,7 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify(appointment), { status: 201 })
   } catch (error) {
-    console.error('Error creating appointment:', error)
+
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 400 })
     }
