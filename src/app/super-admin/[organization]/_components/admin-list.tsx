@@ -71,7 +71,7 @@ export function AdminList({
         : `/api/users/${admin.id}/activate`;
 
       const response = await fetch(endPoint, {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -152,7 +152,7 @@ export function AdminList({
         {initialAdmins.map((admin) => (
           <Card
             key={admin.id}
-            className="relative hover:shadow-md transition-shadow"
+            className="relative"
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">

@@ -101,7 +101,7 @@ export function DeliveryTypesPageClient({
               href={`/admin/transporte/${deliveryType.id}`}
               className="block"
             >
-              <Card className="relative hover:shadow-md transition-shadow">
+              <Card className="relative">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">

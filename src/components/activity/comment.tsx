@@ -58,7 +58,7 @@ export const DeliveryCommentItem: React.FC<DeliveryCommentItemProps> = ({
 
   return (
     <div className={`${isReply ? "ml-8" : ""} animate-fade-in`}>
-      <div className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-all duration-200">
+      <div className="bg-white rounded-xl border transition-all duration-200">
         {/* Header do comentário */}
         <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-gray-50 to-gray-25">
           <div className="flex items-center space-x-3">

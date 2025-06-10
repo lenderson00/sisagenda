@@ -121,7 +121,7 @@ export function RuleCard({ rule, index, onEdit }: RuleCardProps) {
       transition={{ duration: 0.2 }}
     >
       <Card
-        className={cn("transition-all hover:shadow-md cursor-pointer", color)}
+        className={cn("transition-all cursor-pointer", color)}
         onClick={onEdit}
       >
         <CardContent className="p-3">

@@ -189,7 +189,7 @@ export function UsersPageClient({ organizationId }: UsersPageClientProps) {
           {users.map((user: User) => (
             <Card
               key={user.id}
-              className="relative hover:shadow-md transition-shadow"
+              className="relative"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">

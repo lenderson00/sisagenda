@@ -137,7 +137,7 @@ export function AppointmentsList({
       {paginatedAppointments.map((appointment) => (
         <Card
           key={appointment.id}
-          className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+          className="bg-white border-gray-200"
         >
           <div className="p-5">
             <div className="flex items-start justify-between mb-3">

@@ -165,7 +165,7 @@ export function TimePicker({
                         // Available states
                         isAvailable &&
                           !isSelected &&
-                          "bg-white hover:bg-slate-50 text-slate-900 cursor-pointer border-slate-200 hover:border-slate-300 hover:shadow-sm focus:ring-sky-500",
+                          "bg-white hover:bg-slate-50 text-slate-900 cursor-pointer border-slate-200 hover:border-slate-300  focus:ring-sky-500",
                         // Selected state
                         isSelected &&
                           "bg-sky-500 text-white border-sky-500 shadow-md focus:ring-sky-400",
@@ -275,7 +275,7 @@ export function TimePicker({
                 "w-full h-12 text-sm font-medium transition-all duration-200",
                 "flex items-center justify-center gap-2",
                 selectedTime
-                  ? "bg-sky-500 hover:bg-sky-600 text-white shadow-md hover:shadow-lg"
+                  ? "bg-sky-500 hover:bg-sky-600 text-white"
                   : "bg-slate-100 text-slate-400 cursor-not-allowed",
               )}
             >

@@ -173,7 +173,7 @@ export function SuppliersPageClient({
           {suppliers.map((supplier: Supplier) => (
             <Card
               key={supplier.id}
-              className="relative hover:shadow-md transition-shadow"
+              className="relative transition-shadow"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">

@@ -132,7 +132,7 @@ export const AppointmentTimelineEventItem: React.FC<
       </div>
 
       {/* Conteúdo do evento */}
-      <div className="min-w-0 flex-1 rounded-lg border bg-white shadow-sm transition-shadow duration-200 hover:shadow-md">
+      <div className="min-w-0 flex-1 rounded-lg border bg-white shadow-sm transition-shadow duration-200">
         <div className="p-4">
           {/* Header do evento */}
           <div className="mb-2 flex items-center justify-between">
