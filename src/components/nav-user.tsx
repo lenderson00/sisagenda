@@ -26,20 +26,31 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { IconBuilding, IconUsers } from "@tabler/icons-react";
+import { useUser } from "@/hooks/use-user";
+import { Skeleton } from "./ui/skeleton";
+import { signOut } from "next-auth/react";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    image: string;
-  };
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
+  const { user } = useUser();
+
+  if (!user) {
+    return <Skeleton className="h-12 w-full" />;
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      redirect("/entrar");
+    } catch (error) {
+      toast.error("Erro ao deslogar");
+    }
+  };
 
   return (
-    <SidebarMenu>
+    <SidebarMenu className="h-12" >
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -48,14 +59,14 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.image} alt={user.name} />
+                <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
                 <AvatarFallback className="rounded-lg">
-                  {getTwoFirstLetters(user.name)}
+                  {getTwoFirstLetters(user?.name || "")}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-medium">{user?.name}</span>
+                <span className="truncate text-xs">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -69,14 +80,14 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.image} alt={user.name} />
+                  <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
                   <AvatarFallback className="rounded-lg">
-                    {getTwoFirstLetters(user.name)}
+                    {getTwoFirstLetters(user?.name || "")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{user?.name}</span>
+                  <span className="truncate text-xs">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -95,7 +106,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>

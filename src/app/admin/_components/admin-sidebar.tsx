@@ -8,6 +8,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import {
@@ -52,16 +55,30 @@ const configMain = [
   },
 ];
 
-export const AdminSidebar = () => {
+export const AdminSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" variant="inset"  {...props}>
       <SidebarHeader>
-        <Logo className="w-10 h-10" />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <a href="/">
+                <div className="text-sidebar-primary-foreground flex aspect-square size-12 -ml-2 items-center justify-center rounded-lg">
+                  <Logo className="size-10" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">SisAgenda</span>
+                  <span className="truncate text-xs">Administração</span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={main} title="" className="mt-4" />
+        <NavMain items={main} title="Principal" className="mt-4" />
         <NavMain items={adminMain} title="Administração" />
-        <NavMain items={configMain} title="Configurações" />
+        <NavMain items={configMain} title="" className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser
@@ -72,7 +89,7 @@ export const AdminSidebar = () => {
           }}
         />
       </SidebarFooter>
-      <SidebarRail />
+
     </Sidebar>
   );
 };

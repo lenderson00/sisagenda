@@ -41,8 +41,10 @@ export const Credentials: Provider = CredentialsProvider({
 
     const isPasswordValid = await compare(password, user.password);
 
+    console.log(isPasswordValid, user.isActive);
+
     if (!isPasswordValid || !user.isActive) {
-      return null;
+      throw new Error("Usuário inativo ou senha inválida");
     }
 
     return {

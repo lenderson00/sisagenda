@@ -18,8 +18,5 @@ export async function POST(req: Request) {
     data: { password: hashedPassword, mustChangePassword: false },
   });
 
-  // Sign out to force a new session with updated data
-  await signOut();
-
   return NextResponse.json({ success: true });
 }

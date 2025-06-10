@@ -46,9 +46,12 @@ export const LoginForm: React.FC = () => {
       } else {
         toast.success("Login realizado com sucesso!");
       }
-    } catch (error) {
-      console.error(error);
-      toast.error(`${JSON.stringify(error)}`);
+    } catch (error: any) {
+      if (error.digest?.startsWith("NEXT_REDIRECT")) {
+        throw error;
+      }
+      console.error("NEXT_AUTH_ERROR", error);
+      toast.error("Ocorreu um erro inesperado.");
     }
   }
 

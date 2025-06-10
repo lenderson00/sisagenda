@@ -11,8 +11,8 @@ import {
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "@/lib/actions/auth";
-import { useRouter } from "next/navigation";
+import { resetPassword, signIn } from "@/lib/actions/auth";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -54,28 +54,9 @@ export function NovaSenhaForm({ email }: NovaSenhaFormProps) {
 
   async function onSubmit(values: FormSchema) {
     setLoading(true);
-    try {
-      const res = await fetch("/api/auth/nova-senha", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: values.password }),
-      });
-
-      if (res.ok) {
-        toast.success("Senha alterada com sucesso!");
-        await signIn( {
-          email,
-          password: values.password,
-          redirectTo: "/?bem-vindo=true",
-        });
-      } else {
-        toast.error("Erro ao alterar a senha");
-      }
-    } catch (error) {
-      toast.error("Erro ao alterar a senha");
-    } finally {
-      setLoading(false);
-    }
+    await resetPassword(values.password);
+    toast.success("Senha alterada com sucesso!");
+    setLoading(false);
   }
 
   return (
