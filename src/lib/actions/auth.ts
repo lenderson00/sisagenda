@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { unstable_update } from "@/lib/auth";
 
 export const baseSignIn = async (credentials: { email: string; password: string }) => {
 
@@ -79,6 +80,11 @@ export const resetPassword = async (password: string) => {
     data: { password: hashedPassword, mustChangePassword: false },
   });
 
+  await signInAction("credentials", {
+    email: session.user.email,
+    password: password,
+    redirect: false,
+  });
 
   redirect("/?bem-vindo=true");
 };

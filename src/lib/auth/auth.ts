@@ -8,6 +8,7 @@ export const {
   signIn,
   signOut,
   auth,
+  unstable_update,
 } = NextAuth({
   adapter: PrismaAdapter(prisma),
   ...authOptions,
