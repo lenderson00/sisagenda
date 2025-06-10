@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateOrganization } from "../_hooks/use-create-organization";
+import { useUpdateOrganization } from "../_hooks/use-update-organization";
 
 const organizationFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
@@ -33,32 +34,65 @@ const organizationFormSchema = z.object({
 
 type OrganizationFormValues = z.infer<typeof organizationFormSchema>;
 
-export function OrganizationForm({ onSuccess }: { onSuccess?: () => void }) {
+// Just a type for the organization prop
+type Organization = {
+  id: string;
+  name: string;
+  sigla: string;
+  description: string | null;
+  role: "COMIMSUP" | "DEPOSITO" | "COMRJ";
+};
+
+export function OrganizationForm({
+  onSuccess,
+  organization,
+}: {
+  onSuccess?: () => void;
+  organization?: Organization;
+}) {
   const createOrganization = useCreateOrganization();
+  const updateOrganization = useUpdateOrganization();
+
   const form = useForm<OrganizationFormValues>({
     resolver: zodResolver(organizationFormSchema),
     defaultValues: {
-      name: "",
-      sigla: "",
-      description: "",
-      role: "DEPOSITO",
+      name: organization?.name ?? "",
+      sigla: organization?.sigla ?? "",
+      description: organization?.description ?? "",
+      role: organization?.role ?? "DEPOSITO",
     },
   });
 
+  const isEditing = !!organization;
+
   function onSubmit(values: OrganizationFormValues) {
-    createOrganization.mutate(values, {
-      onSuccess: () => {
-        form.reset();
-        onSuccess?.();
-      },
-    });
+    if (isEditing) {
+      updateOrganization.mutate(
+        { id: organization.id, ...values },
+        {
+          onSuccess: () => {
+            form.reset();
+            onSuccess?.();
+          },
+        }
+      );
+    } else {
+      createOrganization.mutate(values, {
+        onSuccess: () => {
+          form.reset();
+          onSuccess?.();
+        },
+      });
+    }
   }
+
+  const isLoading = createOrganization.isPending || updateOrganization.isPending;
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-3 w-full"
+        className="flex flex-col gap-3 w-full px-4 md:px-0 mb-4"
       >
         <div className="flex gap-2 w-full items-start">
           <FormField
@@ -129,16 +163,16 @@ export function OrganizationForm({ onSuccess }: { onSuccess?: () => void }) {
         />
         {/* TODO: Add comimsupId field - it should be a select showing other organizations with role COMIMSUP. Hide if current role is COMIMSUP */}
         {/* TODO: Add isActive field - it should be a switch */}
-        <div className="flex justify-end gap-2">
-          <DialogClose asChild>
-            <Button type="button" variant="outline">
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button type="submit" disabled={createOrganization.isPending}>
-            {createOrganization.isPending
-              ? "Creating..."
-              : "Create Organization"}
+        <div className="flex w-full">
+
+          <Button type="submit" disabled={isLoading}>
+            {isLoading
+              ? isEditing
+                ? "Saving..."
+                : "Creating..."
+              : isEditing
+                ? "Save Changes"
+                : "Create Organization"}
           </Button>
         </div>
       </form>

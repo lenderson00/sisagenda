@@ -1,15 +1,11 @@
 import Footer from "@/components/footer";
-import { TopNavigation } from "@/components/top-navigation";
+import { TopBar } from "@/components/top-bar";
 
-const tabs = [
-  { label: "Organizações Militares", href: "/" },
-  { label: "Configurações", href: "/configuracoes" },
-];
 
 const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col">
-      <TopNavigation tabs={tabs} />
+      <TopBar className="border-b" />
       <div className="min-h-[60vh] bg-neutral-50">{children}</div>
       <Footer />
     </div>

@@ -5,7 +5,7 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
-import { CreateOrganizationDialog } from "./_components/create-organization-dialog";
+import { CreateOrganization } from "./_components/create-organization-dialog";
 import { getOrganizations } from "./_hooks/use-organizations";
 import { OrganizationList } from "./page-client";
 
@@ -27,7 +27,7 @@ export default async function AdminPage() {
     <div>
       <div className="border-b">
         <div className="container mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
+          <div className="flex md:items-center justify-between flex-col md:flex-row gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-gray-900">
                 Organizações Militares
@@ -36,7 +36,7 @@ export default async function AdminPage() {
                 Gerencie as organizações militares e seus administradores
               </p>
             </div>
-            <CreateOrganizationDialog />
+            <CreateOrganization />
           </div>
         </div>
       </div>

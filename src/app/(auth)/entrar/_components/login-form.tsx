@@ -40,8 +40,12 @@ export const LoginForm: React.FC = () => {
   async function onSubmit(values: LoginSchema) {
     const { email, password } = values;
     try {
-      await signIn({ email, password });
-      toast.success("Login realizado com sucesso!");
+      const result = await signIn({ email, password });
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Login realizado com sucesso!");
+      }
     } catch (error) {
       console.error(error);
       toast.error(`${JSON.stringify(error)}`);

@@ -16,11 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconUser } from "@tabler/icons-react";
-import { Building, Edit, MoreHorizontal, Plus, User } from "lucide-react";
+import { IconPlus, IconUser } from "@tabler/icons-react";
+import { Building, Edit, MoreHorizontal, User } from "lucide-react";
 import Link from "next/link";
-import { CreateOrganizationDialog } from "./_components/create-organization-dialog";
 import { useOrganizations } from "./_hooks/use-organizations";
+import { DrawerDialog } from "@/components/ui/dialog-drawer";
+import { OrganizationForm } from "./_components/organization-form";
+import { CreateOrganization } from "./_components/create-organization-dialog";
 
 export function OrganizationList() {
   const { data, isPending } = useOrganizations();
@@ -127,10 +129,11 @@ export function OrganizationList() {
             description="Comece criando sua primeira Organização Militar."
             icon={IconUser}
           >
-            <CreateOrganizationDialog />
+            <CreateOrganization />
           </EmptyCard>
         )}
       </div>
     </>
   );
 }
+
