@@ -5,12 +5,6 @@ import { NextResponse } from "next/server";
 import "dayjs/locale/pt-br";
 
 import { auth } from "@/lib/auth";
-import {
-  findFits,
-  formatHHMM,
-  splitByLunch,
-  transformFitsToHH,
-} from "@/lib/engine/time";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {

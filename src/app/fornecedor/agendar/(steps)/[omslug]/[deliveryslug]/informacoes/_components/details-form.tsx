@@ -20,6 +20,7 @@ import { Form } from "@/components/ui/form";
 import { clearFormData, loadFormData, saveFormData } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
+import dayjs from "dayjs";
 import { useScheduleStore } from "../../_store";
 import { Step1BasicInfo } from "./step-1-basic-info";
 import { Step2Items } from "./step-2-items";
@@ -91,7 +92,11 @@ export function DetailsForm() {
     },
   });
 
-  const createAppointmentMutation = useCreateAppointment();
+  const createAppointmentMutation = useCreateAppointment(
+    schedule?.organizationId ?? "",
+    schedule?.deliveryTypeId ?? "",
+    schedule?.dateTime ?? new Date(),
+  );
 
   // Check for stale schedule data
   useEffect(() => {
@@ -170,6 +175,10 @@ export function DetailsForm() {
 
   function prevStep() {
     setCurrentStep((prev) => prev - 1);
+  }
+
+  if (!schedule) {
+    return null;
   }
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import { toast } from "sonner";
 
 type AppointmentInput = {
@@ -30,12 +31,13 @@ async function createAppointment(input: AppointmentInput) {
   return response.json();
 }
 
-export function useCreateAppointment() {
+export function useCreateAppointment(organizationId: string, deliveryTypeId: string, dateKey: Date) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createAppointment,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["availability", organizationId, deliveryTypeId, dayjs(dateKey).format("YYYY-MM-DD")] });
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       toast.success("Agendamento solicitado com sucesso!");
     },

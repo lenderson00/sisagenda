@@ -23,7 +23,6 @@ export function DataPageClient({
   organizationName?: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [activeTab, setActiveTab] = useState<"weekly" | "rules">("weekly");
   const { setSchedule } = useScheduleStore();
   const router = useRouter();
 

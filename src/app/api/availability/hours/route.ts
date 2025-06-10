@@ -121,6 +121,7 @@ export async function GET(request: Request) {
     const blockedTimes = await prisma.appointment.findMany({
       select: {
         date: true,
+        duration: true,
       },
       where: {
         organizationId,
@@ -128,17 +129,31 @@ export async function GET(request: Request) {
           gte: referenceDate.startOf("day").toDate(),
           lte: referenceDate.endOf("day").toDate(),
         },
+        status: {
+          in: ["CONFIRMED", "PENDING_CONFIRMATION", "RESCHEDULE_CONFIRMED"],
+        },
       },
     });
 
-    const blockedMinutes = blockedTimes.map((bt) => {
-      const d = dayjs(bt.date);
-      return d.hour() * 60 + d.minute();
+    const newActivityDuration = activityDuration; // duration of appointment to be scheduled
+
+    const blockedIntervals = blockedTimes.map((bt) => {
+      const start = dayjs(bt.date).hour() * 60 + dayjs(bt.date).minute();
+      const end = start + bt.duration;
+      return { start, end };
     });
 
     const availableTimes = timesAfterRules
       .filter((time) => {
-        return !blockedMinutes.includes(time);
+        const newAppointmentStart = time;
+        const newAppointmentEnd = time + newActivityDuration;
+
+        // Check for overlap with any blocked interval
+        return !blockedIntervals.some(
+          (interval) =>
+            newAppointmentStart < interval.end &&
+            newAppointmentEnd > interval.start,
+        );
       })
       .map((time) => formatHHMM(time));
 

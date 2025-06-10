@@ -10,18 +10,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DrawerDialog } from "@/components/ui/dialog-drawer";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconPlus, IconUser } from "@tabler/icons-react";
+import { IconUser } from "@tabler/icons-react";
 import { Building, Edit, MoreHorizontal, User } from "lucide-react";
 import Link from "next/link";
 import { CreateOrganization } from "./_components/create-organization-dialog";
-import { OrganizationForm } from "./_components/organization-form";
 import { useOrganizations } from "./_hooks/use-organizations";
 
 export function OrganizationList() {
