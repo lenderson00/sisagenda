@@ -1,6 +1,6 @@
 "use client";
 
-import { getQueryClient } from "@/lib/react-query";
+import { ModalProvider } from "@/components/modals/provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider as JotaiProvider } from "jotai";
 import type { Session } from "next-auth";
@@ -21,7 +21,9 @@ export function Providers({ children, session }: Props) {
       <JotaiProvider>
         <Toaster />
         <QueryClientProvider client={queryClient}>
-          {children}
+          <ModalProvider>
+            {children}
+          </ModalProvider>
         </QueryClientProvider>
       </JotaiProvider>
     </SessionProvider>

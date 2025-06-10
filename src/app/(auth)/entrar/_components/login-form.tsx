@@ -23,7 +23,7 @@ import type React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { signIn } from "../../_actions/signin";
+import { signIn } from "@/lib/actions/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Por favor, insira um email válido"),
