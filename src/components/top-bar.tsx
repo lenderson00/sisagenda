@@ -22,35 +22,7 @@ export const TopBar = ({ className }: { className?: string }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="sm"
-          className="border-gray-300 text-gray-700 hover:bg-gray-50"
-        >
-          <ExternalLink className="w-4 h-4 mr-2" />
-          View Live
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-700 hover:bg-gray-100"
-        >
-          Feedback
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-gray-700 hover:bg-gray-100"
-        >
-          <Bell className="w-4 h-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-gray-700 hover:bg-gray-100"
-        >
-          <Settings className="w-4 h-4" />
-        </Button>
+
         <AccountAvatar />
       </div>
     </div>

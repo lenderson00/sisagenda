@@ -8,9 +8,11 @@ const createOrganizationSchema = z.object({
   sigla: z.string().min(1, "Sigla is required"),
   description: z.string().optional(),
   role: z.enum(["COMIMSUP", "DEPOSITO", "COMRJ"]),
+  isActive: z.boolean().optional().default(true),
+  comimsupId: z.string().optional(),
 });
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await auth();
 
@@ -18,9 +20,13 @@ export async function GET() {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const role = searchParams.get("role") as "COMIMSUP" | "DEPOSITO" | "COMRJ" | undefined;
+
     const organizations = await prisma.organization.findMany({
       where: {
         deletedAt: null,
+        role: role ?? undefined,
       },
       orderBy: {
         createdAt: "desc",
@@ -52,12 +58,16 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validatedData = createOrganizationSchema.parse(body);
 
+    console.log(validatedData);
+
     const organization = await prisma.organization.create({
       data: {
         name: validatedData.name,
         sigla: validatedData.sigla,
         description: validatedData.description,
         role: validatedData.role,
+        isActive: validatedData.isActive,
+        comimsupId: validatedData.role === "DEPOSITO" ? validatedData.comimsupId : null,
       },
     });
 

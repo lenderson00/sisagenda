@@ -24,12 +24,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateOrganization } from "../_hooks/use-create-organization";
 import { useUpdateOrganization } from "../_hooks/use-update-organization";
+import { useOrganizationsByRole } from "../_hooks/use-organizations";
 
 const organizationFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
   sigla: z.string().min(2, "Mínimo 2 letras"),
-  description: z.string().optional(),
   role: z.enum(["COMIMSUP", "DEPOSITO", "COMRJ"]),
+  isActive: z.boolean().optional(),
+  comimsupId: z.string().optional(),
+  description: z.string().optional(),
 });
 
 type OrganizationFormValues = z.infer<typeof organizationFormSchema>;
@@ -41,6 +44,8 @@ type Organization = {
   sigla: string;
   description: string | null;
   role: "COMIMSUP" | "DEPOSITO" | "COMRJ";
+  isActive: boolean | null;
+  comimsupId: string;
 };
 
 export function OrganizationForm({
@@ -52,6 +57,7 @@ export function OrganizationForm({
 }) {
   const createOrganization = useCreateOrganization();
   const updateOrganization = useUpdateOrganization();
+  const comimsups = useOrganizationsByRole("COMIMSUP");
 
   const form = useForm<OrganizationFormValues>({
     resolver: zodResolver(organizationFormSchema),
@@ -60,6 +66,8 @@ export function OrganizationForm({
       sigla: organization?.sigla ?? "",
       description: organization?.description ?? "",
       role: organization?.role ?? "DEPOSITO",
+      isActive: organization?.isActive ?? true,
+      comimsupId: organization?.comimsupId ?? "",
     },
   });
 
@@ -100,9 +108,9 @@ export function OrganizationForm({
             name="name"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Organization name" {...field} />
+                  <Input placeholder="Nome da OM" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -115,7 +123,7 @@ export function OrganizationForm({
               <FormItem className="w-full">
                 <FormLabel>Sigla</FormLabel>
                 <FormControl>
-                  <Input placeholder="Organization sigla" {...field} />
+                  <Input placeholder="Sigla da OM" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -130,7 +138,7 @@ export function OrganizationForm({
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us a little bit about the organization"
+                  placeholder="Diga um pouco sobre a OM"
                   className="resize-none"
                   {...field}
                 />
@@ -144,7 +152,7 @@ export function OrganizationForm({
           name="role"
           render={({ field }) => (
             <FormItem className="w-full mb-2">
-              <FormLabel>Role</FormLabel>
+              <FormLabel>Permissão</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -162,17 +170,48 @@ export function OrganizationForm({
           )}
         />
         {/* TODO: Add comimsupId field - it should be a select showing other organizations with role COMIMSUP. Hide if current role is COMIMSUP */}
+        {form.watch("role") === "DEPOSITO" && comimsups.data && comimsups.data.length > 0 && (
+          <FormField
+            control={form.control}
+            name="comimsupId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>COMIMSUP</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a COMIMSUP" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {comimsups.data?.map((comimsup) => (
+                        <SelectItem key={comimsup.id} value={comimsup.id}>
+                          {comimsup.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         {/* TODO: Add isActive field - it should be a switch */}
-        <div className="flex w-full">
 
-          <Button type="submit" disabled={isLoading}>
+
+
+        <div className="flex w-full flex-1">
+
+          <Button type="submit" disabled={isLoading} className="w-full mt-2">
             {isLoading
               ? isEditing
-                ? "Saving..."
-                : "Creating..."
+                ? "Salvando..."
+                : "Criando..."
               : isEditing
-                ? "Save Changes"
-                : "Create Organization"}
+                ? "Salvar Alterações"
+                : "Criar OM"}
           </Button>
         </div>
       </form>

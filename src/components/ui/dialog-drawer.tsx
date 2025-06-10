@@ -45,7 +45,7 @@ export function DrawerDialog({ title, description, action, children, icon }: Dra
         <DialogTrigger asChild>
         <Button variant="default"> {icon && <Icon className="mr-2" />} {action}</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>
