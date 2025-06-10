@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -40,6 +41,7 @@ export function DeliveryTypeForm({
       description: "",
     },
   });
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const handleSubmit = (data: FormData) => {
     onSubmit(data);
@@ -47,7 +49,15 @@ export function DeliveryTypeForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-6 w-full px-4 md:px-0"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && e.shiftKey) {
+            form.handleSubmit(handleSubmit)();
+          }
+        }}
+      >
         <FormField
           control={form.control}
           name="name"
@@ -85,19 +95,22 @@ export function DeliveryTypeForm({
         />
 
         <div className="flex justify-end space-x-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            className="border-gray-300 text-gray-700 hover:bg-gray-50"
-          >
-            Cancelar
-          </Button>
+          {!isMobile && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              Cancelar
+            </Button>
+          )}
+
           <Button
             type="submit"
-            className="bg-gray-900 hover:bg-gray-800 text-white"
+            className="bg-gray-900 hover:bg-gray-800 text-white w-full md:w-auto"
           >
-            {initialData ? "Atualizar" : "Criar"}
+            {initialData ? "Atualizar Transporte" : "Criar Transporte"}
           </Button>
         </div>
       </form>

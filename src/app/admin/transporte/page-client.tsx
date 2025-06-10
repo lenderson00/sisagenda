@@ -77,7 +77,7 @@ export function DeliveryTypesPageClient({
   if (deliveryTypes.length === 0) {
     return (
       <div className="">
-        <div className="container mx-auto px-6 py-8">
+        <div className="container mx-auto md:px-6 px-4 md:py-8 py-6">
           <EmptyCard
             icon={IconTruck}
             title="Nenhum tipo de transporte encontrado"
@@ -92,7 +92,7 @@ export function DeliveryTypesPageClient({
 
   return (
     <div className="">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto md:px-6 px-4 md:py-8 py-6">
         {/* Delivery Types Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
           {deliveryTypes.map((deliveryType: DeliveryType) => (

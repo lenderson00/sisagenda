@@ -18,6 +18,7 @@ import {
   IconCalendar,
   IconDashboard,
   IconSettings,
+  IconTruck,
   IconUsers,
 } from "@tabler/icons-react";
 
@@ -29,12 +30,20 @@ const main = [
   },
 ];
 
-const adminMain = [
+const gerenciamentoMain = [
   {
     name: "Agendamentos",
     url: "/agendamentos",
     icon: IconCalendar,
   },
+  {
+    name: "Transportes",
+    url: "/transporte",
+    icon: IconTruck,
+  },
+];
+
+const adminMain = [
   {
     name: "Usuários",
     url: "/usuarios",
@@ -79,6 +88,7 @@ export const AdminSidebar = ({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={main} title="Principal" className="mt-4" />
+        <NavMain items={gerenciamentoMain} title="Gerenciamento" />
         <NavMain items={adminMain} title="Administração" />
         <NavMain items={configMain} title="" className="mt-auto" />
       </SidebarContent>

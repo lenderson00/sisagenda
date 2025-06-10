@@ -73,12 +73,12 @@ const DeliveryTypeLayout = async ({
           </div>
         </div>
       </div>
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 gap-4">
-          <aside className="-ml-4 w-1/4 pr-2">
+      <div className="container mx-auto md:px-6 px-4 md:py-8 py-6">
+        <div className="flex flex-col space-y-8 md:flex-row lg:space-x-12 lg:space-y-0 gap-0 md:gap-8">
+          <aside className="md:-ml-4 md:w-1/4 w-full md:pr-2">
             <SidebarNav items={sidebarNavItems} />
           </aside>
-          <div className="w-3/4">{children}</div>
+          <div className="w-full md:w-3/4">{children}</div>
         </div>
       </div>
     </div>
