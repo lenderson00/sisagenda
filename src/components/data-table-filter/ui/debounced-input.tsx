@@ -22,6 +22,7 @@ export function DebouncedInput({
   }, [initialValue]);
 
   // Define the debounced function with useCallback
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const debouncedOnChange = useCallback(
     debounce((newValue: string | number) => {
       onChange(newValue);
