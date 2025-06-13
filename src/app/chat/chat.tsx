@@ -26,11 +26,11 @@ export const Chat = ({ userName, userId }: Props) => {
 
   useEffect(() => {
     if (chat) {
-      router.push(`/chat/${chat.id}`);
+      router.push(`/chat/${chat.id}?prompt=${encodeURIComponent(input)}`);
       setIsLoading(false);
       toast.dismiss();
     }
-  }, [chat]);
+  }, [chat, input, router]);
 
   return (
     <div className="flex flex-col justify-center items-center flex-1 h-full">

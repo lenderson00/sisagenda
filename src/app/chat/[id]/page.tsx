@@ -15,7 +15,7 @@ export default function ChatPage() {
   const params = useParams();
   const chatId = params?.id as string;
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const { queryParams } = useRouterStuff();
+  const { searchParams } = useRouterStuff();
 
   // State to prevent infinite loops
   const [promptProcessed, setPromptProcessed] = useState(false);
@@ -44,6 +44,29 @@ export default function ChatPage() {
       console.error("Chat error:", error);
     },
   });
+
+  useEffect(() => {
+    const prompt = searchParams.get("prompt");
+    if (prompt && !promptProcessed && isInitialized) {
+      append({
+        id: "initial-prompt",
+        role: "user",
+        content: prompt,
+      });
+      setPromptProcessed(true);
+
+      // Clean the URL by removing the prompt query parameter
+      router.replace(`/chat/${chatId}`, { scroll: false });
+    }
+  }, [
+    searchParams,
+    promptProcessed,
+    append,
+    router,
+    chatId,
+    setPromptProcessed,
+    isInitialized,
+  ]);
 
   useEffect(() => {
     if (!chatId) {
