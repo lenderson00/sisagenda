@@ -1,4 +1,9 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { deleteChat, renameChat } from "../_actions/chat-actions";
 
 type Chat = {
   id: string;
@@ -27,5 +32,40 @@ export const useChatList = () => {
     queryFn: getChatList,
     initialPageParam: null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+};
+
+export const useDeleteChat = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (chatId: string) => {
+      const formData = new FormData();
+      formData.append("chatId", chatId);
+      return deleteChat(formData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+  });
+};
+
+export const useRenameChat = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      chatId,
+      title,
+    }: {
+      chatId: string;
+      title: string;
+    }) => {
+      const formData = new FormData();
+      formData.append("chatId", chatId);
+      formData.append("title", title);
+      return renameChat(formData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
   });
 };

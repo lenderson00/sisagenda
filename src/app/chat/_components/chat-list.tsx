@@ -1,6 +1,6 @@
-import { useChatList } from "../_hooks/use-chat";
+import { useChatList, useDeleteChat, useRenameChat } from "../_hooks/use-chat";
 import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   SidebarGroup,
@@ -10,9 +10,42 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { IconDots } from "@tabler/icons-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { ChatItem } from "./chat-item";
 
 export const ChatList = () => {
   const { ref, inView } = useInView();
@@ -24,12 +57,6 @@ export const ChatList = () => {
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage]);
-
-  const pathname = usePathname();
-
-  const isActive = (url: string) => {
-    return pathname === url;
-  };
 
   if (status === "pending")
     return (
@@ -49,29 +76,12 @@ export const ChatList = () => {
           <SidebarMenu>
             {data.pages.map((page, i) => (
               <div key={i}>
-                {page.items.map((chat) => (
-                  <SidebarMenuItem
-                    key={chat.id}
-                    className={cn(
-                      {
-                        "text-neutral-500": !isActive("/chat/" + chat.id),
-                        "text-primary": isActive("/chat/" + chat.id),
-                      },
-                      "-mx-4 px-2",
-                    )}
-                  >
-                    <SidebarMenuButton
-                      asChild
-                      tooltip={dayjs(chat.updatedAt).day().toLocaleString()}
-                      className={cn({
-                        "bg-sidebar-accent": isActive("/chat/" + chat.id),
-                      })}
-                    >
-                      <Link href={"/chat/" + chat.id}>
-                        <span>{chat.title || "Sem título"} </span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                {page.items.map((chat, index) => (
+                  <ChatItem
+                    key={chat.id + "-" + index}
+                    id={chat.id}
+                    title={chat.title ?? "Nova conversa"}
+                  />
                 ))}
               </div>
             ))}
