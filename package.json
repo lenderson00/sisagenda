@@ -55,6 +55,7 @@
     "react-day-picker": "8.10.1",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.57.0",
+    "react-intersection-observer": "^9.16.0",
     "recharts": "^2.15.3",
     "resend": "^4.5.1",
     "rrule": "^2.8.1",

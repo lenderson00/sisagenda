@@ -47,6 +47,7 @@ model User {
   organization        Organization?         @relation(fields: [organizationId], references: [id])
   PasswordResetToken  PasswordResetToken[]
   AppointmentActivity AppointmentActivity[]
+  Chat                Chat[]
 
   @@index([email])
   @@index([organizationId])
@@ -362,4 +363,15 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([token])
+}
+
+model Chat {
+  id    String  @id @default(cuid())
+  title String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
