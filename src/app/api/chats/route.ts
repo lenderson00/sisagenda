@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { openai } from "@ai-sdk/openai";
+import { generateText } from "ai";
 import z from "zod";
 
 export const GET = async (request: NextRequest) => {
@@ -67,9 +69,19 @@ export const POST = async (request: NextRequest) => {
 
   const { title } = createChatSchema.parse(await request.json());
 
+  let suggestedTitle = title;
+
+  if (title != "Nova Conversa") {
+    const response = await generateText({
+      model: openai("gpt-4o-mini"),
+      prompt: `Sugira um título para uma conversa com o usuário sobre o título ${title}, com 2 palavras. Nao coloque " no titulo.`,
+    });
+    suggestedTitle = response.text;
+  }
+
   const chat = await prisma.chat.create({
     data: {
-      title,
+      title: suggestedTitle,
       userId,
     },
   });

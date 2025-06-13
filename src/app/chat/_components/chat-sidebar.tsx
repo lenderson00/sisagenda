@@ -6,25 +6,25 @@ import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { IconDashboard, IconWriting } from "@tabler/icons-react";
 import { ChatList } from "./chat-list";
 import { useCreateChat } from "../_hooks/use-create-chat";
+import { useRouter } from "next/navigation";
 
 export const ChatSidebar = ({
-  userId,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { userId: string }) => {
-  const { mutate: createChat, status } = useCreateChat(userId);
+}: React.ComponentProps<typeof Sidebar>) => {
+  const router = useRouter();
+
   return (
     <Sidebar variant="inset" {...props} className="top-16">
       <Button
         className="mx-2 justify-start shadow-none mb-4"
         variant={"outline"}
-        onClick={() => createChat()}
-        disabled={status === "pending"}
+        onClick={() => router.push("/chat")}
       >
         <IconWriting />
         Nova Conversa
       </Button>
       <SidebarContent>
-        <ChatList userId={userId} />
+        <ChatList />
       </SidebarContent>
     </Sidebar>
   );

@@ -1,22 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const createNewChat = async () => {
+const createNewChat = async (input?: string) => {
   const response = await fetch("/api/chats", {
     method: "POST",
     body: JSON.stringify({
-      title: "Nova Conversa",
+      title: input || "Nova Conversa",
     }),
   });
   return response.json();
 };
 
-export const useCreateChat = (userId: string) => {
+export const useCreateChat = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createNewChat,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["chats", userId] });
+    mutationFn: ({ input }: { input?: string }) => createNewChat(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
     },
   });
 };

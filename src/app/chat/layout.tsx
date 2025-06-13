@@ -37,21 +37,11 @@ const SuperAdminLayout = async ({
     redirect("/");
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session.user.email,
-    },
-  });
-
-  if (!user) {
-    redirect("/entrar");
-  }
-
   return (
     <div className="max-h-screen overflow-hidden">
       <ChatHeader />
       <SidebarProvider className={"min-h-[calc(100svh-56px)]"}>
-        <ChatSidebar userId={user.id} />
+        <ChatSidebar />
         <SidebarInset className="border-1 overflow-hidden h-[calc(100svh-80px)]">
           <ScrollArea className="h-[calc(100svh-80px)] relative rounded-lg ">
             <div className="flex flex-col ">

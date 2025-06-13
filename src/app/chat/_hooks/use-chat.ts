@@ -21,9 +21,9 @@ const getChatList = async ({
   return (await response.json()) as ChatResponse;
 };
 
-export const useChatList = (userId: string) => {
+export const useChatList = () => {
   return useInfiniteQuery({
-    queryKey: ["chats", userId],
+    queryKey: ["chats"],
     queryFn: getChatList,
     initialPageParam: null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,

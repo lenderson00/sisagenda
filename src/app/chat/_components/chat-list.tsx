@@ -14,10 +14,10 @@ import { usePathname } from "next/navigation";
 import dayjs from "dayjs";
 import Link from "next/link";
 
-export const ChatList = ({ userId }: { userId: string }) => {
+export const ChatList = () => {
   const { ref, inView } = useInView();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useChatList(userId);
+    useChatList();
 
   useEffect(() => {
     if (inView && hasNextPage) {

@@ -1,11 +1,22 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Chat } from "./chat";
+import { prisma } from "@/lib/prisma";
 
 export default async function ChatPage() {
   const session = await auth();
 
-  if (!session) {
+  if (!session || !session.user.email) {
+    return redirect("/entrar");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
+  });
+
+  if (!user) {
     return redirect("/entrar");
   }
 
@@ -13,7 +24,7 @@ export default async function ChatPage() {
     <div className=" flex flex-col h-[calc(100svh-80px-48px)] pt-12">
       <div className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          <Chat />
+          <Chat userId={user.id} userName={user.name || ""} />
         </div>
         <div className="text-center py-2 text-xs text-gray-500">
           Nossa IA pode cometer erros. Por favor, verifique as respostas.
