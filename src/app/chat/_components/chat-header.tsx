@@ -7,7 +7,7 @@ export const ChatHeader = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        "flex h-14 items-center justify-between px-6 bg-sidebar",
+        "@container/chat-header relative z-20 flex h-14 w-full shrink-0 items-center justify-between gap-4 sm:h-11 sm:px-2 bg-sidebar px-4",
         className,
       )}
     >
@@ -22,7 +22,7 @@ export const ChatHeader = ({ className }: { className?: string }) => {
       </div>
 
       <div className="flex items-center gap-4 relative z-[99999]">
-        <AccountAvatar />
+        <AccountAvatar className="size-6" />
       </div>
     </div>
   );

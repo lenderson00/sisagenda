@@ -133,7 +133,7 @@ export function ChatInput({
           placeholder="Digite sua mensagem..."
           value={input}
           onChange={handleInput}
-          className="min-h-[100px]  w-full overflow-hidden resize-none rounded-2xl text-base bg-muted outline-4"
+          className="min-h-[100px]  w-full overflow-hidden resize-none rounded-2xl text-base bg-muted outline-4 max-h-[200px]"
           rows={3}
           onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
             if (event.key === "Enter" && !event.shiftKey) {

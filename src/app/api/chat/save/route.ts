@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
@@ -15,8 +13,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await prisma.message.create({
-      data: {
+    const result = await prisma.message.upsert({
+      where: { id: message.id },
+      update: {
+        role: message.role,
+        content: message.content,
+        toolInvocations: message.parts
+          ? JSON.stringify(message.parts)
+          : undefined,
+      },
+      create: {
         id: message.id,
         role: message.role,
         content: message.content,

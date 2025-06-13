@@ -126,9 +126,9 @@ export default function ChatPage() {
     <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col bg-white no-scrollbar">
       <div
         ref={chatContainerRef}
-        className="no-scrollbar flex-1 pb-16 space-y-2 overflow-y-auto p-4 max-w-2xl w-full mx-auto"
+        className="no-scrollbar flex-1 pb-16 space-y-2 overflow-y-auto overflow-x-visible p-4 max-w-2xl w-full mx-auto"
       >
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg as any} />
           ))}

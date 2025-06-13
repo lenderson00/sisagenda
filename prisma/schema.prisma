@@ -144,58 +144,6 @@ model DeliveryType {
   @@index([organizationId])
 }
 
-/// Represents availability slots for deliveries
-model Availability {
-  id String @id @default(cuid())
-
-  weekDay   Int @db.SmallInt
-  startTime Int
-  endTime   Int
-
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  deliveryTypeId String
-  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
-
-  @@index([organizationId])
-  @@index([weekDay])
-}
-
-model AvailabilitySettings {
-  id String @id @default(cuid())
-
-  duration       Int     @default(60) @db.SmallInt
-  isActive       Boolean @default(true)
-  lunchTimeStart Int     @default(720) @db.SmallInt
-  lunchTimeEnd   Int     @default(780) @db.SmallInt
-
-  deliveryTypeId String       @unique
-  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-/// Stores rules for availability slots
-model AvailabilityRule {
-  id String @id @default(cuid())
-
-  rule Json
-
-  deliveryTypeId String       @unique
-  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([id])
-}
-
 /// Represents all possible statuses for an appointment.
 /// The initial status is PENDING_CONFIRMATION.
 enum AppointmentStatus {
@@ -307,6 +255,58 @@ model AppointmentActivity {
   @@index([isInternal])
   @@index([isVisible])
   @@index([parentId])
+}
+
+/// Represents availability slots for deliveries
+model Availability {
+  id String @id @default(cuid())
+
+  weekDay   Int @db.SmallInt
+  startTime Int
+  endTime   Int
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  deliveryTypeId String
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+
+  @@index([organizationId])
+  @@index([weekDay])
+}
+
+model AvailabilitySettings {
+  id String @id @default(cuid())
+
+  duration       Int     @default(60) @db.SmallInt
+  isActive       Boolean @default(true)
+  lunchTimeStart Int     @default(720) @db.SmallInt
+  lunchTimeEnd   Int     @default(780) @db.SmallInt
+
+  deliveryTypeId String       @unique
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Stores rules for availability slots
+model AvailabilityRule {
+  id String @id @default(cuid())
+
+  rule Json
+
+  deliveryTypeId String       @unique
+  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
 }
 
 /// Represents different types of audit actions

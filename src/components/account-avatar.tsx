@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "@/hooks/use-user";
+import { cn } from "@/lib/utils";
 import {
   CreditCard,
   HelpCircle,
@@ -13,7 +14,10 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-export function AccountAvatar() {
+type Props = {
+  className?: string;
+};
+export function AccountAvatar({ className }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -41,12 +45,12 @@ export function AccountAvatar() {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className={cn("relative", className)} ref={dropdownRef}>
       <button
-        className={`bg-primary rounded-full p-2 transition-all duration-200 ${isOpen ? "ring-2 ring-primary/30" : "hover:bg-primary/90"}`}
+        className={`bg-primary rounded-full p-1 transition-all duration-200 ${isOpen ? "ring-2 ring-primary/30" : "hover:bg-primary/90"}`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <User className="h-5 w-5 text-primary-foreground" />
+        <User className="h-full w-full text-primary-foreground" />
       </button>
 
       {isOpen && (
