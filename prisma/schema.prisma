@@ -48,6 +48,7 @@ model User {
   PasswordResetToken  PasswordResetToken[]
   AppointmentActivity AppointmentActivity[]
   Chat                Chat[]
+  MessageFeedback     MessageFeedback[]
 
   @@index([email])
   @@index([organizationId])
@@ -387,4 +388,25 @@ model Message {
   chat   Chat   @relation(fields: [chatId], references: [id])
 
   toolInvocations Json?
+  MessageFeedback MessageFeedback[]
+}
+
+enum MessageFeedbackType {
+  THUMBS_UP
+  THUMBS_DOWN
+}
+
+model MessageFeedback {
+  id String @id @default(cuid())
+
+  type MessageFeedbackType
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  messageId String
+  message   Message @relation(fields: [messageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

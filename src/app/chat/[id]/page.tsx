@@ -1,14 +1,16 @@
 "use client";
 
 import { useRouterStuff } from "@/hooks/use-router-stuffs";
+import { useChat } from "@ai-sdk/react";
+import { IconPoint, IconPointFilled } from "@tabler/icons-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useMessageLoader } from "./_hooks/use-message-loader";
-import { useMessagePersistence } from "./_hooks/use-message-persistence";
-import { useChat } from "@ai-sdk/react";
 import { ChatInput } from "../_components/chat-input";
 import { ChatMessage } from "./_components/chat-message";
-import { AnimatePresence } from "framer-motion";
+import { useMessageLoader } from "./_hooks/use-message-loader";
+import { useMessagePersistence } from "./_hooks/use-message-persistence";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -33,8 +35,8 @@ export default function ChatPage() {
     handleSubmit,
     error,
     append,
-    isLoading,
     setMessages,
+    status,
   } = useChat({
     id: chatId,
     api: "/api/chat",
@@ -45,6 +47,7 @@ export default function ChatPage() {
     },
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const prompt = searchParams.get("prompt");
     if (prompt && !promptProcessed && isInitialized) {
@@ -89,6 +92,7 @@ export default function ChatPage() {
     }
   }, [chatId, router, isInitialized, loadMessages, setMessages, markAsSaved]);
 
+  const isLoading = status === "streaming";
   // Save new messages as they are added, handling streaming
   useEffect(() => {
     if (!isLoaded || !isInitialized) return;
@@ -112,6 +116,7 @@ export default function ChatPage() {
   ]);
 
   // Auto-scroll to bottom when messages change
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
@@ -122,6 +127,9 @@ export default function ChatPage() {
   if (!chatId) {
     return null;
   }
+
+  console.log(status);
+
   return (
     <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col bg-white no-scrollbar">
       <div
@@ -130,8 +138,19 @@ export default function ChatPage() {
       >
         <AnimatePresence mode="wait">
           {messages.map((msg) => (
-            <ChatMessage key={msg.id} message={msg as any} />
+            <ChatMessage key={msg.id} message={msg as any} status={status} />
           ))}
+
+          {status === "submitted" && (
+            <motion.div
+              className="flex items-center space-x-1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <IconPointFilled className="size-10 motion-preset-pulse-md  text-neutral-400" />
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 

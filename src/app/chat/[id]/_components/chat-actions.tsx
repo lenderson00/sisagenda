@@ -15,6 +15,7 @@ interface ChatActionsProps {
 
 export const ChatActions = ({ message, className }: ChatActionsProps) => {
   const [isCopied, setIsCopied] = useState(false);
+
   const isUser = message.role === "user";
 
   const onCopy = () => {
@@ -29,18 +30,21 @@ export const ChatActions = ({ message, className }: ChatActionsProps) => {
   return (
     <div
       className={cn(
-        "flex items-center h-8 mt-2 opacity-0 transition-opacity duration-200",
+        "flex items-center h-8 opacity-0 transition-opacity duration-200",
         isUser ? "justify-end" : "justify-start",
         className,
       )}
     >
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1">
         {message.content && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onCopy}
-            className="h-8 w-8"
+            className={cn(
+              "size-8 rounded-lg",
+              isUser && "hover:bg-transparent",
+            )}
           >
             {isCopied ? (
               <Check className="h-4 w-4" />
@@ -55,7 +59,7 @@ export const ChatActions = ({ message, className }: ChatActionsProps) => {
               variant="ghost"
               size="icon"
               onClick={() => {}}
-              className="h-8 w-8"
+              className="size-8 rounded-lg"
             >
               <ThumbsUp className="h-4 w-4" />
             </Button>
@@ -63,7 +67,7 @@ export const ChatActions = ({ message, className }: ChatActionsProps) => {
               variant="ghost"
               size="icon"
               onClick={() => {}}
-              className="h-8 w-8"
+              className="size-8 rounded-lg"
             >
               <ThumbsDown className="h-4 w-4" />
             </Button>
