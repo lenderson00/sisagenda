@@ -1,0 +1,42 @@
+import { NextRequest, NextResponse } from "next/server";
+
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { prisma } from "@/lib/prisma";
+
+export async function POST(request: NextRequest) {
+  try {
+    const { message, chatId } = await request.json();
+
+    if (!chatId || !message) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
+    }
+
+    const result = await prisma.message.create({
+      data: {
+        id: message.id,
+        role: message.role,
+        content: message.content,
+        toolInvocations: message.parts
+          ? JSON.stringify(message.parts)
+          : undefined,
+        chatId,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      saved: result !== null,
+      messageId: message.id,
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
