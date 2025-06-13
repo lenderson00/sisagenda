@@ -1,4 +1,4 @@
-import { useChatList } from "../_hooks/use-chat-list";
+import { useChatList } from "../_hooks/use-chat";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import dayjs from "dayjs";
+import Link from "next/link";
 
 export const ChatList = ({ userId }: { userId: string }) => {
   const { ref, inView } = useInView();
@@ -47,22 +48,28 @@ export const ChatList = ({ userId }: { userId: string }) => {
         {data.pages.length > 0 && (
           <SidebarMenu>
             {data.pages.map((page, i) => (
-              <div key={i} className="space-y-2">
+              <div key={i}>
                 {page.items.map((chat) => (
                   <SidebarMenuItem
                     key={chat.id}
-                    className={cn({
-                      "text-neutral-500": !isActive("/chat/" + chat.id),
-                      "text-primary": isActive("/chat/" + chat.id),
-                    })}
+                    className={cn(
+                      {
+                        "text-neutral-500": !isActive("/chat/" + chat.id),
+                        "text-primary": isActive("/chat/" + chat.id),
+                      },
+                      "-mx-4 px-2",
+                    )}
                   >
                     <SidebarMenuButton
                       asChild
                       tooltip={dayjs(chat.updatedAt).day().toLocaleString()}
+                      className={cn({
+                        "bg-sidebar-accent": isActive("/chat/" + chat.id),
+                      })}
                     >
-                      <a href={"/chat/" + chat.id}>
+                      <Link href={"/chat/" + chat.id}>
                         <span>{chat.title || "Sem título"} </span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -77,9 +84,7 @@ export const ChatList = ({ userId }: { userId: string }) => {
           <div>Carregando...</div>
         ) : hasNextPage ? (
           <div>Carregar mais...</div>
-        ) : (
-          <div>Sem mais conversas</div>
-        )}
+        ) : null}
       </div>
     </div>
   );

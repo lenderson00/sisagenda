@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import z from "zod";
 
 export const GET = async (request: NextRequest) => {
   const session = await auth();
@@ -40,4 +41,38 @@ export const GET = async (request: NextRequest) => {
     nextCursor,
     hasNextPage,
   });
+};
+
+const createChatSchema = z.object({
+  title: z.string().min(1),
+});
+
+export const POST = async (request: NextRequest) => {
+  const session = await auth();
+  if (!session || !session.user || !session.user.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
+  });
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const userId = user.id;
+
+  const { title } = createChatSchema.parse(await request.json());
+
+  const chat = await prisma.chat.create({
+    data: {
+      title,
+      userId,
+    },
+  });
+
+  return NextResponse.json(chat);
 };
