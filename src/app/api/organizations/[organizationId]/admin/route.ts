@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -55,13 +56,21 @@ export async function POST(req: Request) {
     // Hash the default password
     const hashedPassword = await bcrypt.hash("Marinh@2025", 10);
 
+    let userRole: UserRole = "ADMIN";
+
+    if (organization.role === "COMIMSUP") {
+      userRole = "COMIMSUP_ADMIN";
+    } else if (organization.role === "COMRJ") {
+      userRole = "COMRJ_ADMIN";
+    }
+
     // Create the admin user
     const adminUser = await prisma.user.create({
       data: {
         name: validatedData.name,
         email: validatedData.email,
         password: hashedPassword,
-        role: "ADMIN",
+        role: userRole,
         organizationId: validatedData.organizationId,
       },
     });

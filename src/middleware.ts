@@ -102,11 +102,20 @@ export default auth(async (req: NextAuthRequest) => {
     return response;
   }
 
+  console.log("path", path);
+  if (path.includes("/chat")) {
+    return response;
+  }
+
   // Handle root path
   if (path === "/") {
     switch (role) {
       case UserRole.SUPER_ADMIN:
         return NextResponse.rewrite(new URL("/super-admin", nextUrl));
+      case UserRole.COMIMSUP_ADMIN:
+        return NextResponse.rewrite(new URL("/comimsup-admin", nextUrl));
+      case UserRole.COMRJ_ADMIN:
+        return NextResponse.rewrite(new URL("/comrj-admin", nextUrl));
       case UserRole.ADMIN:
         return NextResponse.rewrite(new URL("/admin", nextUrl));
       case UserRole.USER:
