@@ -79,7 +79,7 @@ export const ChatMessage = memo(({ message, status }: ChatMessageProps) => {
                 <ChatActions
                   message={message}
                   className={cn(
-                    "opacity-100 transition-opacity duration-200",
+                    "opacity-100 transition-opacity duration-200 h-10",
                     isUser ? !isHovered && "opacity-0" : "opacity-100",
                   )}
                 />
