@@ -2,11 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { MessageFeedbackType } from "@prisma/client";
+import { motion } from "framer-motion";
 import { Check, Copy, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useState } from "react";
+import { feedbackAction } from "../../_actions/feedback-action";
 
 interface ChatActionsProps {
   message: {
+    id: string;
     content: string;
     role: "user" | "assistant" | "data";
   };
@@ -15,8 +19,16 @@ interface ChatActionsProps {
 
 export const ChatActions = ({ message, className }: ChatActionsProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [feedbackType, setFeedbackType] = useState<MessageFeedbackType | null>(
+    null,
+  );
 
   const isUser = message.role === "user";
+
+  const handleFeedback = async (type: MessageFeedbackType) => {
+    setFeedbackType((prev) => (prev === type ? null : type));
+    await feedbackAction(message.id, type);
+  };
 
   const onCopy = () => {
     if (isCopied) return;
@@ -54,24 +66,52 @@ export const ChatActions = ({ message, className }: ChatActionsProps) => {
           </Button>
         )}
         {!isUser && message.content && (
-          <>
+          <motion.div
+            className="flex items-center space-x-1"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.2 }}
+          >
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {}}
-              className="size-8 rounded-lg"
+              onClick={() => handleFeedback("THUMBS_UP")}
+              disabled={
+                feedbackType === "THUMBS_UP" || feedbackType === "THUMBS_DOWN"
+              }
+              className={cn(
+                "size-8 rounded-lg",
+                feedbackType === "THUMBS_DOWN" && "hidden",
+              )}
             >
-              <ThumbsUp className="h-4 w-4" />
+              <ThumbsUp
+                className={cn(
+                  "h-4 w-4",
+                  feedbackType === "THUMBS_UP" && "fill-current",
+                )}
+              />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {}}
-              className="size-8 rounded-lg"
+              disabled={
+                feedbackType === "THUMBS_UP" || feedbackType === "THUMBS_DOWN"
+              }
+              onClick={() => handleFeedback("THUMBS_DOWN")}
+              className={cn(
+                "size-8 rounded-lg",
+                feedbackType === "THUMBS_UP" && "hidden",
+              )}
             >
-              <ThumbsDown className="h-4 w-4" />
+              <ThumbsDown
+                className={cn(
+                  "h-4 w-4",
+                  feedbackType === "THUMBS_DOWN" && "fill-current",
+                )}
+              />
             </Button>
-          </>
+          </motion.div>
         )}
       </div>
     </div>

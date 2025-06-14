@@ -17,81 +17,78 @@ interface ChatMessage extends Message {
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 
-export const ChatMessage = memo(
-  ({
-    message,
-    status,
-  }: {
-    message: ChatMessage;
-    status: ChatStatus;
-  }) => {
-    const isUser = message.role === "user";
-    const [isHovered, setIsHovered] = useState(false);
+interface ChatMessageProps {
+  message: ChatMessage;
+  status: ChatStatus;
+}
 
-    const isStreaming = status === "streaming";
+export const ChatMessage = memo(({ message, status }: ChatMessageProps) => {
+  const isUser = message.role === "user";
+  const [isHovered, setIsHovered] = useState(false);
 
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.3 }}
-        className="flex items-start gap-3 py-2 relative"
-      >
-        <div className="flex-1 pt-1 text-sm space-y-2">
-          {/* Render tool invocation parts first, as they happen before the final content */}
-          {message.parts?.map((part, index) => {
-            if (part.type === "tool-invocation") {
-              return (
-                <ToolCall
-                  key={part.toolInvocation.toolCallId ?? index}
-                  toolInvocation={part.toolInvocation}
-                />
-              );
-            }
+  const isStreaming = status === "streaming";
 
-            return null;
-          })}
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-start gap-3 py-2 relative"
+    >
+      <div className="flex-1 pt-1 text-sm space-y-2">
+        {/* Render tool invocation parts first, as they happen before the final content */}
+        {message.parts?.map((part, index) => {
+          if (part.type === "tool-invocation") {
+            return (
+              <ToolCall
+                key={part.toolInvocation.toolCallId ?? index}
+                toolInvocation={part.toolInvocation}
+              />
+            );
+          }
 
-          {/* Render aggregated text content. `useChat` streams text parts into this. */}
-          {message.content ? (
+          return null;
+        })}
+
+        {/* Render aggregated text content. `useChat` streams text parts into this. */}
+        {message.content ? (
+          <div
+            className={cn(
+              "w-full flex",
+              isUser ? "justify-end" : "justify-start",
+            )}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <div
               className={cn(
-                "w-full flex",
-                isUser ? "justify-end" : "justify-start",
+                "flex flex-col",
+                isUser ? "items-end" : "items-start",
               )}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
             >
               <div
                 className={cn(
-                  "flex flex-col",
-                  isUser ? "items-end" : "items-start",
+                  "p-2 rounded-lg [&>p]:m-0 w-full prose prose-sm",
+                  isUser ? "bg-neutral-100 px-4 max-w-md" : "bg-transparent",
                 )}
               >
-                <div
-                  className={cn(
-                    "p-2 rounded-lg [&>p]:m-0 w-full prose prose-sm",
-                    isUser ? "bg-neutral-100 px-4 max-w-md" : "bg-transparent",
-                  )}
-                >
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
-                </div>
-                {!isStreaming && (
-                  <ChatActions
-                    message={message}
-                    className={cn(
-                      "opacity-100 transition-opacity duration-200",
-                      isUser ? !isHovered && "opacity-0" : "opacity-100",
-                    )}
-                  />
-                )}
+                <ReactMarkdown>{message.content}</ReactMarkdown>
               </div>
+              {!isStreaming && (
+                <ChatActions
+                  message={message}
+                  className={cn(
+                    "opacity-100 transition-opacity duration-200",
+                    isUser ? !isHovered && "opacity-0" : "opacity-100",
+                  )}
+                />
+              )}
             </div>
-          ) : null}
-        </div>
-      </motion.div>
-    );
-  },
-);
+          </div>
+        ) : null}
+      </div>
+    </motion.div>
+  );
+});
 ChatMessage.displayName = "ChatMessage";

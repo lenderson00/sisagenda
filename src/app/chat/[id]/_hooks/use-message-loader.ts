@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 export const useMessageLoader = (chatId: string) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const loadMessages = useCallback(async () => {
     const response = await fetch(`/api/chat/messages?chatId=${chatId}`);
     const data = await response.json();
