@@ -75,6 +75,8 @@ export async function POST(req: Request) {
       },
     });
 
+    console.log(adminUser);
+
     return NextResponse.json(adminUser);
   } catch (error) {
     if (error instanceof z.ZodError) {

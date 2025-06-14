@@ -22,7 +22,9 @@ export async function GET(
     const admins = await prisma.user.findMany({
       where: {
         organizationId: organizationId,
-        role: "ADMIN",
+        role: {
+          in: ["ADMIN", "COMIMSUP_ADMIN", "COMRJ_ADMIN"],
+        },
         deletedAt: null,
       },
       select: {
@@ -35,6 +37,8 @@ export async function GET(
         updatedAt: true,
       },
     });
+
+    console.log(admins);
 
     return NextResponse.json(admins);
   } catch (error) {
