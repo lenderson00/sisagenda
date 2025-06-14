@@ -12,6 +12,7 @@ interface CustomChatFormProps extends ChatFormProps {
   handleInputChangeWrapper: (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => void;
+  isSubmitDisabled?: boolean;
 }
 
 function ChatFormComponent({
@@ -22,6 +23,7 @@ function ChatFormComponent({
   messages,
   append,
   handleSubmit,
+  isSubmitDisabled,
 }: CustomChatFormProps) {
   return (
     <div className="px-4 pb-4">
@@ -35,6 +37,7 @@ function ChatFormComponent({
             messages={messages}
             append={append}
             handleSubmit={handleSubmit}
+            isSubmitDisabled={isSubmitDisabled}
           />
         </form>
       </div>

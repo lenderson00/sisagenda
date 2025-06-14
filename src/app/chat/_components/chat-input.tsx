@@ -36,6 +36,7 @@ export function ChatInput({
   handleSubmit,
   createNewChat,
   isCreating,
+  isSubmitDisabled,
 }: {
   input: string;
   setInput: (event: React.ChangeEvent<HTMLTextAreaElement>) => void; // Tipo corrigido para receber o evento
@@ -55,6 +56,7 @@ export function ChatInput({
     },
     chatRequestOptions?: ChatRequestOptions,
   ) => void;
+  isSubmitDisabled?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -136,6 +138,7 @@ export function ChatInput({
           onChange={handleInput}
           className="min-h-[100px]  w-full overflow-hidden resize-none rounded-2xl text-base bg-muted outline-4 max-h-[200px]"
           rows={3}
+          disabled={isSubmitDisabled}
           onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
@@ -172,7 +175,7 @@ export function ChatInput({
           </Button>
         ) : (
           <Button
-            disabled={input.length === 0}
+            disabled={input.length === 0 || isSubmitDisabled}
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
               event.preventDefault();
               if (createNewChat && input.length > 0) {

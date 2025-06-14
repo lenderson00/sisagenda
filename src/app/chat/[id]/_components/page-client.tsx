@@ -11,6 +11,8 @@ import { ChatContainerRoot } from "./chat-container";
 import { ChatForm } from "./chat-form";
 import { MessageList } from "./message-list";
 
+const MAX_MESSAGES_PER_CHAT = 30;
+
 interface PageClientProps {
   chatId: string;
 }
@@ -114,11 +116,18 @@ export function PageClient({ chatId }: PageClientProps) {
   const handleFormSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+
+      if (messages.length >= MAX_MESSAGES_PER_CHAT) {
+        // TODO: show a toast notification
+        console.error("Chat message limit reached");
+        return;
+      }
+
       if (input.trim()) {
         handleSubmit(e);
       }
     },
-    [input, handleSubmit],
+    [input, handleSubmit, messages],
   );
 
   // Memoize the input change handler
@@ -147,6 +156,7 @@ export function PageClient({ chatId }: PageClientProps) {
           messages={messages}
           append={append}
           handleSubmit={handleSubmit}
+          isSubmitDisabled={messages.length >= MAX_MESSAGES_PER_CHAT}
         />
       </div>
     </AnimatePresence>

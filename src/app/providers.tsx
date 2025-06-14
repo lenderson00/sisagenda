@@ -1,6 +1,7 @@
 "use client";
 
 import { ModalProvider } from "@/components/modals/provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider as JotaiProvider } from "jotai";
 import type { Session } from "next-auth";
@@ -21,7 +22,9 @@ export function Providers({ children, session }: Props) {
       <JotaiProvider>
         <Toaster />
         <QueryClientProvider client={queryClient}>
-          <ModalProvider>{children}</ModalProvider>
+          <TooltipProvider delayDuration={200} skipDelayDuration={500}>
+            <ModalProvider>{children}</ModalProvider>
+          </TooltipProvider>
         </QueryClientProvider>
       </JotaiProvider>
     </SessionProvider>
