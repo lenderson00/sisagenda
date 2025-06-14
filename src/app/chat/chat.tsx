@@ -1,11 +1,11 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ChatInput } from "./_components/chat-input";
 import { useCreateChat } from "./_hooks/use-create-chat";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
 
 type Props = {
   userId: string;

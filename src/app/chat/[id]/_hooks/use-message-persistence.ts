@@ -1,4 +1,4 @@
-import { Message } from "ai";
+import type { Message } from "ai";
 import { useCallback, useState } from "react";
 
 export const useMessagePersistence = (chatId: string) => {

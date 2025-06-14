@@ -31,13 +31,24 @@ async function createAppointment(input: AppointmentInput) {
   return response.json();
 }
 
-export function useCreateAppointment(organizationId: string, deliveryTypeId: string, dateKey: Date) {
+export function useCreateAppointment(
+  organizationId: string,
+  deliveryTypeId: string,
+  dateKey: Date,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createAppointment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["availability", organizationId, deliveryTypeId, dayjs(dateKey).format("YYYY-MM-DD")] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "availability",
+          organizationId,
+          deliveryTypeId,
+          dayjs(dateKey).format("YYYY-MM-DD"),
+        ],
+      });
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       toast.success("Agendamento solicitado com sucesso!");
     },

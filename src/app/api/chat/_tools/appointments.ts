@@ -1,8 +1,8 @@
 "use server";
 
 import { openai } from "@ai-sdk/openai";
-import { Client } from "pg";
 import { generateObject } from "ai";
+import { Client } from "pg";
 import { z } from "zod";
 
 export type Result = Record<string, string | number>;

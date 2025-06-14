@@ -1,3 +1,4 @@
+import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import {
   Collapsible,
   CollapsibleContent,
@@ -5,7 +6,6 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronUp } from "lucide-react";
 import { useState } from "react";
-import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 
 export const ToolCall = ({ toolInvocation }: { toolInvocation: any }) => {
   const [isOpen, setIsOpen] = useState(false);

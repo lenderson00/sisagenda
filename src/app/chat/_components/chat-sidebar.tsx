@@ -4,9 +4,9 @@ import { NavMain } from "@/components/nav-main";
 import { Button } from "@/components/ui/button";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { IconDashboard, IconWriting } from "@tabler/icons-react";
-import { ChatList } from "./chat-list";
-import { useCreateChat } from "../_hooks/use-create-chat";
 import { useRouter } from "next/navigation";
+import { useCreateChat } from "../_hooks/use-create-chat";
+import { ChatList } from "./chat-list";
 
 export const ChatSidebar = ({
   ...props

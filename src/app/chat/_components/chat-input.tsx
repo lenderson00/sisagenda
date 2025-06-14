@@ -3,14 +3,14 @@
 import type { ChatRequestOptions, CreateMessage, Message } from "ai";
 import { motion } from "framer-motion";
 import type React from "react";
-import { useRef, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
-import useWindowSize from "@/hooks/use-window-size";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { IconArrowUp, IconLoader2, IconPlayerStop } from "@tabler/icons-react";
+import useWindowSize from "@/hooks/use-window-size";
 import { cn } from "@/lib/utils";
+import { IconArrowUp, IconLoader2, IconPlayerStop } from "@tabler/icons-react";
 
 const suggestedActions = [
   {

@@ -1,27 +1,3 @@
-import { useChatList, useDeleteChat, useRenameChat } from "../_hooks/use-chat";
-import { useInView } from "react-intersection-observer";
-import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import { usePathname, useRouter } from "next/navigation";
-import dayjs from "dayjs";
-import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { IconDots } from "@tabler/icons-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,18 +9,42 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
-  DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { IconDots } from "@tabler/icons-react";
+import dayjs from "dayjs";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import { toast } from "sonner";
+import { useChatList, useDeleteChat, useRenameChat } from "../_hooks/use-chat";
 import { ChatItem } from "./chat-item";
 
 export const ChatList = () => {

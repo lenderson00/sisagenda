@@ -1,5 +1,11 @@
 import { AppointmentStatus } from "@prisma/client";
-import { endOfDay, format, isWithinInterval, startOfDay, subDays } from "date-fns";
+import {
+  endOfDay,
+  format,
+  isWithinInterval,
+  startOfDay,
+  subDays,
+} from "date-fns";
 
 export interface DashboardStats {
   totalAppointments: number;
@@ -61,7 +67,10 @@ export const getStatusLabel = (status: AppointmentStatus): string => {
   return labels[status] || status;
 };
 
-export const generateTimeSeriesData = (appointments: any[], days = 7): TimeSeriesData[] => {
+export const generateTimeSeriesData = (
+  appointments: any[],
+  days = 7,
+): TimeSeriesData[] => {
   const data = [];
   const today = new Date();
 
@@ -70,17 +79,20 @@ export const generateTimeSeriesData = (appointments: any[], days = 7): TimeSerie
     const dayStart = startOfDay(date);
     const dayEnd = endOfDay(date);
 
-    const dayAppointments = appointments.filter(apt =>
-      isWithinInterval(new Date(apt.date), { start: dayStart, end: dayEnd })
+    const dayAppointments = appointments.filter((apt) =>
+      isWithinInterval(new Date(apt.date), { start: dayStart, end: dayEnd }),
     );
 
     data.push({
-      date: format(date, 'dd/MM'),
+      date: format(date, "dd/MM"),
       appointments: dayAppointments.length,
-      confirmed: dayAppointments.filter(apt => apt.status === AppointmentStatus.CONFIRMED).length,
-      cancelled: dayAppointments.filter(apt =>
-        apt.status === AppointmentStatus.CANCELLED ||
-        apt.status === AppointmentStatus.REJECTED
+      confirmed: dayAppointments.filter(
+        (apt) => apt.status === AppointmentStatus.CONFIRMED,
+      ).length,
+      cancelled: dayAppointments.filter(
+        (apt) =>
+          apt.status === AppointmentStatus.CANCELLED ||
+          apt.status === AppointmentStatus.REJECTED,
       ).length,
     });
   }
@@ -95,24 +107,31 @@ export const calculateStats = (appointments: any[]): DashboardStats => {
 
   return {
     totalAppointments: appointments.length,
-    pendingAppointments: appointments.filter(apt => apt.status === AppointmentStatus.PENDING_CONFIRMATION).length,
-    confirmedAppointments: appointments.filter(apt => apt.status === AppointmentStatus.CONFIRMED).length,
-    completedAppointments: appointments.filter(apt => apt.status === AppointmentStatus.COMPLETED).length,
-    cancelledAppointments: appointments.filter(apt =>
-      apt.status === AppointmentStatus.CANCELLED ||
-      apt.status === AppointmentStatus.REJECTED
+    pendingAppointments: appointments.filter(
+      (apt) => apt.status === AppointmentStatus.PENDING_CONFIRMATION,
     ).length,
-    todayAppointments: appointments.filter(apt =>
+    confirmedAppointments: appointments.filter(
+      (apt) => apt.status === AppointmentStatus.CONFIRMED,
+    ).length,
+    completedAppointments: appointments.filter(
+      (apt) => apt.status === AppointmentStatus.COMPLETED,
+    ).length,
+    cancelledAppointments: appointments.filter(
+      (apt) =>
+        apt.status === AppointmentStatus.CANCELLED ||
+        apt.status === AppointmentStatus.REJECTED,
+    ).length,
+    todayAppointments: appointments.filter((apt) =>
       isWithinInterval(new Date(apt.date), {
         start: startOfDay(today),
-        end: endOfDay(today)
-      })
+        end: endOfDay(today),
+      }),
     ).length,
-    weekAppointments: appointments.filter(apt =>
-      new Date(apt.date) >= weekAgo
+    weekAppointments: appointments.filter(
+      (apt) => new Date(apt.date) >= weekAgo,
     ).length,
-    monthAppointments: appointments.filter(apt =>
-      new Date(apt.date) >= monthAgo
+    monthAppointments: appointments.filter(
+      (apt) => new Date(apt.date) >= monthAgo,
     ).length,
   };
 };

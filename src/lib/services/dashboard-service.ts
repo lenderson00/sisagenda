@@ -34,10 +34,12 @@ export async function getDashboardData(organizationId: string) {
   const timeSeriesData = generateTimeSeriesData(appointments, 7);
 
   // Calculate status distribution
-  const statusDistribution = Object.values(AppointmentStatus).map((status) => ({
-    status,
-    count: appointments.filter((apt) => apt.status === status).length,
-  })).filter((item) => item.count > 0);
+  const statusDistribution = Object.values(AppointmentStatus)
+    .map((status) => ({
+      status,
+      count: appointments.filter((apt) => apt.status === status).length,
+    }))
+    .filter((item) => item.count > 0);
 
   // Calculate supplier performance
   const supplierPerformance = await getSupplierPerformance(organizationId);
@@ -70,28 +72,31 @@ export async function getSupplierPerformance(organizationId: string) {
     },
   });
 
-  return suppliers.map((supplier) => {
-    const totalAppointments = supplier.appointments.length;
-    const completedAppointments = supplier.appointments.filter(
-      (apt) => apt.status === AppointmentStatus.COMPLETED
-    ).length;
-    const cancelledAppointments = supplier.appointments.filter(
-      (apt) =>
-        apt.status === AppointmentStatus.CANCELLED ||
-        apt.status === AppointmentStatus.REJECTED
-    ).length;
-    const completionRate = totalAppointments > 0
-      ? (completedAppointments / totalAppointments) * 100
-      : 0;
+  return suppliers
+    .map((supplier) => {
+      const totalAppointments = supplier.appointments.length;
+      const completedAppointments = supplier.appointments.filter(
+        (apt) => apt.status === AppointmentStatus.COMPLETED,
+      ).length;
+      const cancelledAppointments = supplier.appointments.filter(
+        (apt) =>
+          apt.status === AppointmentStatus.CANCELLED ||
+          apt.status === AppointmentStatus.REJECTED,
+      ).length;
+      const completionRate =
+        totalAppointments > 0
+          ? (completedAppointments / totalAppointments) * 100
+          : 0;
 
-    return {
-      name: supplier.name || "Unnamed Supplier",
-      totalAppointments,
-      completedAppointments,
-      cancelledAppointments,
-      completionRate: Math.round(completionRate),
-    };
-  }).filter((supplier) => supplier.totalAppointments > 0);
+      return {
+        name: supplier.name || "Unnamed Supplier",
+        totalAppointments,
+        completedAppointments,
+        cancelledAppointments,
+        completionRate: Math.round(completionRate),
+      };
+    })
+    .filter((supplier) => supplier.totalAppointments > 0);
 }
 
 export async function getOrganizationInfo(organizationId: string) {
