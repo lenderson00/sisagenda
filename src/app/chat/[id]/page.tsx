@@ -138,7 +138,7 @@ export default function ChatPage() {
   const chatContent = useMemo(
     () => (
       <ChatContainerContent
-        className="flex w-full flex-col pt-20 pb-4 max-w-2xl mx-auto"
+        className="flex w-full flex-col pt-20 pb-4  px-4 max-w-2xl mx-auto overflow-x-hidden"
         style={{
           scrollbarGutter: "stable both-edges",
           scrollbarWidth: "none",
@@ -155,9 +155,8 @@ export default function ChatPage() {
               <IconPointFilled className="size-10 motion-preset-pulse-md  text-neutral-400" />
             </div>
           )}
-
-        <div className="absolute bottom-0 flex w-full max-w-3xl flex-1 items-end justify-end gap-4 px-6 pb-2">
-          <ScrollButton className="absolute top-[-50px] right-[500px]" />
+        <div className="absolute bottom-0 inset-x-0 max-w-2xl mx-auto">
+          <ScrollButton className="absolute bottom-4 right-4 md:right-0" />
         </div>
       </ChatContainerContent>
     ),
@@ -170,7 +169,7 @@ export default function ChatPage() {
 
   return (
     <AnimatePresence mode="wait">
-      <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col bg-white no-scrollbar">
+      <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col bg-white">
         <ChatContainerRoot className="relative w-full no-scrollbar">
           {chatContent}
         </ChatContainerRoot>
