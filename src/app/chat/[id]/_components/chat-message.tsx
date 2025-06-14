@@ -69,7 +69,7 @@ export const ChatMessage = memo(({ message, status }: ChatMessageProps) => {
             >
               <div
                 className={cn(
-                  "p-2 rounded-lg [&>p]:m-0 w-full prose prose-sm",
+                  "p-2 rounded-lg [&>p]:m-0 w-full prose prose-sm max-w-2xl",
                   isUser ? "bg-neutral-100 px-4 max-w-md" : "bg-transparent",
                 )}
               >
