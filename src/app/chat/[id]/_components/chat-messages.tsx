@@ -15,7 +15,7 @@ interface ChatMessage extends Message {
   parts?: any[];
 }
 
-type ChatStatus = "submitted" | "streaming" | "ready" | "error";
+export type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 
 interface ChatMessageProps {
   message: ChatMessage;
