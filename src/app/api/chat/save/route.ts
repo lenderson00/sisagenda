@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 
@@ -18,17 +18,13 @@ export async function POST(request: NextRequest) {
       update: {
         role: message.role,
         content: message.content,
-        toolInvocations: message.parts
-          ? JSON.stringify(message.parts)
-          : undefined,
+        toolInvocations: message.parts ?? undefined,
       },
       create: {
         id: message.id,
         role: message.role,
         content: message.content,
-        toolInvocations: message.parts
-          ? JSON.stringify(message.parts)
-          : undefined,
+        toolInvocations: message.parts ?? undefined,
         chatId,
       },
     });
