@@ -103,7 +103,14 @@ export default auth(async (req: NextAuthRequest) => {
   }
 
   console.log("path", path);
-  if (path.includes("/chat")) {
+  if (
+    path.includes("/chat") &&
+    (role === UserRole.COMRJ_ADMIN || role === UserRole.COMIMSUP_ADMIN)
+  ) {
+    return response;
+  }
+
+  if (path.includes("/docs")) {
     return response;
   }
 
@@ -112,10 +119,8 @@ export default auth(async (req: NextAuthRequest) => {
     switch (role) {
       case UserRole.SUPER_ADMIN:
         return NextResponse.rewrite(new URL("/super-admin", nextUrl));
-      case UserRole.COMIMSUP_ADMIN:
+      case UserRole.COMIMSUP_ADMIN || UserRole.COMRJ_ADMIN:
         return NextResponse.rewrite(new URL("/comimsup-admin", nextUrl));
-      case UserRole.COMRJ_ADMIN:
-        return NextResponse.rewrite(new URL("/comrj-admin", nextUrl));
       case UserRole.ADMIN:
         return NextResponse.rewrite(new URL("/admin", nextUrl));
       case UserRole.USER:
