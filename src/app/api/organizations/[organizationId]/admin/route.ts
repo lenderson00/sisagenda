@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -59,9 +59,9 @@ export async function POST(req: Request) {
     let userRole: UserRole = "ADMIN";
 
     if (organization.role === "COMIMSUP") {
-      userRole = "COMIMSUP_ADMIN";
+      userRole = "COMIMSUP_ADMIN" as UserRole;
     } else if (organization.role === "COMRJ") {
-      userRole = "COMRJ_ADMIN";
+      userRole = "COMRJ_ADMIN" as UserRole;
     }
 
     // Create the admin user

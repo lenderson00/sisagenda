@@ -29,9 +29,7 @@ export const GET = async (request: NextRequest) => {
       id: message.id,
       role: message.role,
       content: message.content,
-      toolInvocations: message.toolInvocations
-        ? JSON.parse(message.toolInvocations as string)
-        : null,
+      toolInvocations: message.toolInvocations || null,
     })),
   );
 };

@@ -16,11 +16,12 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { ChatSidebar } from "./_components/chat-sidebar";
-import { ChatHeader } from "./_components/chat-header";
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+
+import { ChatHeader } from "./_components/chat-header";
+import { ChatSidebar } from "./_components/chat-sidebar";
 
 const SuperAdminLayout = async ({
   children,
@@ -39,7 +40,7 @@ const SuperAdminLayout = async ({
 
   return (
     <div className="max-h-screen overflow-hidden">
-      <ChatHeader />
+      <ChatHeader className="relative z-[99999]" />
       <SidebarProvider className={"min-h-[calc(100svh-56px)]"}>
         <ChatSidebar />
         <SidebarInset className="border-1 overflow-hidden h-[calc(100svh-80px)]">
