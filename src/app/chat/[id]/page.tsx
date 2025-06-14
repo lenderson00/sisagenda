@@ -12,7 +12,7 @@ import {
   ChatContainerContent,
   ChatContainerRoot,
 } from "./_components/chat-container";
-import { ChatMessage } from "./_components/chat-message";
+import { ChatMessage } from "./_components/chat-messages";
 import { ScrollButton } from "./_components/scroll-button";
 import { useMessageLoader } from "./_hooks/use-message-loader";
 import { useMessagePersistence } from "./_hooks/use-message-persistence";
@@ -138,14 +138,19 @@ export default function ChatPage() {
   const chatContent = useMemo(
     () => (
       <ChatContainerContent
-        className="flex w-full flex-col pt-20 pb-4  px-4 max-w-2xl mx-auto overflow-x-hidden"
+        className="flex w-full flex-col pt-20 pb-16  px-4 max-w-2xl mx-auto overflow-x-hidden"
         style={{
           scrollbarGutter: "stable both-edges",
           scrollbarWidth: "none",
         }}
       >
-        {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg as any} status={status} />
+        {messages.map((msg, index) => (
+          <ChatMessage
+            key={msg.id}
+            message={msg as any}
+            status={status}
+            isLastMessage={index === messages.length - 1}
+          />
         ))}
 
         {status === "submitted" &&
@@ -170,7 +175,7 @@ export default function ChatPage() {
   return (
     <AnimatePresence mode="wait">
       <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col bg-white">
-        <ChatContainerRoot className="relative w-full no-scrollbar">
+        <ChatContainerRoot className="relative w-full no-scrollbar h-full flex-1">
           {chatContent}
         </ChatContainerRoot>
 
