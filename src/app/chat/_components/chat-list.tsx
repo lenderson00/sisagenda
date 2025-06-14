@@ -78,7 +78,7 @@ export const ChatList = () => {
               <div key={i}>
                 {page.items.map((chat, index) => (
                   <ChatItem
-                    key={chat.id + "-" + index}
+                    key={`${chat.id}-${index}`}
                     id={chat.id}
                     title={chat.title ?? "Nova conversa"}
                   />

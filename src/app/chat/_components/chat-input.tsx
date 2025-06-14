@@ -99,6 +99,7 @@ export function ChatInput({
               className={index > 1 ? "hidden sm:block" : "block"}
             >
               <button
+                type="button"
                 onClick={async () => {
                   if (createNewChat) {
                     createNewChat(suggestedAction.action);

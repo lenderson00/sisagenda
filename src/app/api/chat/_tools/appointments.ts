@@ -150,9 +150,9 @@ export const runGenerateSQLQuery = async (query: string) => {
       );
       // throw error
       throw Error("Table 'Appointment' does not exist");
-    } else {
-      throw e;
     }
+
+    throw e;
   }
 
   return data.rows as Result[];
@@ -163,7 +163,7 @@ export const generateChartConfig = async (
   userQuery: string,
 ) => {
   "use server";
-  const system = `You are a data visualization expert. `;
+  const system = "You are a data visualization expert. ";
 
   try {
     const { object: config } = await generateObject({

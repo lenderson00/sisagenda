@@ -24,10 +24,10 @@ export const useMessagePersistence = (chatId: string) => {
         if (response.ok && result.success) {
           setSavedMessageIds((prev) => new Set(prev).add(message.id));
           return true;
-        } else {
-          console.error("Failed to save message:", result.error);
-          return false;
         }
+
+        console.error("Failed to save message:", result.error);
+        return false;
       } catch (error) {
         console.error("Failed to save message:", error);
         return false;
@@ -39,7 +39,9 @@ export const useMessagePersistence = (chatId: string) => {
   const markAsSaved = useCallback((messageIds: string[]) => {
     setSavedMessageIds((prev) => {
       const newSet = new Set(prev);
-      messageIds.forEach((id) => newSet.add(id));
+      for (const id of messageIds) {
+        newSet.add(id);
+      }
       return newSet;
     });
   }, []);

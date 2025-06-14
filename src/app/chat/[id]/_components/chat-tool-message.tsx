@@ -47,7 +47,7 @@ export const ToolCall = ({ toolInvocation }: { toolInvocation: any }) => {
         </div>
         {hasArgs && (
           <CollapsibleTrigger asChild>
-            <button className="text-sm cursor-pointer">
+            <button type="button" className="text-sm cursor-pointer">
               <div className="flex items-center">
                 <span>Detalhes</span>
                 <ChevronUp

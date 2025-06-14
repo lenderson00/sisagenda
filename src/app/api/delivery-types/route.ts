@@ -55,6 +55,7 @@ export async function POST(req: Request) {
     const slug = validatedData.name
       .toLowerCase()
       .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");

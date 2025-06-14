@@ -47,6 +47,7 @@ export function AccountAvatar({ className }: Props) {
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
       <button
+        type="button"
         className={`bg-primary rounded-full p-1 transition-all duration-200 ${isOpen ? "ring-2 ring-primary/30" : "hover:bg-primary/90"}`}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -70,11 +71,17 @@ export function AccountAvatar({ className }: Props) {
           </div>
 
           <div className="py-1">
-            <button className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150">
+            <button
+              type="button"
+              className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150"
+            >
               <UserCircle className="h-4 w-4 mr-3 text-muted-foreground" />
               Meu perfil
             </button>
-            <button className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150">
+            <button
+              type="button"
+              className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150"
+            >
               <Settings className="h-4 w-4 mr-3 text-muted-foreground" />
               Configurações
             </button>
@@ -82,6 +89,7 @@ export function AccountAvatar({ className }: Props) {
 
           <div className="py-1 border-t border-border">
             <button
+              type="button"
               className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted transition-colors duration-150"
               onClick={handleSignOut}
             >

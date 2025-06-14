@@ -82,6 +82,7 @@ function __FilterSelector<TData>({
     () =>
       property && column ? (
         <FilterValueController
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
           filter={filter!}
           column={column as Column<TData, ColumnDataType>}
           actions={actions}

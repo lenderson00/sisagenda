@@ -71,7 +71,7 @@ export const POST = async (request: NextRequest) => {
 
   let suggestedTitle = title;
 
-  if (title != "Nova Conversa") {
+  if (title !== "Nova Conversa") {
     const response = await generateText({
       model: openai("gpt-4o-mini"),
       prompt: `Sugira um título para uma conversa com o usuário sobre o título ${title}, com 2 palavras. Nao coloque " no titulo.`,

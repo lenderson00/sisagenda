@@ -202,6 +202,7 @@ export function FilterValueOptionDisplay<TData>({
     <div className="inline-flex items-center gap-0.5">
       {hasOptionIcons &&
         take(selected, 3).map(({ value, icon }) => {
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
           const Icon = icon!;
           return isValidElement(Icon) ? (
             Icon
@@ -251,6 +252,7 @@ export function FilterValueMultiOptionDisplay<TData>({
       {hasOptionIcons && (
         <div key="icons" className="inline-flex items-center gap-0.5">
           {take(selected, 3).map(({ value, icon }) => {
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             const Icon = icon!;
             return isValidElement(Icon) ? (
               cloneElement(Icon, { key: value })
