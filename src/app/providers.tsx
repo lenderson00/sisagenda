@@ -1,6 +1,7 @@
 "use client";
 
 import { ModalProvider } from "@/components/modals/provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider as JotaiProvider } from "jotai";
@@ -23,7 +24,20 @@ export function Providers({ children, session }: Props) {
         <Toaster />
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={200} skipDelayDuration={500}>
-            <ModalProvider>{children}</ModalProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ModalProvider>
+                <div vaul-drawer-wrapper="">
+                  <div className="relative flex min-h-svh flex-col bg-background">
+                    {children}
+                  </div>
+                </div>
+              </ModalProvider>
+            </ThemeProvider>
           </TooltipProvider>
         </QueryClientProvider>
       </JotaiProvider>
