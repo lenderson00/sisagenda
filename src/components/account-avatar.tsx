@@ -11,7 +11,6 @@ import {
   UserCircle,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -20,7 +19,6 @@ type Props = {
 export function AccountAvatar({ className }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const { user } = useUser();
 
   // Handle click outside to close dropdown
@@ -59,7 +57,9 @@ export function AccountAvatar({ className }: Props) {
           <div className="py-2 px-3 border-b border-border">
             <div className="flex items-center space-x-3">
               <div>
-                <p className="text-sm font-medium">{user?.name || ""}</p>
+                <p className="text-sm font-medium">
+                  {user?.postoGraduacao || ""} {user?.name || ""}
+                </p>
                 <p className="text-xs text-muted-foreground">
                   {user?.email || ""}
                 </p>

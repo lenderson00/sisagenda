@@ -21,14 +21,19 @@ enum UserRole {
 model User {
   id                 String    @id @default(cuid())
   name               String?
+  nip                String?   @unique
+  cpf                String?   @unique
   email              String    @unique
+  postoGraduacao     String?
   emailVerified      DateTime?
   image              String?
   isActive           Boolean   @default(true)
   role               UserRole  @default(USER)
   password           String
   mustChangePassword Boolean   @default(true)
-  whatsapp           String?
+
+  whatsapp         String?
+  whatsappVerified Boolean @default(false)
 
   auditLogs AuditLog[]
 
