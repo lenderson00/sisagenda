@@ -32,6 +32,13 @@ export async function GET(req: Request) {
         deletedAt: null,
         role: role ?? undefined,
       },
+      include: {
+        comimsup: {
+          select: {
+            name: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },

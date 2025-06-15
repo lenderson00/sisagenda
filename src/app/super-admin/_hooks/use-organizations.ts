@@ -19,8 +19,14 @@ export async function getOrganizationsByRole(
   return response.json();
 }
 
+type OrganizationResponse = Organization & {
+  comimsup: {
+    name: string;
+  };
+};
+
 export function useOrganizations() {
-  return useQuery<Organization[]>({
+  return useQuery<OrganizationResponse[]>({
     queryKey: ["organizations"],
     queryFn: getOrganizations,
   });
@@ -29,7 +35,7 @@ export function useOrganizations() {
 export function useOrganizationsByRole(
   role: "COMIMSUP" | "DEPOSITO" | "COMRJ",
 ) {
-  return useQuery<Organization[]>({
+  return useQuery<OrganizationResponse[]>({
     queryKey: ["organizations", role],
     queryFn: () => getOrganizationsByRole(role),
   });

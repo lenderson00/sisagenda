@@ -6,6 +6,7 @@ import { MobileNav } from "@/components/mobile-nav";
 import { ModeSwitcher } from "@/components/mode-switcher";
 import { Button } from "@/components/ui/button";
 import { AccountAvatar } from "./account-avatar";
+import { Separator } from "./ui/separator";
 
 const mockTree = {
   children: [],
@@ -24,6 +25,7 @@ export function SiteHeader() {
             <div className="hidden w-full flex-1 md:flex md:w-auto md:flex-none border rounded-md">
               <CommandMenu tree={mockTree} colors={mockColors} />
             </div>
+
             <nav className="flex items-center gap-2 ml-4">
               <AccountAvatar className="size-6" />
             </nav>
