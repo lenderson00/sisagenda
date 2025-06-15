@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DrawerDialog } from "@/components/ui/dialog-drawer";
 import type { Organization } from "@prisma/client";
@@ -28,6 +29,18 @@ export function OrganizationAdminClient({
               </h1>
             </div>
             <p className="text-gray-600 mt-1">{organization.description}</p>
+          </div>
+          <div>
+            {admins && admins.length < 2 && (
+              <DrawerDialog
+                action="Adicionar Administrador"
+                icon={IconPlus}
+                title="Adicionar Administrador"
+                description="Adicione um administrador para gerenciar esta organização."
+              >
+                <AdminForm organizationId={organization.id} />
+              </DrawerDialog>
+            )}
           </div>
         </div>
       </div>

@@ -20,6 +20,7 @@ import { useCreateAdmin } from "../_hooks/use-create-admin";
 const adminFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
   email: z.string().email("Email inválido"),
+  postoGraduacao: z.string().min(2, "Mínimo 2 letras"),
 });
 
 type AdminFormValues = z.infer<typeof adminFormSchema>;
@@ -38,6 +39,7 @@ export function AdminForm({ organizationId }: AdminFormProps) {
     defaultValues: {
       name: "",
       email: "",
+      postoGraduacao: "",
     },
   });
 
@@ -61,19 +63,34 @@ export function AdminForm({ organizationId }: AdminFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-3 w-full px-4 md:px-0"
       >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input placeholder="Nome do administrador" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex flex-col gap-3 md:flex-row">
+          <FormField
+            control={form.control}
+            name="postoGraduacao"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Posto/Graduacao</FormLabel>
+                <FormControl>
+                  <Input placeholder="Posto/Graduacao" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Nome de Guerra</FormLabel>
+                <FormControl>
+                  <Input placeholder="Nome de Guerra do ADMIN" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="email"
@@ -81,7 +98,7 @@ export function AdminForm({ organizationId }: AdminFormProps) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email do administrador" {...field} />
+                <Input placeholder="Email do ADMIN" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

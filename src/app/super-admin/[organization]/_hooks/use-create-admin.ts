@@ -4,6 +4,7 @@ import { toast } from "sonner";
 type CreateAdminData = {
   name: string;
   email: string;
+  postoGraduacao: string;
   organizationId: string;
 };
 
