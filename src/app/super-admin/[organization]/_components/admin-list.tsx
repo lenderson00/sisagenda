@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import type { User as UserType } from "@prisma/client";
 import { IconMail, IconUser } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -78,7 +79,7 @@ export function AdminList({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to toggle status");
+        throw new Error("Falha ao alterar status");
       }
 
       return response.json();
@@ -109,7 +110,7 @@ export function AdminList({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete admin");
+        throw new Error("Falha ao excluir administrador");
       }
     },
     onSuccess: (_, variables) => {
@@ -141,7 +142,9 @@ export function AdminList({
   if (initialAdmins.length === 0) {
     return (
       <div className="text-center py-12 w-full">
-        <p className="text-muted-foreground">No administrators found.</p>
+        <p className="text-muted-foreground">
+          Nenhum administrador encontrado.
+        </p>
       </div>
     );
   }
@@ -151,19 +154,23 @@ export function AdminList({
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
         {initialAdmins.map((admin) => (
           <Card key={admin.id} className="relative">
-            <CardHeader className="pb-3">
+            <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <IconUser className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="font-semibold leading-none">{admin.name}</h3>
+                  <div className="space-y-1 flex h-fit  items-center gap-2">
+                    <h3 className="font-semibold leading-none mt-1">
+                      {admin.postoGraduacao} {admin.name}
+                    </h3>
+
                     <Badge
-                      variant={admin.isActive ? "default" : "secondary"}
-                      className="text-xs"
+                      variant={admin.isActive ? "outline" : "destructive"}
+                      className={cn(
+                        "text-xs p-0.5 px-2 ",
+                        !admin.isActive &&
+                          "text-white dark:text-destructive-foreground",
+                      )}
                     >
-                      {admin.isActive ? "Active" : "Inactive"}
+                      {admin.isActive ? "Ativo" : "Inativo"}
                     </Badge>
                   </div>
                 </div>
@@ -182,11 +189,11 @@ export function AdminList({
                       }}
                     >
                       <Lock className="mr-2 h-4 w-4" />
-                      Reset Password
+                      Redefinir Senha
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleToggleStatus(admin)}>
                       <Key className="mr-2 h-4 w-4" />
-                      {admin.isActive ? "Deactivate" : "Activate"}
+                      {admin.isActive ? "Desativar" : "Ativar"}
                     </DropdownMenuItem>
                     {!admin.isActive && (
                       <DropdownMenuItem
@@ -197,7 +204,7 @@ export function AdminList({
                         }}
                       >
                         <Trash className="mr-2 h-4 w-4" />
-                        Delete
+                        Excluir
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>
@@ -228,7 +235,7 @@ export function AdminList({
                   }}
                 >
                   <Lock className="mr-2 h-3 w-3" />
-                  Reset
+                  Redefinir Senha
                 </Button>
                 <Button
                   variant={admin.isActive ? "secondary" : "default"}
@@ -237,7 +244,7 @@ export function AdminList({
                   onClick={() => handleToggleStatus(admin)}
                 >
                   <Key className="mr-2 h-3 w-3" />
-                  {admin.isActive ? "Deactivate" : "Activate"}
+                  {admin.isActive ? "Desativar" : "Ativar"}
                 </Button>
                 {!admin.isActive && (
                   <Button
@@ -260,17 +267,19 @@ export function AdminList({
       <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Reset Password</AlertDialogTitle>
+            <AlertDialogTitle>Redefinir Senha</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to reset the password for{" "}
-              {selectedAdmin?.name}? A password reset link will be sent to their
-              email address.
+              Tem certeza que deseja redefinir a senha de{" "}
+              <span className="font-bold">
+                {selectedAdmin?.postoGraduacao} {selectedAdmin?.name}
+              </span>
+              ?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleResetPassword}>
-              Reset Password
+              Redefinir Senha
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -282,19 +291,19 @@ export function AdminList({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Administrator</AlertDialogTitle>
+            <AlertDialogTitle>Excluir Administrador</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete {selectedAdmin?.name}? This action
-              cannot be undone.
+              Tem certeza que deseja excluir {selectedAdmin?.name}? Esta ação
+              não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-white dark:text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -60,7 +60,7 @@ export function NovaSenhaForm({ email }: NovaSenhaFormProps) {
   }
 
   return (
-    <Card className="w-full max-w-sm pb-2">
+    <Card className="w-full max-w-sm ">
       <CardHeader className="text-center">
         <CardTitle className="text-xl">Defina uma nova senha</CardTitle>
         <CardDescription>Defina uma nova senha para sua conta</CardDescription>
