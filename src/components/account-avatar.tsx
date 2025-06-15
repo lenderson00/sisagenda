@@ -45,7 +45,7 @@ export function AccountAvatar({ className }: Props) {
   };
 
   return (
-    <div className={cn("relative", className)} ref={dropdownRef}>
+    <div className={cn("relative cursor-pointer", className)} ref={dropdownRef}>
       <button
         type="button"
         className={`bg-primary rounded-full p-1 transition-all duration-200 ${isOpen ? "ring-2 ring-primary/30" : "hover:bg-primary/90"}`}
@@ -58,9 +58,6 @@ export function AccountAvatar({ className }: Props) {
         <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-card ring-1 ring-black/5 dark:ring-white/10 z-50 animate-in fade-in slide-in-from-top-5 duration-200">
           <div className="py-2 px-3 border-b border-border">
             <div className="flex items-center space-x-3">
-              <div className="bg-primary/20 rounded-full p-2">
-                <UserCircle className="h-6 w-6 text-primary" />
-              </div>
               <div>
                 <p className="text-sm font-medium">{user?.name || ""}</p>
                 <p className="text-xs text-muted-foreground">
@@ -73,16 +70,14 @@ export function AccountAvatar({ className }: Props) {
           <div className="py-1">
             <button
               type="button"
-              className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150"
+              className="flex cursor-pointer items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150"
             >
-              <UserCircle className="h-4 w-4 mr-3 text-muted-foreground" />
               Meu perfil
             </button>
             <button
               type="button"
-              className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150"
+              className="flex cursor-pointer items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-150"
             >
-              <Settings className="h-4 w-4 mr-3 text-muted-foreground" />
               Configurações
             </button>
           </div>
@@ -90,7 +85,7 @@ export function AccountAvatar({ className }: Props) {
           <div className="py-1 border-t border-border">
             <button
               type="button"
-              className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted transition-colors duration-150"
+              className="flex cursor-pointer items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted transition-colors duration-150"
               onClick={handleSignOut}
             >
               <LogOut className="h-4 w-4 mr-3" />

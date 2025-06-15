@@ -1,8 +1,42 @@
-import { Button } from "@/components/ui/button";
-import { ChevronDown, Circle, Github, Moon, Sun } from "lucide-react";
+"use client";
+
+import { useUser } from "@/hooks/use-user";
+import { Circle } from "lucide-react";
 import Link from "next/link";
+import { ModeSwitcher } from "./mode-switcher";
+
+const footerLinks = {
+  SUPER_ADMIN: [
+    {
+      name: "Principal",
+      href: "/",
+    },
+    {
+      name: "Documentação",
+      href: "/docs",
+    },
+  ],
+
+  FORNECEDOR: [
+    {
+      name: "Principal",
+      href: "/",
+    },
+  ],
+
+  USER: [
+    {
+      name: "Principal",
+      href: "/",
+    },
+  ],
+};
 
 export default function Footer() {
+  const { user } = useUser();
+
+  const links = footerLinks[user?.role as keyof typeof footerLinks] || [];
+
   return (
     <footer className="border-t bg-background rounded-b-lg">
       <div className="container mx-auto px-4 py-6">
@@ -19,34 +53,15 @@ export default function Footer() {
 
             {/* Navigation Links */}
             <nav className="flex items-center space-x-6">
-              <Link
-                href="/"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Home
-              </Link>
-              <Link
-                href="/"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Principal
-              </Link>
-              <Link
-                href="/configuracoes"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Configurações
-              </Link>
-
-              <div className="flex items-center space-x-1">
+              {links.map((link) => (
                 <Link
-                  href="/legal"
+                  key={link.name}
+                  href={link.href}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Legal
+                  {link.name}
                 </Link>
-                <ChevronDown className="w-3 h-3 text-muted-foreground" />
-              </div>
+              ))}
             </nav>
           </div>
 
@@ -60,9 +75,7 @@ export default function Footer() {
 
             {/* Theme and External Links */}
             <div className="flex items-center space-x-1">
-              <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-                <Moon className="w-4 h-4" />
-              </Button>
+              <ModeSwitcher />
             </div>
           </div>
         </div>

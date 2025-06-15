@@ -29,10 +29,10 @@ export default async function AdminPage() {
         <div className="container mx-auto px-6 py-8">
           <div className="flex md:items-center justify-between flex-col md:flex-row gap-4">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-3xl font-bold tracking-tight ">
                 Organizações Militares
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className=" mt-1 text-muted-foreground">
                 Gerencie as organizações militares e seus administradores
               </p>
             </div>
