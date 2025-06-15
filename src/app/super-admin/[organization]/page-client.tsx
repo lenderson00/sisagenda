@@ -20,15 +20,17 @@ export function OrganizationAdminClient({
 
   return (
     <div className="h-full">
-      <div className="border-b bg-gray-50 py-4 md:py-8 px-4 md:px-0 ">
+      <div className="border-b  py-4 md:py-8 px-4 md:px-0 ">
         <div className="container mx-auto flex items-center justify-between mt-4">
           <div>
             <div className="flex gap-2">
-              <h1 className="text-xl md:max-w-xl text-balance md:text-3xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-xl md:max-w-xl text-balance md:text-3xl font-bold tracking-tight">
                 {organization.name}
               </h1>
             </div>
-            <p className="text-gray-600 mt-1">{organization.description}</p>
+            <p className="text-muted-foreground mt-1">
+              {organization.description}
+            </p>
           </div>
           <div>
             {admins && admins.length < 2 && (

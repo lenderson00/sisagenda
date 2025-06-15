@@ -74,12 +74,15 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="w-full md:max-w-sm"
+          className="w-full md:max-w-sm bg-background"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden md:block">
-            <Button variant="outline" className="ml-auto">
-              Colunas <ChevronDown />
+            <Button
+              variant="outline"
+              className="ml-auto min-w-24 flex items-center gap-2"
+            >
+              Colunas
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

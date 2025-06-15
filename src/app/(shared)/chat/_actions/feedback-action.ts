@@ -42,7 +42,6 @@ export const feedbackAction = async (
     },
   });
 
-  console.log(existingFeedback);
 
   if (existingFeedback) {
     if (existingFeedback.type === type) {

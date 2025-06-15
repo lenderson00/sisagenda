@@ -20,8 +20,6 @@ function ScrollButton({
 }: ScrollButtonProps) {
   const { isAtBottom, scrollToBottom } = useStickToBottomContext();
 
-  console.log(isAtBottom);
-
   return (
     <Button
       variant={variant}

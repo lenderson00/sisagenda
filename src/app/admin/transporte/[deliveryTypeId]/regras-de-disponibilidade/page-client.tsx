@@ -30,7 +30,6 @@ export default function RegrasDeDisponibilidadePageClient() {
           throw new Error("Failed to fetch rules");
         }
         const result = await response.json();
-        console.log(result, "RESULT");
         return result;
       },
     },
