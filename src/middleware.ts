@@ -102,7 +102,6 @@ export default auth(async (req: NextAuthRequest) => {
     return response;
   }
 
-  console.log("path", path);
   if (
     path.includes("/chat") &&
     (role === UserRole.COMRJ_ADMIN || role === UserRole.COMIMSUP_ADMIN)
@@ -110,7 +109,7 @@ export default auth(async (req: NextAuthRequest) => {
     return response;
   }
 
-  if (path.includes("/docs")) {
+  if (path.includes("/docs") || path.includes("/perfil")) {
     return response;
   }
 

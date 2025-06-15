@@ -13,6 +13,8 @@ export const GET = async () => {
     where: { email: session.user.email },
     include: {
       organization: true,
+      AppointmentActivity: true,
+      appointments: true,
     },
   });
 
