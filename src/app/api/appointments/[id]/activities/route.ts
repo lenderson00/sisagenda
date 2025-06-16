@@ -53,10 +53,47 @@ export async function POST(
     const body = await request.json();
     const { type, content } = body;
 
+    // Validate required fields
+    if (!type || !content) {
+      return NextResponse.json(
+        { error: "Type and content are required" },
+        { status: 400 },
+      );
+    }
+
+    // Validate user ID exists
+    if (!session.user.id) {
+      console.error("Session user ID is missing:", session.user);
+      return NextResponse.json(
+        { error: "User ID is missing from session" },
+        { status: 400 },
+      );
+    }
+
+    // Verify appointment exists
+    const appointment = await prisma.appointment.findUnique({
+      where: { id },
+    });
+
+    if (!appointment) {
+      return NextResponse.json(
+        { error: "Appointment not found" },
+        { status: 404 },
+      );
+    }
+
+    console.log("Creating activity with data:", {
+      type,
+      title: type === "COMMENT" ? "Comentário" : type,
+      content,
+      appointmentId: id,
+      userId: session.user.id,
+    });
+
     const activity = await prisma.appointmentActivity.create({
       data: {
         type: type,
-        title: "Comentário",
+        title: type === "COMMENT" ? "Comentário" : type,
         content: content,
         appointmentId: id,
         userId: session.user.id,

@@ -12,6 +12,7 @@ export const authOptions: NextAuthConfig = {
     jwt: async ({ token, user }) => {
       if (user) {
         const u = user as User;
+        token.id = u.id;
         token.role = u.role;
         token.organizationId = u.organizationId;
         token.mustChangePassword = u.mustChangePassword;
@@ -20,6 +21,7 @@ export const authOptions: NextAuthConfig = {
     },
     session: async ({ session, token }) => {
       if (session.user) {
+        session.user.id = token.id as string;
         session.user.role = token.role as string | undefined;
         session.user.organizationId = token.organizationId as
           | string

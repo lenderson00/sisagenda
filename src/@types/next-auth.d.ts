@@ -11,6 +11,7 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
   interface User extends DefaultUser {
+    id: string;
     role?: string;
     organizationId?: string;
     mustChangePassword?: boolean;

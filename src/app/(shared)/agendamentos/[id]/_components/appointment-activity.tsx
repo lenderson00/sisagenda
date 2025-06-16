@@ -3,13 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
 import { Textarea } from "@/components/ui/textarea";
 import type { AppointmentActivity, User } from "@prisma/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,6 +21,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { AppointmentActivityItem } from "./appointment-activity-item";
+import { useSession } from "next-auth/react";
 
 interface AppointmentActivityListProps {
   appointmentId: string;
@@ -42,137 +37,12 @@ interface CommentFormData {
   content: string;
 }
 
-const getActivityDescription = (activity: AppointmentActivity) => {
-  switch (activity.type) {
-    case "COMMENT": {
-      const content = activity.content || "";
-      const shortComment =
-        content.length > 50 ? `${content.substring(0, 50)}...` : content;
-      return `comentou: ${shortComment}`;
-    }
-    case "CREATED":
-      return "criou o agendamento";
-    case "UPDATED":
-      return "atualizou o agendamento";
-    case "CANCELLED":
-      return "solicitou cancelamento";
-    case "RESCHEDULE_REQUESTED":
-      return "solicitou reagendamento";
-    case "RESCHEDULE_CONFIRMED":
-      return "confirmou reagendamento";
-    case "RESCHEDULE_REJECTED":
-      return "rejeitou reagendamento";
-    case "STATUS_CHANGE":
-      return "alterou o status";
-    default:
-      return activity.content || "realizou uma ação";
-  }
-};
-
-const getActivityIcon = (type: string) => {
-  switch (type) {
-    case "COMMENT":
-      return MessageCircle;
-    case "CREATED":
-      return Calendar;
-    case "CANCELLED":
-      return X;
-    case "RESCHEDULE_REQUESTED":
-    case "RESCHEDULE_CONFIRMED":
-    case "RESCHEDULE_REJECTED":
-      return RotateCcw;
-    default:
-      return FileText;
-  }
-};
-
-const getActivityTitle = (activity: AppointmentActivity) => {
-  switch (activity.type) {
-    case "COMMENT":
-      return "Comentário";
-    case "CREATED":
-      return "Agendamento Criado";
-    case "UPDATED":
-      return "Agendamento Atualizado";
-    case "CANCELLED":
-      return "Solicitação de Cancelamento";
-    case "RESCHEDULE_REQUESTED":
-      return "Solicitação de Reagendamento";
-    case "RESCHEDULE_CONFIRMED":
-      return "Reagendamento Confirmado";
-    case "RESCHEDULE_REJECTED":
-      return "Reagendamento Rejeitado";
-    case "STATUS_CHANGE":
-      return "Status Alterado";
-    default:
-      return "Atividade";
-  }
-};
-
-const getActivityDetails = (activity: AppointmentActivity) => {
-  const metadata = activity.metadata as any;
-
-  switch (activity.type) {
-    case "COMMENT":
-      return {
-        description: "Comentário adicionado ao agendamento",
-        content: activity.content,
-        details: null,
-      };
-    case "CANCELLED":
-      return {
-        description: "Solicitação de cancelamento do agendamento",
-        content: activity.content,
-        details:
-          "Este agendamento foi marcado para cancelamento e aguarda aprovação.",
-      };
-    case "RESCHEDULE_REQUESTED":
-      return {
-        description: "Solicitação de reagendamento do agendamento",
-        content: activity.content,
-        details: metadata?.proposedDate
-          ? `Nova data proposta: ${new Date(metadata.proposedDate).toLocaleDateString("pt-BR")}`
-          : null,
-      };
-    case "RESCHEDULE_CONFIRMED":
-      return {
-        description: "O reagendamento foi confirmado",
-        content: activity.content,
-        details: metadata?.newDate
-          ? `Nova data confirmada: ${new Date(metadata.newDate).toLocaleDateString("pt-BR")}`
-          : null,
-      };
-    case "RESCHEDULE_REJECTED":
-      return {
-        description: "A solicitação de reagendamento foi rejeitada",
-        content: activity.content,
-        details: null,
-      };
-    case "CREATED":
-      return {
-        description: "Agendamento criado no sistema",
-        content: activity.content || "Novo agendamento foi criado com sucesso.",
-        details: `Criado em ${format(new Date(activity.createdAt), "PPP 'às' p", { locale: ptBR })}`,
-      };
-    default:
-      return {
-        description: "Atividade do agendamento",
-        content: activity.content || "Atividade realizada no agendamento.",
-        details: null,
-      };
-  }
-};
-
 export function AppointmentActivityList({
   appointmentId,
   initialActivities,
   currentUser,
 }: AppointmentActivityListProps) {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-  const [selectedActivity, setSelectedActivity] = useState<
-    (AppointmentActivity & { user: User }) | null
-  >(null);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
   // Use React Query to manage activities with real-time updates
@@ -235,20 +105,6 @@ export function AppointmentActivityList({
       setIsSubmittingComment(false);
     }
   };
-
-  const handleActivityClick = (
-    activity: AppointmentActivity & { user: User },
-  ) => {
-    setSelectedActivity(activity);
-    setIsDetailDialogOpen(true);
-  };
-
-  const activityDetails = selectedActivity
-    ? getActivityDetails(selectedActivity)
-    : null;
-  const ActivityIcon = selectedActivity
-    ? getActivityIcon(selectedActivity.type)
-    : FileText;
 
   return (
     <div className="space-y-4">
@@ -314,54 +170,6 @@ export function AppointmentActivityList({
           </div>
         </div>
       </div>
-
-      {/* Activity Detail Dialog */}
-      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ActivityIcon className="h-5 w-5 text-blue-600" />
-              {selectedActivity && getActivityTitle(selectedActivity)}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedActivity && (
-                <>
-                  Por {selectedActivity.user?.name || "Usuário"} •{" "}
-                  {format(new Date(selectedActivity.createdAt), "PPP 'às' p", {
-                    locale: ptBR,
-                  })}
-                </>
-              )}
-            </DialogDescription>
-          </DialogHeader>
-
-          {activityDetails && (
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900 mb-2">
-                  {activityDetails.description}
-                </h4>
-                <div className="p-3 bg-gray-50 rounded-md border">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {activityDetails.content}
-                  </p>
-                </div>
-              </div>
-
-              {activityDetails.details && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">
-                    Detalhes Adicionais
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    {activityDetails.details}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

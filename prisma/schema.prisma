@@ -210,8 +210,6 @@ enum ActivityType {
   COMPLETED
   COMMENT
   STATUS_CHANGE
-  ASSIGNED
-  UNASSIGNED
   RESCHEDULE_REQUESTED
   RESCHEDULE_CONFIRMED
   RESCHEDULE_REJECTED
@@ -223,9 +221,10 @@ enum ActivityType {
 
 /// Tracks all activities and changes related to an appointment
 model AppointmentActivity {
-  id       String       @id @default(cuid())
-  type     ActivityType
-  title    String
+  id    String       @id @default(cuid())
+  type  ActivityType
+  title String
+
   content  String?
   metadata Json? // Additional data specific to the activity type
 
