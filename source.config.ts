@@ -6,7 +6,16 @@ export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
       role: z
-        .array(z.enum(["SUPER_ADMIN", "ADMIN", "COMIMSUP  ", "USER"]))
+        .array(
+          z.enum([
+            "SUPER_ADMIN",
+            "ADMIN",
+            "COMIMSUP_ADMIN",
+            "COMRJ_ADMIN",
+            "USER",
+            "FORNECEDOR",
+          ]),
+        )
         .optional(),
     }),
   },

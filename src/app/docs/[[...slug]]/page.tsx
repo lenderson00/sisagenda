@@ -90,7 +90,11 @@ export default async function Page(props: {
   }
 
   const MDX = doc.body;
-  const neighbours = await findNeighbour(source.pageTree, page.url);
+  let neighbours = null;
+
+  if (userRole === "SUPER_ADMIN") {
+    neighbours = await findNeighbour(source.pageTree, page.url);
+  }
 
   return (
     <div
@@ -107,7 +111,7 @@ export default async function Page(props: {
                   {doc.title}
                 </h1>
                 <div className="flex items-center gap-2 pt-1.5">
-                  {neighbours.previous && (
+                  {neighbours?.previous && (
                     <Button
                       variant="secondary"
                       size="icon"
@@ -120,7 +124,7 @@ export default async function Page(props: {
                       </Link>
                     </Button>
                   )}
-                  {neighbours.next && (
+                  {neighbours?.next && (
                     <Button
                       variant="secondary"
                       size="icon"
@@ -147,7 +151,7 @@ export default async function Page(props: {
           </div>
         </div>
         <div className="mx-auto flex h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0">
-          {neighbours.previous && (
+          {neighbours?.previous && (
             <Button
               variant="secondary"
               size="sm"
@@ -159,7 +163,7 @@ export default async function Page(props: {
               </Link>
             </Button>
           )}
-          {neighbours.next && (
+          {neighbours?.next && (
             <Button
               variant="secondary"
               size="sm"
