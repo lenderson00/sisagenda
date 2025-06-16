@@ -10,6 +10,8 @@ import { useState } from "react";
 import { AppointmentsCalendarView } from "./_components/appointments-calendar";
 import { AppointmentsHeader } from "./_components/appointments-header";
 import { AppointmentsList } from "./_components/appointments-list";
+import { columns } from "./_table/columns";
+import { DataTable } from "./_table/data-table";
 
 export type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;
@@ -45,11 +47,7 @@ export default function AppointmentsPage() {
           {viewMode === "calendar" ? (
             <AppointmentsCalendarView appointments={appointments || []} />
           ) : (
-            <AppointmentsList
-              initialAppointments={appointments || []}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-            />
+            <DataTable columns={columns} data={appointments || []} />
           )}
         </>
       )}

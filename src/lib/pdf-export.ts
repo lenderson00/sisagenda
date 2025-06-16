@@ -3,44 +3,9 @@ import dayjs from "@/lib/dayjs";
 import type { User } from "@prisma/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { getStatusColor, getStatusReadableName } from "./utils";
 
-const getStatusColor = (status: string) => {
-  const statusColors: Record<string, string> = {
-    PENDING_CONFIRMATION: "bg-yellow-500",
-    CONFIRMED: "bg-green-500",
-    REJECTED: "bg-red-500",
-    CANCELLATION_REQUESTED: "bg-orange-500",
-    CANCELLATION_REJECTED: "bg-red-600",
-    CANCELLED: "bg-gray-500",
-    RESCHEDULE_REQUESTED: "bg-purple-500",
-    RESCHEDULE_CONFIRMED: "bg-blue-500",
-    RESCHEDULE_REJECTED: "bg-red-400",
-    RESCHEDULED: "bg-indigo-500",
-    COMPLETED: "bg-green-600",
-    SUPPLIER_NO_SHOW: "bg-red-700"
-  };
 
-  return statusColors[status] || "bg-gray-300";
-};
-
-const getStatusReadableName = (status: string) => {
-  const statusNames: Record<string, string> = {
-    PENDING_CONFIRMATION: "Pendente de Confirmação",
-    CONFIRMED: "Confirmado",
-    REJECTED: "Rejeitado",
-    CANCELLATION_REQUESTED: "Pedido de Cancelamento",
-    CANCELLATION_REJECTED: "Pedido de Cancelamento Rejeitado",
-    CANCELLED: "Cancelado",
-    RESCHEDULE_REQUESTED: "Reagendamento Solicitado",
-    RESCHEDULE_CONFIRMED: "Reagendamento Confirmado",
-    RESCHEDULE_REJECTED: "Reagendamento Rejeitado",
-    RESCHEDULED: "Reagendado",
-    COMPLETED: "Concluído",
-    SUPPLIER_NO_SHOW: "Fornecedor Não Compareceu"
-  };
-
-  return statusNames[status] || status;
-};
 
 export function exportAppointmentsToPDF(
   appointments: AppointmentWithRelations[],
