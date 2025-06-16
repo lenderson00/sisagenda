@@ -96,6 +96,7 @@
     "@types/pg": "^8.15.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "knip": "^5.61.0",
     "react-email": "4.0.15",
     "tailwindcss": "^4",
     "tailwindcss-motion": "^1.1.1",

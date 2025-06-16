@@ -45,7 +45,7 @@ import { IconDots } from "@tabler/icons-react";
  * Single chat item for the sidebar. Handles navigation, rename and delete
  * operations with optimistic feedback via Sonner toasts.
  */
-export type ChatItemProps = {
+type ChatItemProps = {
   id: string;
   title: string;
 };

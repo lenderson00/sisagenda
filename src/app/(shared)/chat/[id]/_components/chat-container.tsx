@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { StickToBottom } from "use-stick-to-bottom";
 
-export type ChatContainerRootProps = {
+type ChatContainerRootProps = {
   children: React.ReactNode;
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
