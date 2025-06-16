@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 
 export const useUser = () => {
   const { data: session } = useSession();
-  console.log(session);
 
   const userResult = useQuery({
     queryKey: ["user", session?.user?.email],
