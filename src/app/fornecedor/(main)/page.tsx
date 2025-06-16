@@ -14,6 +14,9 @@ import { AppointmentsList } from "./_components/appointments-list";
 export type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;
   activities: AppointmentActivity[];
+  organization?: {
+    name: string;
+  };
 };
 
 async function getAppointments(): Promise<AppointmentWithRelations[]> {

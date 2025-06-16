@@ -48,6 +48,11 @@ export async function GET() {
         date: "asc",
       },
       include: {
+        organization: {
+          select: {
+            name: true,
+          },
+        },
         activities: true,
         deliveryType: true,
       },
