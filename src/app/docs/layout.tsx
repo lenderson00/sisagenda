@@ -4,7 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
-import { addRolesToPageTree, filterPageTreeByRole } from "@/lib/page-tree";
+import { filterPageTreeByRole } from "@/lib/page-tree";
 import { UserRole } from "@prisma/client";
 
 export default async function DocsLayout({
@@ -22,8 +22,6 @@ export default async function DocsLayout({
     source.pageTree,
     session.user.role as UserRole,
   );
-
-  console.log(filteredTree, source.pageTree);
 
   return (
     <div className="container-wrapper flex flex-1 flex-col px-2">
