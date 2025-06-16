@@ -56,7 +56,9 @@ export const columns: ColumnDef<OrganizationResponse>[] = [
       console.log(row.original);
       if (row.original?.comimsup?.name) {
         return (
-          <div className="text-sm w-[100px] ">{row.original.comimsup.name}</div>
+          <div className="text-sm w-[300px] truncate ">
+            {row.original.comimsup.name}
+          </div>
         );
       }
 
