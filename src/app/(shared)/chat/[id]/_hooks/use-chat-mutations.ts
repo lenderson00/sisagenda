@@ -64,7 +64,6 @@ export const useClearMessages = (chatId: string | null) => {
     },
     onSuccess: () => {
       queryClient.setQueryData(["messages", chatId], []);
-      toast.success("Messages cleared!");
     },
     onError: (error) => {
       console.error("Failed to clear messages:", error);
