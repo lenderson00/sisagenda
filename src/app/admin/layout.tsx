@@ -1,19 +1,8 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import Footer from "@/components/footer";
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
-import { TopNavigation } from "@/components/top-navigation";
-import { Logo } from "@/components/ui/logo";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
   SidebarInset,
   SidebarProvider,
-  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./_components/admin-sidebar";

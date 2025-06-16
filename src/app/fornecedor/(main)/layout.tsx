@@ -1,12 +1,5 @@
 import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
-import { TopBar } from "@/components/top-bar";
-import { TopNavigation } from "@/components/top-navigation";
-
-const tabs = [
-  { label: "Agendamentos", href: "/" },
-  { label: "Configurações", href: "/configuracoes" },
-];
 
 const FornecedorLayout = ({ children }: { children: React.ReactNode }) => {
   return (
