@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import type { source } from "@/lib/source"
+import type { source } from "@/lib/source";
 import {
   Sidebar,
   SidebarContent,
@@ -13,13 +13,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function DocsSidebar({
   tree,
   ...props
 }: React.ComponentProps<typeof Sidebar> & { tree: typeof source.pageTree }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <Sidebar
@@ -50,7 +50,7 @@ export function DocsSidebar({
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       )
-                    )
+                    );
                   })}
                 </SidebarMenu>
               )}
@@ -59,5 +59,5 @@ export function DocsSidebar({
         ))}
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

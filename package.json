@@ -52,6 +52,7 @@
     "fumadocs-core": "^15.5.2",
     "fumadocs-mdx": "^11.6.8",
     "fumadocs-ui": "^15.5.2",
+    "gray-matter": "^4.0.3",
     "jotai": "^2.12.5",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
