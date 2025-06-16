@@ -1,18 +1,18 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   IconArrowLeft,
   IconArrowRight,
   IconArrowUpRight,
 } from "@tabler/icons-react";
 import { findNeighbour } from "fumadocs-core/server";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
-import { source } from "@/lib/source";
-import { DocsTableOfContents } from "../_components/docs-toc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { mdxComponents } from "../_components/mdx-components";
 import { auth } from "@/lib/auth";
+import { source } from "@/lib/source";
+import { DocsTableOfContents } from "../_components/docs-toc";
+import { mdxComponents } from "../_components/mdx-components";
 
 export function absoluteUrl(path: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
@@ -75,26 +75,15 @@ export default async function Page(props: {
 }) {
   const params = await props.params;
   const page = source.getPage(params.slug);
-  const session = await auth();
 
-  if (!page || !session?.user?.role) {
+  if (!page) {
     notFound();
   }
 
   const doc = page.data;
 
-  const userRole = session.user.role as any;
-
-  if (!doc.role?.includes(userRole)) {
-    notFound();
-  }
-
   const MDX = doc.body;
-  let neighbours = null;
-
-  if (userRole === "SUPER_ADMIN") {
-    neighbours = await findNeighbour(source.pageTree, page.url);
-  }
+  const neighbours = await findNeighbour(source.pageTree, page.url);
 
   return (
     <div
