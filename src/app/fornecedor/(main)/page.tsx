@@ -11,7 +11,7 @@ import { AppointmentsCalendarView } from "./_components/appointments-calendar";
 import { AppointmentsHeader } from "./_components/appointments-header";
 import { AppointmentsList } from "./_components/appointments-list";
 
-type AppointmentWithRelations = Appointment & {
+export type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;
   activities: AppointmentActivity[];
 };
@@ -33,28 +33,23 @@ export default function AppointmentsPage() {
   });
 
   return (
-    <div className="bg-gray-50">
-      <div className="container mx-auto py-8 space-y-4">
-        <AppointmentsHeader
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-        />
-        {isLoading ? (
-          <div className="text-center py-10">Loading appointments...</div>
-        ) : (
-          <>
-            {viewMode === "calendar" ? (
-              <AppointmentsCalendarView appointments={appointments || []} />
-            ) : (
-              <AppointmentsList
-                initialAppointments={appointments || []}
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-              />
-            )}
-          </>
-        )}
-      </div>
+    <div className="container mx-auto py-8 space-y-4">
+      <AppointmentsHeader viewMode={viewMode} onViewModeChange={setViewMode} />
+      {isLoading ? (
+        <div className="text-center py-10">Loading appointments...</div>
+      ) : (
+        <>
+          {viewMode === "calendar" ? (
+            <AppointmentsCalendarView appointments={appointments || []} />
+          ) : (
+            <AppointmentsList
+              initialAppointments={appointments || []}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

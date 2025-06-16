@@ -7,7 +7,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useUser } from "@/hooks/use-user";
+import { IconDownload } from "@tabler/icons-react";
 import {
   CalendarDays,
   ChevronDown,
@@ -16,6 +22,8 @@ import {
   Plus,
 } from "lucide-react";
 import Link from "next/link";
+import type { AppointmentWithRelations } from "../page";
+import { AppointmentsExport } from "./appointments-export";
 
 interface AppointmentsHeaderProps {
   viewMode: "list" | "calendar";
@@ -27,18 +35,22 @@ export function AppointmentsHeader({
   onViewModeChange,
 }: AppointmentsHeaderProps) {
   const { user } = useUser();
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold ">
           Agendamentos {user?.name && `- ${user.name}`}
-        </h1>
-        <Link href="/agendar">
-          <Button className="bg-black text-white hover:bg-gray-800">
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Agendamento
-          </Button>
-        </Link>
+        </h1>{" "}
+        <div className="flex items-center gap-2">
+          <AppointmentsExport />
+          <Link href="/agendar">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Novo Agendamento
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center justify-end mb-4">

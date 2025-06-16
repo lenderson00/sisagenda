@@ -11,7 +11,9 @@ const FornecedorLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col">
       <TopBar className="border-b" />
-      <div className="min-h-[60vh] bg-neutral-50 px-4 ">{children}</div>
+      <div className="min-h-[60vh] bg-neutral-50 dark:bg-neutral-900 px-4 ">
+        {children}
+      </div>
       <Footer />
     </div>
   );
