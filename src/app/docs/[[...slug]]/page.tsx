@@ -11,6 +11,7 @@ import { source } from "@/lib/source";
 import { DocsTableOfContents } from "../_components/docs-toc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { mdxComponents } from "../_components/mdx-components";
 
 export const revalidate = false;
 export const dynamic = "force-static";
@@ -112,7 +113,7 @@ export default async function Page(props: {
                     >
                       <Link href={neighbours.previous.url}>
                         <IconArrowLeft />
-                        <span className="sr-only">Previous</span>
+                        <span className="sr-only">Anterior</span>
                       </Link>
                     </Button>
                   )}
@@ -124,7 +125,7 @@ export default async function Page(props: {
                       asChild
                     >
                       <Link href={neighbours.next.url}>
-                        <span className="sr-only">Next</span>
+                        <span className="sr-only">Próximo</span>
                         <IconArrowRight />
                       </Link>
                     </Button>
@@ -142,14 +143,7 @@ export default async function Page(props: {
                 {links?.doc && (
                   <Badge asChild variant="secondary">
                     <Link href={links.doc} target="_blank" rel="noreferrer">
-                      Docs <IconArrowUpRight />
-                    </Link>
-                  </Badge>
-                )}
-                {links?.api && (
-                  <Badge asChild variant="secondary">
-                    <Link href={links.api} target="_blank" rel="noreferrer">
-                      API Reference <IconArrowUpRight />
+                      Documentação <IconArrowUpRight />
                     </Link>
                   </Badge>
                 )}
@@ -157,7 +151,7 @@ export default async function Page(props: {
             ) : null}
           </div>
           <div className="w-full flex-1 *:data-[slot=alert]:first:mt-0">
-            <MDX components={{}} />
+            <MDX components={mdxComponents} />
           </div>
         </div>
         <div className="mx-auto flex h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0">

@@ -2,7 +2,7 @@
 
 import type { DialogProps } from "@radix-ui/react-dialog";
 import { IconArrowRight } from "@tabler/icons-react";
-import { CornerDownLeftIcon, SquareDashedIcon } from "lucide-react";
+import { CornerDownLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -32,12 +32,10 @@ import { cn } from "@/lib/utils";
 export function CommandMenu({
   tree,
   colors,
-  blocks,
   ...props
 }: DialogProps & {
   tree: any;
   colors: any;
-  blocks?: { name: string; description: string; categories: string[] }[];
 }) {
   const router = useRouter();
   const isMac = useIsMac();
@@ -189,77 +187,6 @@ export function CommandMenu({
                   })}
               </CommandGroup>
             ))}
-            {colors.map((colorPalette: any) => (
-              <CommandGroup
-                key={colorPalette.name}
-                heading={
-                  colorPalette.name.charAt(0).toUpperCase() +
-                  colorPalette.name.slice(1)
-                }
-                className="!p-0 [&_[cmdk-group-heading]]:!p-3"
-              >
-                {colorPalette.colors.map((color: any) => (
-                  <CommandMenuItem
-                    key={color.hex}
-                    value={color.className}
-                    keywords={["color", color.name, color.className]}
-                    onHighlight={() => {}}
-                    onSelect={() => {
-                      runCommand(() =>
-                        copyToClipboardWithMeta(color.oklch, {
-                          name: "copy_color",
-                          properties: { color: color.oklch },
-                        }),
-                      );
-                    }}
-                  >
-                    <div
-                      className="border-ghost aspect-square size-4 rounded-sm bg-(--color) after:rounded-sm"
-                      style={{ "--color": color.oklch } as React.CSSProperties}
-                    />
-                    {color.className}
-                    <span className="text-muted-foreground ml-auto font-mono text-xs font-normal tabular-nums">
-                      {color.oklch}
-                    </span>
-                  </CommandMenuItem>
-                ))}
-              </CommandGroup>
-            ))}
-            {blocks?.length ? (
-              <CommandGroup
-                heading="Blocks"
-                className="!p-0 [&_[cmdk-group-heading]]:!p-3"
-              >
-                {blocks.map((block) => (
-                  <CommandMenuItem
-                    key={block.name}
-                    value={block.name}
-                    onHighlight={() => {
-                      handleBlockHighlight(block);
-                    }}
-                    keywords={[
-                      "block",
-                      block.name,
-                      block.description,
-                      ...block.categories,
-                    ]}
-                    onSelect={() => {
-                      runCommand(() =>
-                        router.push(
-                          `/blocks/${block.categories[0]}#${block.name}`,
-                        ),
-                      );
-                    }}
-                  >
-                    <SquareDashedIcon />
-                    {block.description}
-                    <span className="text-muted-foreground ml-auto font-mono text-xs font-normal tabular-nums">
-                      {block.name}
-                    </span>
-                  </CommandMenuItem>
-                ))}
-              </CommandGroup>
-            ) : null}
           </CommandList>
         </Command>
         <div className="text-muted-foreground absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-2 rounded-b-xl border-t border-t-neutral-100 bg-neutral-50 px-4 text-xs font-medium dark:border-t-neutral-700 dark:bg-neutral-800">
