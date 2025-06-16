@@ -43,6 +43,9 @@ export async function GET() {
         organizationId: session.user.organizationId,
         deletedAt: null,
         userId: session.user.id,
+        status: {
+          notIn: ["COMPLETED"],
+        },
       },
       orderBy: {
         date: "asc",
