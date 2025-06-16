@@ -1,43 +1,43 @@
-import Link from "next/link"
-import { notFound } from "next/navigation"
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
   IconArrowLeft,
   IconArrowRight,
   IconArrowUpRight,
-} from "@tabler/icons-react"
-import { findNeighbour } from "fumadocs-core/server"
-import { source } from "@/lib/source"
-import { DocsTableOfContents } from "../_components/docs-toc"
-import { OpenInV0Cta } from "../_components/open-in-v0-cta"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+} from "@tabler/icons-react";
+import { findNeighbour } from "fumadocs-core/server";
 
-export const revalidate = false
-export const dynamic = "force-static"
-export const dynamicParams = false
+import { source } from "@/lib/source";
+import { DocsTableOfContents } from "../_components/docs-toc";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-export function generateStaticParams() {
-  return source.generateParams()
+export const revalidate = false;
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
+export function absoluteUrl(path: string) {
+  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
 }
 
-function absoluteUrl(path: string) {
-  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`
+export function generateStaticParams() {
+  return source.generateParams();
 }
 
 export async function generateMetadata(props: {
-  params: Promise<{ slug?: string[] }>
+  params: Promise<{ slug?: string[] }>;
 }) {
-  const params = await props.params
-  const page = source.getPage(params.slug)
+  const params = await props.params;
+  const page = source.getPage(params.slug);
 
   if (!page) {
-    notFound()
+    notFound();
   }
 
-  const doc = page.data
+  const doc = page.data;
 
   if (!doc.title || !doc.description) {
-    notFound()
+    notFound();
   }
 
   return {
@@ -51,7 +51,7 @@ export async function generateMetadata(props: {
       images: [
         {
           url: `/og?title=${encodeURIComponent(
-            doc.title
+            doc.title,
           )}&description=${encodeURIComponent(doc.description)}`,
         },
       ],
@@ -63,29 +63,30 @@ export async function generateMetadata(props: {
       images: [
         {
           url: `/og?title=${encodeURIComponent(
-            doc.title
+            doc.title,
           )}&description=${encodeURIComponent(doc.description)}`,
         },
       ],
       creator: "@shadcn",
     },
-  }
+  };
 }
 
 export default async function Page(props: {
-  params: Promise<{ slug?: string[] }>
+  params: Promise<{ slug?: string[] }>;
 }) {
-  const params = await props.params
-  const page = source.getPage(params.slug)
+  const params = await props.params;
+  const page = source.getPage(params.slug);
   if (!page) {
-    notFound()
+    notFound();
   }
 
-  const doc = page.data
-  const MDX = doc.body
-  const neighbours = await findNeighbour(source.pageTree, page.url)
+  const doc = page.data;
+  const MDX = doc.body;
+  const neighbours = await findNeighbour(source.pageTree, page.url);
 
-  const links = doc.links
+  // @ts-expect-error - revisit fumadocs types.
+  const links = doc.links;
 
   return (
     <div
@@ -188,16 +189,11 @@ export default async function Page(props: {
       </div>
       <div className="sticky top-[calc(var(--header-height)+1px)] z-30 ml-auto hidden h-[calc(100svh-var(--header-height)-var(--footer-height))] w-72 flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex">
         <div className="h-(--top-spacing) shrink-0" />
-        {doc.toc?.length ? (
-          <div className="no-scrollbar overflow-y-auto px-8">
-            <DocsTableOfContents toc={doc.toc} />
-            <div className="h-12" />
-          </div>
-        ) : null}
-        <div className="flex flex-1 flex-col gap-12 px-6">
-          <OpenInV0Cta />
+        <div className="no-scrollbar overflow-y-auto px-8">
+          <DocsTableOfContents toc={doc.toc} />
+          <div className="h-12" />
         </div>
       </div>
     </div>
-  )
+  );
 }
