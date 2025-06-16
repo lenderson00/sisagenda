@@ -42,9 +42,10 @@ export default async function AppointmentPage({
   params,
 }: AppointmentPageProps) {
   const { id } = await params;
+  const session = await auth();
   const appointment = await getAppointment(id);
 
-  if (!appointment) {
+  if (!appointment || !session?.user) {
     notFound();
   }
 
@@ -56,7 +57,9 @@ export default async function AppointmentPage({
           <AppointmentActivityList
             appointmentId={id}
             initialActivities={appointment.activities}
-            currentUser={{ name: appointment.user.name || "" }}
+            currentUser={{
+              name: session.user.name || "Usuário",
+            }}
           />
         </div>
         {/* Right Column: Sidebar */}
