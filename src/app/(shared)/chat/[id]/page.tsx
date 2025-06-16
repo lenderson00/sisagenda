@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import { PageClient } from "./_components/page-client";
+import { PageClient } from "./page-client";
 
 interface ChatPageProps {
   params: Promise<{
@@ -20,5 +20,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
   if (!chat) {
     return notFound();
   }
+
   return <PageClient chatId={id} />;
 }

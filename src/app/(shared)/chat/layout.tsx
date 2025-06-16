@@ -20,6 +20,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
+import { ChatSessionProvider } from "./[id]/_context/session";
 import { ChatHeader } from "./_components/chat-header";
 import { ChatSidebar } from "./_components/chat-sidebar";
 
@@ -55,7 +56,10 @@ const SuperAdminLayout = async ({
                   />
                 </div>
               </header>
-              <div className="pt-12 bg-background">{children}</div>
+
+              <ChatSessionProvider>
+                <div className="pt-12 bg-background">{children}</div>
+              </ChatSessionProvider>
               {/* <Footer /> */}
             </div>
           </ScrollArea>

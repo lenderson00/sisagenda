@@ -11,14 +11,24 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userId = session.user.id;
+  const userEmail = session.user.email;
   const searchParams = request.nextUrl.searchParams;
   const cursor = searchParams.get("cursor");
   const limit = Number(searchParams.get("limit")) || 10;
 
+  const user = await prisma.user.findUnique({
+    where: {
+      email: userEmail,
+    },
+  });
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
   const chats = await prisma.chat.findMany({
     where: {
-      userId,
+      userId: user.id,
     },
     orderBy: {
       updatedAt: "desc",
@@ -26,11 +36,11 @@ export const GET = async (request: NextRequest) => {
     take: limit + 1,
     ...(cursor
       ? {
-          cursor: {
-            id: cursor,
-          },
-          skip: 1,
-        }
+        cursor: {
+          id: cursor,
+        },
+        skip: 1,
+      }
       : {}),
   });
 

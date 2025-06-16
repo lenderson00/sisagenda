@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useChatDraft } from "./[id]/_hooks/use-chat-draft";
 import { ChatInput } from "./_components/chat-input";
 import { useCreateChat } from "./_hooks/use-create-chat";
 
@@ -17,6 +18,7 @@ export const Chat = ({ userName, userId }: Props) => {
   const router = useRouter();
   const { mutate: createChat, isPending, data: chat } = useCreateChat();
   const [isLoading, setIsLoading] = useState(false);
+  const { setDraftValueWithChatId } = useChatDraft();
 
   const createNewChat = async (input: string) => {
     setIsLoading(true);
@@ -26,11 +28,12 @@ export const Chat = ({ userName, userId }: Props) => {
 
   useEffect(() => {
     if (chat) {
-      router.push(`/chat/${chat.id}?prompt=${encodeURIComponent(input)}`);
-      setIsLoading(false);
+      setDraftValueWithChatId(chat?.id, input);
+      router.push(`/chat/${chat.id}`);
       toast.dismiss();
+      setIsLoading(false);
     }
-  }, [chat, input, router]);
+  }, [chat, router, setDraftValueWithChatId, input]);
 
   return (
     <div className="flex flex-col justify-center items-center flex-1 h-full">
