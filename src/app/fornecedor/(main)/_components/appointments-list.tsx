@@ -43,13 +43,13 @@ type AppointmentWithRelations = Appointment & {
 
 interface AppointmentsListProps {
   initialAppointments: AppointmentWithRelations[];
-  viewMode?: "grid" | "list";
-  onViewModeChange?: (mode: "grid" | "list") => void;
+  viewMode?: "list" | "calendar";
+  onViewModeChange?: (mode: "list" | "calendar") => void;
 }
 
 export function AppointmentsList({
   initialAppointments,
-  viewMode = "grid",
+  viewMode = "list",
   onViewModeChange,
 }: AppointmentsListProps) {
   const [appointments] = useState(initialAppointments);

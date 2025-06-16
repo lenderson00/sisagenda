@@ -25,9 +25,7 @@ async function getAppointments(): Promise<AppointmentWithRelations[]> {
 }
 
 export default function AppointmentsPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "calendar">(
-    "grid",
-  );
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ["appointments"],
