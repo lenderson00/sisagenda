@@ -1,24 +1,7 @@
 "use client";
 
 import { EmptyCard } from "@/components/empty-card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { IconUser } from "@tabler/icons-react";
-import { Building, Edit, MoreHorizontal, User } from "lucide-react";
-import Link from "next/link";
 import { CreateOrganization } from "./_components/create-organization-dialog";
 import { useOrganizations } from "./_hooks/use-organizations";
 import { columns } from "./_table/columns";
