@@ -1,7 +1,19 @@
 import { AccountAvatar } from "@/components/account-avatar";
+import { CommandMenu } from "@/components/command-menu";
 import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+
+const mockTree = {
+  children: [
+    {
+      label: "Nova Conversa",
+      href: "/chat",
+    },
+  ],
+};
+
+const mockColors: any[] = [];
 
 export const ChatHeader = ({ className }: { className?: string }) => {
   return (
@@ -21,8 +33,16 @@ export const ChatHeader = ({ className }: { className?: string }) => {
         </Link>
       </div>
 
-      <div className="flex items-center gap-4 relative z-[99999]">
-        <AccountAvatar className="size-6" />
+      <div className="flex items-center gap-4 relative z-10">
+        <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
+          <div className="hidden w-full flex-1 md:flex md:w-auto md:flex-none border rounded-md">
+            <CommandMenu tree={mockTree} colors={mockColors} />
+          </div>
+
+          <nav className="flex items-center gap-2 ml-4">
+            <AccountAvatar className="size-6" />
+          </nav>
+        </div>
       </div>
     </div>
   );

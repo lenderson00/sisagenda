@@ -41,13 +41,13 @@ const SuperAdminLayout = async ({
 
   return (
     <div className="max-h-screen overflow-hidden">
-      <ChatHeader className="relative z-[99999]" />
+      <ChatHeader className="relative" />
       <SidebarProvider className={"min-h-[calc(100svh-56px)]"}>
         <ChatSidebar />
         <SidebarInset className="border-1 overflow-hidden h-[calc(100svh-80px)]">
           <ScrollArea className="h-[calc(100svh-80px)] relative rounded-lg ">
             <div className="flex flex-col ">
-              <header className="flex h-12 bg-background border-b shrink-0 items-center gap-2 absolute top-0 left-0 right-0 z-50">
+              <header className="flex h-12 bg-background border-b shrink-0 items-center gap-2 absolute top-0 left-0 right-0">
                 <div className="flex items-center gap-2 px-4">
                   <SidebarTrigger className="-ml-1" />
                   <Separator
