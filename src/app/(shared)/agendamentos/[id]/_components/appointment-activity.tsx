@@ -26,6 +26,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { AppointmentActivityItem } from "./appointment-activity-item";
 
 interface AppointmentActivityListProps {
   appointmentId: string;
@@ -250,17 +251,14 @@ export function AppointmentActivityList({
     : FileText;
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-blue-600" />
-            Atividades
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="space-y-4">
+      <div>
+        <div>
+          <div className="text-xl flex items-center gap-2">Atividades</div>
+        </div>
+        <div>
           {/* Activities Timeline */}
-          <div className="space-y-3 mb-6">
+          <div className="space-y-3">
             {activities.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <MessageCircle className="h-12 w-12 mx-auto mb-3 text-gray-300" />
@@ -269,35 +267,10 @@ export function AppointmentActivityList({
               </div>
             ) : (
               activities.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3">
-                  <Avatar className="h-6 w-6 flex-shrink-0">
-                    <AvatarImage src={activity.user.image || undefined} />
-                    <AvatarFallback className="bg-gray-100 text-gray-600 text-xs">
-                      {activity.user.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      <span className="font-medium text-gray-900">
-                        {activity.user.name}
-                      </span>{" "}
-                      <button
-                        type="button"
-                        onClick={() => handleActivityClick(activity)}
-                        className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
-                      >
-                        {getActivityDescription(activity)}
-                      </button>{" "}
-                      <span className="text-gray-500">
-                        •{" "}
-                        {formatDistanceToNow(new Date(activity.createdAt), {
-                          addSuffix: true,
-                          locale: ptBR,
-                        })}
-                      </span>
-                    </p>
-                  </div>
-                </div>
+                <AppointmentActivityItem
+                  key={activity.id}
+                  activity={activity}
+                />
               ))
             )}
           </div>
@@ -339,8 +312,8 @@ export function AppointmentActivityList({
               </div>
             </form>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Activity Detail Dialog */}
       <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
@@ -389,6 +362,6 @@ export function AppointmentActivityList({
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
