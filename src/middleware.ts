@@ -109,7 +109,11 @@ export default auth(async (req: NextAuthRequest) => {
     return response;
   }
 
-  if (path.includes("/docs") || path.includes("/perfil")) {
+  if (
+    path.includes("/docs") ||
+    path.includes("/perfil") ||
+    path.includes("/agendamentos")
+  ) {
     return response;
   }
 

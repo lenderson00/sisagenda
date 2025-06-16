@@ -27,7 +27,7 @@ export const columns: ColumnDef<AppointmentWithRelations>[] = [
     header: "Ordem de Compra",
     cell: ({ row }) => {
       return (
-        <Link href={`/${row.original.id}`}>
+        <Link href={`/agendamentos/${row.original.id}`}>
           <div className="text-sm min-w-[190px] truncate">
             {row.original.ordemDeCompra}
           </div>
@@ -108,11 +108,9 @@ export const columns: ColumnDef<AppointmentWithRelations>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem asChild>
-              <Link href={`/${row.original.id}`}>Ver Detalhes</Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`/${row.original.id}`}>Editar</Link>
+              <Link href={`/agendamentos/${row.original.id}`}>
+                Ver Detalhes
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
