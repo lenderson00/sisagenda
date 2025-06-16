@@ -12,10 +12,7 @@ import { DocsTableOfContents } from "../_components/docs-toc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { mdxComponents } from "../_components/mdx-components";
-
-export const revalidate = false;
-export const dynamic = "force-static";
-export const dynamicParams = false;
+import { auth } from "@/lib/auth";
 
 export function absoluteUrl(path: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
@@ -68,7 +65,7 @@ export async function generateMetadata(props: {
           )}&description=${encodeURIComponent(doc.description)}`,
         },
       ],
-      creator: "@shadcn",
+      creator: "sisagenda",
     },
   };
 }
@@ -78,16 +75,22 @@ export default async function Page(props: {
 }) {
   const params = await props.params;
   const page = source.getPage(params.slug);
-  if (!page) {
+  const session = await auth();
+
+  if (!page || !session?.user?.role) {
     notFound();
   }
 
   const doc = page.data;
+
+  const userRole = session.user.role as any;
+
+  if (!doc.role?.includes(userRole)) {
+    notFound();
+  }
+
   const MDX = doc.body;
   const neighbours = await findNeighbour(source.pageTree, page.url);
-
-  // @ts-expect-error - revisit fumadocs types.
-  const links = doc.links;
 
   return (
     <div
@@ -138,17 +141,6 @@ export default async function Page(props: {
                 </p>
               )}
             </div>
-            {links ? (
-              <div className="flex items-center space-x-2 pt-4">
-                {links?.doc && (
-                  <Badge asChild variant="secondary">
-                    <Link href={links.doc} target="_blank" rel="noreferrer">
-                      Documentação <IconArrowUpRight />
-                    </Link>
-                  </Badge>
-                )}
-              </div>
-            ) : null}
           </div>
           <div className="w-full flex-1 *:data-[slot=alert]:first:mt-0">
             <MDX components={mdxComponents} />

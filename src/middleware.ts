@@ -55,6 +55,7 @@ export default auth(async (req: NextAuthRequest) => {
   const isApiRoute = pathname.startsWith("/api/");
   const isPublicRoute = publicRoutes.includes(pathname);
   const isNewPasswordRoute = pathname === "/nova-senha";
+  const path = nextUrl.pathname;
 
   const response = NextResponse.next({
     request: {
@@ -64,6 +65,10 @@ export default auth(async (req: NextAuthRequest) => {
 
   // Allow API routes to pass through
   if (isApiRoute) {
+    return response;
+  }
+
+  if (path.includes("/docs")) {
     return response;
   }
 
@@ -95,8 +100,6 @@ export default auth(async (req: NextAuthRequest) => {
       new URL(defaultRedirects.onAuthPageToLoggedUser, nextUrl),
     );
   }
-
-  const path = nextUrl.pathname;
 
   if (isNewPasswordRoute) {
     return response;
