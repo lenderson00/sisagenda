@@ -8,7 +8,7 @@ export async function POST(
 ) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user || !session.user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -22,6 +22,19 @@ export async function POST(
       return NextResponse.json(
         { error: "Reason is required" },
         { status: 400 },
+      );
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 },
       );
     }
 
@@ -56,7 +69,7 @@ export async function POST(
         title: "Solicitação de Cancelamento",
         content: reason,
         appointmentId: id,
-        userId: session.user.id,
+        userId: user.id,
         previousStatus: appointment.status,
         newStatus: "CANCELLATION_REQUESTED",
       },

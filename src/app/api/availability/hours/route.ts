@@ -30,6 +30,10 @@ export async function GET(request: Request) {
     const dateStr = searchParams.get("date"); // formato esperado "dd-mm-yyyy"
 
     if (!deliveryTypeId || !dateStr || !organizationId) {
+
+      console.log(deliveryTypeId, dateStr, organizationId);
+
+
       return NextResponse.json(
         {
           message:
@@ -49,13 +53,14 @@ export async function GET(request: Request) {
     // 1) Converte "dd-mm-yyyy" para Date usando dayjs e locale pt-br
     const parsed = dayjs(dateStr, "DD-MM-YYYY", "pt-br");
 
+
     if (!parsed.isValid()) {
       return NextResponse.json(
         { message: "Formato de data inválido. Use 'dd-mm-yyyy'." },
         { status: 400 },
       );
     }
-    const date = parsed.toDate();
+
 
     if (referenceDate.isBefore(new Date())) {
       return NextResponse.json({ possibleTimes: [], availableTimes: [] });

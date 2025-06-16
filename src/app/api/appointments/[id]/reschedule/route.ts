@@ -8,7 +8,7 @@ export async function POST(
 ) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user || !session.user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -22,6 +22,19 @@ export async function POST(
       return NextResponse.json(
         { error: "Reason and new date are required" },
         { status: 400 },
+      );
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 },
       );
     }
 
@@ -41,6 +54,13 @@ export async function POST(
       );
     }
 
+    if (["COMPLETED", "CANCELLATION_REQUESTED", "CANCELLED"].includes(appointment.status)) {
+      return NextResponse.json(
+        { error: "Appointment already completed or cancelled" },
+        { status: 400 },
+      );
+    }
+
     // Update appointment status to reschedule requested
     await prisma.appointment.update({
       where: { id },
@@ -56,7 +76,7 @@ export async function POST(
         title: "Solicitação de Reagendamento",
         content: `${reason}. Nova data proposta: ${new Date(newDate).toLocaleDateString("pt-BR")}`,
         appointmentId: id,
-        userId: session.user.id,
+        userId: user.id,
         previousStatus: appointment.status,
         newStatus: "RESCHEDULE_REQUESTED",
         metadata: {

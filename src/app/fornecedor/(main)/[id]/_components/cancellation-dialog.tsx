@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,6 +34,7 @@ export function CancellationDialog({
 }: CancellationDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -73,6 +75,15 @@ export function CancellationDialog({
       });
 
       toast.success("Solicitação de cancelamento enviada com sucesso!");
+
+      // Invalidate queries to refresh the data
+      await queryClient.invalidateQueries({
+        queryKey: ["appointment", appointmentId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["appointment-activities", appointmentId],
+      });
+
       onOpenChange(false);
       reset();
       router.refresh();
