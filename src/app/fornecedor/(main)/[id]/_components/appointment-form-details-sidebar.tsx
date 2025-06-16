@@ -40,7 +40,7 @@ const DetailItem: React.FC<{
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-600">{value}</p>
+          <p className="text-sm text-gray-600">{JSON.stringify(value)}</p>
         )}
       </div>
     </div>
@@ -91,19 +91,6 @@ export function AppointmentFormDetailsSidebar({
           icon={Phone}
           label="Contact Phone"
           value={appointment.user.whatsapp}
-        />
-
-        <Separator />
-
-        <DetailItem
-          icon={FileText}
-          label="Client Requirements"
-          value={appointment.observations as string}
-        />
-        <DetailItem
-          icon={Paperclip}
-          label="Internal Notes"
-          value={appointment.observations as string}
         />
       </CardContent>
     </Card>

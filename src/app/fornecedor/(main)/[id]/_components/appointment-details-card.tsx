@@ -53,7 +53,7 @@ export function AppointmentDetailsCard({
             <span>{appointment.user.address || "Endereço não informado"}</span>
           </div>
 
-          {appointment.observations && (
+          {/* {appointment.observations && (
             <div className="mt-4">
               <h4 className="text-sm font-medium text-gray-700 mb-2">
                 Observações
@@ -62,7 +62,7 @@ export function AppointmentDetailsCard({
                 {appointment.observations as string}
               </p>
             </div>
-          )}
+          )} */}
         </CardContent>
       </Card>
 
@@ -138,15 +138,6 @@ export function AppointmentDetailsCard({
               </div>
             </div>
           </div>
-
-          {appointment.observations && (
-            <div>
-              <h3 className="font-semibold mb-2 text-gray-800">Observações</h3>
-              <p className="text-sm text-gray-600 whitespace-pre-wrap">
-                {appointment.observations as string}
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
     </>
