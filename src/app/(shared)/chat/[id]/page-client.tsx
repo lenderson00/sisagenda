@@ -1,6 +1,6 @@
 "use client";
 
-import { type Message, useChat } from "@ai-sdk/react";
+import { CreateMessage, type Message, useChat } from "@ai-sdk/react";
 import { AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -55,13 +55,16 @@ function ChatView({
       initialMessagesFromProps.length === 0 &&
       !didAppendDraft.current
     ) {
-      append({
+      const messageDraft: Message = {
         role: "user",
         content: draftValue,
-      });
+        id: crypto.randomUUID(),
+      };
+      append(messageDraft);
+      saveAllMessages([messageDraft]);
       didAppendDraft.current = true;
     }
-  }, [append, draftValue, initialMessagesFromProps.length]);
+  }, [append, draftValue, initialMessagesFromProps.length, saveAllMessages]);
 
   const isLoading = status === "streaming" || status === "submitted";
 

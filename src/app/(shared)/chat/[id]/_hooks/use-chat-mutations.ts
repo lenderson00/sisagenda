@@ -42,7 +42,6 @@ export const useSetMessages = (chatId: string | null) => {
     },
     onSuccess: (_, variables) => {
       queryClient.setQueryData(["messages", chatId], variables);
-      toast.success("Messages saved successfully!");
     },
     onError: (error) => {
       console.error("Failed to save messages:", error);
