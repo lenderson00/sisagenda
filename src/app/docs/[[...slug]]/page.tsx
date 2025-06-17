@@ -14,7 +14,7 @@ import { source } from "@/lib/source";
 import { DocsTableOfContents } from "../_components/docs-toc";
 import { mdxComponents } from "../_components/mdx-components";
 
-export function absoluteUrl(path: string) {
+function absoluteUrl(path: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
 }
 
