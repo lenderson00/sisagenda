@@ -10,11 +10,13 @@ const roles = z.enum([
   "FORNECEDOR",
 ]);
 
+const schema = frontmatterSchema.extend({
+  role: z.array(roles).optional().default(["USER"]),
+});
+
 export const docs = defineDocs({
   dir: "content/docs",
   docs: {
-    schema: frontmatterSchema.extend({
-      role: z.array(roles).optional(),
-    }),
+    schema,
   },
 });
