@@ -138,16 +138,18 @@ export function TimePicker({
                 <h3 className="text-sm font-medium text-slate-700">
                   Horários disponíveis
                 </h3>
-                <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
-                  {availability.availableTimes.length} de{" "}
-                  {availability.possibleTimes.length}
-                </span>
+                {availability?.availableTimes && (
+                  <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                    {availability.availableTimes.length} de{" "}
+                    {availability.possibleTimes.length}
+                  </span>
+                )}
               </div>
 
               <div className="space-y-2">
-                {availability.possibleTimes.map((hour: any, index: any) => {
+                {availability?.possibleTimes?.map((hour: any, index: any) => {
                   const isAvailable =
-                    availability.availableTimes.includes(hour);
+                    availability.availableTimes?.includes(hour) ?? false;
                   const isSelected = selectedTime === hour;
 
                   return (
@@ -237,7 +239,7 @@ export function TimePicker({
                 })}
               </div>
 
-              {availability.availableTimes.length === 0 && (
+              {availability?.availableTimes?.length === 0 && (
                 <div className="text-center py-6 border-t border-slate-100 mt-6">
                   <p className="text-sm text-slate-500">
                     Todos os horários estão ocupados

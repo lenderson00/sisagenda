@@ -1,10 +1,9 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DeliveryType } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { DeliveryTypeCard } from "../delivery-type-card";
 
 interface Step2DeliveryTypesProps {
   selectedDeliveryTypeIds: string[];
@@ -45,12 +44,9 @@ export function Step2DeliveryTypes({
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(3)].map((_, i) => (
-          <div className="flex items-center space-x-2" key={i}>
-            <Skeleton className="h-4 w-4" />
-            <Skeleton className="h-4 w-48" />
-          </div>
+          <Skeleton className="h-32 w-full" key={i} />
         ))}
       </div>
     );
@@ -58,23 +54,21 @@ export function Step2DeliveryTypes({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium">Selecionar Tipos de Entrega</h3>
-      <p className="text-sm text-muted-foreground">
-        Selecione quais tipos de entrega serão afetados por esta regra. Se
-        nenhum for selecionado, a regra será aplicada a todos.
-      </p>
-      <div className="space-y-2">
+      <div className="space-y-1">
+        <h3 className="text-lg font-medium">Selecionar Tipos de Entrega</h3>
+        <p className="text-sm text-muted-foreground">
+          Selecione quais tipos de entrega serão afetados por esta regra. Se
+          nenhum for selecionado, a regra será aplicada a todos.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {deliveryTypes.map((deliveryType) => (
-          <div key={deliveryType.id} className="flex items-center space-x-2">
-            <Checkbox
-              id={deliveryType.id}
-              checked={selectedDeliveryTypeIds.includes(deliveryType.id)}
-              onCheckedChange={() => handleCheckboxChange(deliveryType.id)}
-            />
-            <Label htmlFor={deliveryType.id} className="font-normal">
-              {deliveryType.name}
-            </Label>
-          </div>
+          <DeliveryTypeCard
+            key={deliveryType.id}
+            deliveryType={deliveryType}
+            isSelected={selectedDeliveryTypeIds.includes(deliveryType.id)}
+            onSelect={handleCheckboxChange}
+          />
         ))}
       </div>
     </div>

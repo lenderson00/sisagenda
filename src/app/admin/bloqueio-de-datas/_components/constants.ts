@@ -6,7 +6,6 @@ import {
   Clock,
   Repeat,
 } from "lucide-react";
-import { WeekOfMonth } from "./types";
 
 export const ruleTypeOptions = [
   {

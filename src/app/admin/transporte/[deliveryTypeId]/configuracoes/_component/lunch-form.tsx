@@ -82,13 +82,8 @@ export default function LunchForm({
   });
 
   const handleSubmit = async (data: { startTime: string; endTime: string }) => {
-    try {
-      await onSubmit?.(data);
-      await queryClient.invalidateQueries({ queryKey: ["deliveryTypeConfig"] });
-      toast.success("Lunch time updated successfully");
-    } catch (error) {
-      toast.error("Failed to update lunch time");
-    }
+    onSubmit?.(data);
+    await queryClient.invalidateQueries({ queryKey: ["deliveryTypeConfig"] });
   };
 
   return (

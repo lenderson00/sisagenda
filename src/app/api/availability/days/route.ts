@@ -41,6 +41,7 @@ export async function GET(request: Request) {
       },
     });
 
+
     const availableWeekDaysInMonth = availableWeekDays.map(
       (day) => day.weekDay,
     );
