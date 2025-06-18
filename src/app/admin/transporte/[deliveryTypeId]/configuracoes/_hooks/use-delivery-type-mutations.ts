@@ -96,7 +96,7 @@ export const useDeliveryTypeMutations = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["delivery-types"] });
       toast.success("Delivery type deleted successfully");
-      router.push("/admin/transporte");
+      router.push("/transporte");
     },
     onError: () => {
       toast.error("Failed to delete delivery type");

@@ -6,15 +6,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { DeliveryType } from "@prisma/client";
 import { useEffect, useState } from "react";
 
-interface Step4DeliveryTypesProps {
+interface Step2DeliveryTypesProps {
   selectedDeliveryTypeIds: string[];
   onDeliveryTypeIdsChange: (ids: string[]) => void;
 }
 
-export function Step4DeliveryTypes({
+export function Step2DeliveryTypes({
   selectedDeliveryTypeIds,
   onDeliveryTypeIdsChange,
-}: Step4DeliveryTypesProps) {
+}: Step2DeliveryTypesProps) {
   const [deliveryTypes, setDeliveryTypes] = useState<DeliveryType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

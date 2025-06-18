@@ -98,7 +98,7 @@ export function DeliveryTypesPageClient({
           {deliveryTypes.map((deliveryType: DeliveryType) => (
             <Link
               key={deliveryType.id}
-              href={`/admin/transporte/${deliveryType.id}`}
+              href={`/transporte/${deliveryType.id}`}
               className="block"
             >
               <Card className="relative">

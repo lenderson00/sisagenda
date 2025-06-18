@@ -39,27 +39,43 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const { deliveryTypeIds, rules } = createRuleSchema.parse(body);
 
-  const availabilityRule = await prisma.availabilityRule.upsert({
+  const existingRule = await prisma.availabilityRule.findFirst({
     where: {
       organizationId: session.user.organizationId,
     },
-    create: {
+  });
+
+  if (existingRule) {
+    // Update existing rule
+    const updatedRule = await prisma.availabilityRule.update({
+      where: {
+        id: existingRule.id,
+      },
+      data: {
+        rule: rules,
+        deliveryTypes: {
+          set: deliveryTypeIds.map((id) => ({ id })),
+        },
+      },
+      include: {
+        deliveryTypes: true,
+      },
+    });
+    return NextResponse.json(updatedRule);
+  }
+
+  // Create new rule
+  const newRule = await prisma.availabilityRule.create({
+    data: {
       organizationId: session.user.organizationId,
       rule: rules,
       deliveryTypes: {
         connect: deliveryTypeIds.map((id) => ({ id })),
       },
     },
-    update: {
-      rule: rules,
-      deliveryTypes: {
-        set: deliveryTypeIds.map((id) => ({ id })),
-      },
-    },
     include: {
       deliveryTypes: true,
     },
   });
-
-  return NextResponse.json(availabilityRule);
+  return NextResponse.json(newRule);
 }

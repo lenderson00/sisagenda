@@ -80,7 +80,7 @@ export default function DeleteForm({
           queryKey: ["deliveryTypeConfig"],
         });
         toast.success("Delivery type deleted successfully");
-        router.push("/admin/transporte");
+        router.push("/transporte");
       } catch (error) {
         toast.error("Failed to delete delivery type");
       }

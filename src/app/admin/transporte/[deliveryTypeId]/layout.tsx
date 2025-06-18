@@ -9,15 +9,15 @@ const createSidebarNavItems = (deliveryTypeId: string) => {
   return [
     {
       title: "Disponibilidade",
-      href: `/admin/transporte/${deliveryTypeId}`,
+      href: `/transporte/${deliveryTypeId}`,
     },
     {
       title: "Regras de Disponibilidade",
-      href: `/admin/transporte/${deliveryTypeId}/regras-de-disponibilidade`,
+      href: `/transporte/${deliveryTypeId}/regras-de-disponibilidade`,
     },
     {
       title: "Configurações",
-      href: `/admin/transporte/${deliveryTypeId}/configuracoes`,
+      href: `/transporte/${deliveryTypeId}/configuracoes`,
     },
   ];
 };

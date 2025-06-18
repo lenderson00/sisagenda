@@ -61,7 +61,6 @@ export async function GET(request: Request) {
         deliveryType: {
           include: {
             AvailabilitySettings: true,
-            availabilityRules: true,
           },
         },
       },
@@ -69,6 +68,25 @@ export async function GET(request: Request) {
 
     if (!availabilityForDay) {
       return NextResponse.json({ possibleTimes: [], availableTimes: [] });
+    }
+
+    const orgRule = await prisma.availabilityRule.findUnique({
+      where: { organizationId },
+      include: {
+        deliveryTypes: { select: { id: true } },
+      },
+    });
+
+    let rules: AvailabilityExceptionRule[] = [];
+
+    if (orgRule && Array.isArray(orgRule.rule)) {
+      const deliveryTypeIds = orgRule.deliveryTypes.map((dt) => dt.id);
+      if (
+        deliveryTypeIds.length === 0 ||
+        deliveryTypeIds.includes(deliveryTypeId)
+      ) {
+        rules = orgRule.rule as unknown as AvailabilityExceptionRule[];
+      }
     }
 
     const lunchStart =
@@ -87,14 +105,6 @@ export async function GET(request: Request) {
     );
 
     const possibleTimes = possibleTimesResult.map((time) => formatHHMM(time));
-
-    const availabilityRule = availabilityForDay.deliveryType.availabilityRules;
-
-    let rules: AvailabilityExceptionRule[] = [];
-
-    if (availabilityRule && Array.isArray(availabilityRule.rule)) {
-      rules = availabilityRule.rule as unknown as AvailabilityExceptionRule[];
-    }
 
     const timesAfterRules = applyRulesToPossibleTimes(
       possibleTimesResult,
