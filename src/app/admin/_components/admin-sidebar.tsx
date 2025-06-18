@@ -16,6 +16,7 @@ import {
 import {
   IconBuilding,
   IconCalendar,
+  IconCalendarOff,
   IconDashboard,
   IconSettings,
   IconTruck,
@@ -40,6 +41,11 @@ const gerenciamentoMain = [
     name: "Transportes",
     url: "/transporte",
     icon: IconTruck,
+  },
+  {
+    name: "Bloqueio de Datas",
+    url: "/bloqueio-de-datas",
+    icon: IconCalendarOff,
   },
 ];
 

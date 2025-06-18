@@ -1,59 +1,31 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
-  if (!session) {
+  if (!session || !session.user.organizationId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const searchParams = request.nextUrl.searchParams;
-  const deliveryTypeId = searchParams.get("deliveryTypeId");
-  if (!deliveryTypeId) {
-    return NextResponse.json(
-      { error: "DeliveryTypeId is required" },
-      { status: 400 },
-    );
-  }
-
-  const deliveryType = await prisma.deliveryType.findUnique({
-    where: { id: deliveryTypeId },
+  const deliveryTypes = await prisma.deliveryType.findMany({
+    where: {
+      organizationId: session.user.organizationId,
+    },
     include: {
-      organization: true,
       availabilityRules: true,
     },
   });
 
-  if (!deliveryType) {
-    return NextResponse.json(
-      { error: "DeliveryType not found" },
-      { status: 404 },
-    );
-  }
 
-  console.log("DELIVERY TYPE", deliveryType.availabilityRules?.rule);
-
-  if (deliveryType.organizationId !== session.user.organizationId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const rule = deliveryType.availabilityRules;
-
-  if (!rule) {
-    await prisma.availabilityRule.create({
-      data: {
-        deliveryTypeId: deliveryType.id,
-        rule: [],
-      },
-    });
-    return NextResponse.json([]);
-  }
-
-  const ruleDTO = rule.rule ? rule.rule : [];
-
-  return NextResponse.json(ruleDTO);
+  return NextResponse.json(deliveryTypes);
 }
+
+const createRuleSchema = z.object({
+  deliveryTypeIds: z.array(z.string()),
+  rules: z.array(z.any()),
+});
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -62,56 +34,27 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { deliveryTypeId, rules } = body;
+  const { deliveryTypeIds, rules } = createRuleSchema.parse(body);
 
-  if (
-    !deliveryTypeId ||
-    !rules ||
-    !Array.isArray(rules) ||
-    rules.length === 0
-  ) {
-    return NextResponse.json(
-      { error: "DeliveryTypeId and rules array are required" },
-      { status: 400 },
-    );
+  for (const deliveryTypeId of deliveryTypeIds) {
+    // Upsert the rule - create if doesn't exist, update if it does
+    await prisma.availabilityRule.upsert({
+      where: {
+        deliveryTypeId: deliveryTypeId,
+      },
+      create: {
+        deliveryTypeId: deliveryTypeId,
+        rule: rules,
+      },
+      update: {
+        rule: rules,
+      },
+    });
   }
 
-  const deliveryType = await prisma.deliveryType.findUnique({
-    where: { id: deliveryTypeId },
-    include: {
-      organization: true,
-      availabilityRules: true,
-    },
-  });
 
-  if (!deliveryType) {
-    return NextResponse.json(
-      { error: "DeliveryType not found" },
-      { status: 404 },
-    );
-  }
 
-  if (deliveryType.organizationId !== session.user.organizationId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  // Upsert the rule - create if doesn't exist, update if it does
-  const rule = await prisma.availabilityRule.upsert({
-    where: {
-      deliveryTypeId: deliveryType.id,
-    },
-    create: {
-      deliveryTypeId: deliveryType.id,
-      rule: rules,
-    },
-    update: {
-      rule: rules,
-    },
-  });
-
-  console.log("RULE", rule);
-
-  return NextResponse.json({ rule: rule.rule });
+  return NextResponse.json({ rules });
 }
 
 export async function PUT(request: NextRequest) {

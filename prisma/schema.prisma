@@ -91,8 +91,9 @@ model Organization {
 
   militares User[]
 
-  deliveryTypes DeliveryType[]
-  appointments  Appointment[]
+  deliveryTypes     DeliveryType[]
+  availabilityRules AvailabilityRule[]
+  appointments      Appointment[]
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -135,7 +136,7 @@ model DeliveryType {
   isActive Boolean @default(true)
 
   availability         Availability[]
-  availabilityRules    AvailabilityRule?
+  availabilityRules    AvailabilityRule[]
   AvailabilitySettings AvailabilitySettings?
 
   appointments Appointment[]
@@ -301,23 +302,25 @@ model AvailabilitySettings {
 
 /// Stores rules for availability slots
 model AvailabilityRule {
-  id String @id @default(cuid())
-
+  id   String @id @default(cuid())
+  name String
   rule Json
 
-  deliveryTypeId String       @unique
-  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  deliveryTypes DeliveryType[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([id])
+  @@index([organizationId])
 }
 
 /// Represents different types of audit actions
 enum AuditAction {
-  CREATE
-  UPDATE
+  CREATE_USER
+  UPDATE_USER
   DELETE
   LOGIN
   LOGOUT
