@@ -50,6 +50,7 @@ export function useCreateAppointment(
         ],
       });
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["availability"] });
       toast.success("Agendamento solicitado com sucesso!");
     },
     onError: (error) => {

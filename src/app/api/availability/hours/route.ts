@@ -15,55 +15,41 @@ import {
   transformFitsToHH,
 } from "@/lib/engine/time";
 import { prisma } from "@/lib/prisma";
+import { validateSession } from "@/lib/auth/session/validate";
+import { z } from "zod";
+
+const schema = z.object({
+  deliveryTypeId: z.string(),
+  organizationId: z.string(),
+  date: z.string(),
+});
 
 export async function GET(request: Request) {
-  const session = await auth();
-
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
 
   try {
+    await validateSession();
     const { searchParams } = new URL(request.url);
-    const deliveryTypeId = searchParams.get("deliveryTypeId");
-    const organizationId = searchParams.get("organizationId");
-    const dateStr = searchParams.get("date"); // formato esperado "dd-mm-yyyy"
 
-    if (!deliveryTypeId || !dateStr || !organizationId) {
+    const { deliveryTypeId, organizationId, date } = schema.parse({
+      deliveryTypeId: searchParams.get("deliveryTypeId"),
+      organizationId: searchParams.get("organizationId"),
+      date: searchParams.get("date"),
+    });
 
-      console.log(deliveryTypeId, dateStr, organizationId);
-
-
-      return NextResponse.json(
-        {
-          message:
-            "Parâmetros 'deliveryTypeId', 'date' e 'organizationId' são obrigatórios.",
-        },
-        { status: 400 },
-      );
-    }
-
-    const referenceDate = dayjs(String(dateStr));
+    const referenceDate = dayjs(String(date));
     const isPastDate = referenceDate.endOf("day").isBefore(new Date());
 
     if (isPastDate) {
       return NextResponse.json({ possibleTimes: [], availableTimes: [] });
     }
 
-    // 1) Converte "dd-mm-yyyy" para Date usando dayjs e locale pt-br
-    const parsed = dayjs(dateStr, "DD-MM-YYYY", "pt-br");
-
+    const parsed = dayjs(date, "DD-MM-YYYY", "pt-br");
 
     if (!parsed.isValid()) {
       return NextResponse.json(
         { message: "Formato de data inválido. Use 'dd-mm-yyyy'." },
         { status: 400 },
       );
-    }
-
-
-    if (referenceDate.isBefore(new Date())) {
-      return NextResponse.json({ possibleTimes: [], availableTimes: [] });
     }
 
     const availabilityForDay = await prisma.availability.findFirst({
@@ -91,13 +77,6 @@ export async function GET(request: Request) {
       availabilityForDay.deliveryType.AvailabilitySettings?.lunchTimeEnd ?? 0;
     const activityDuration =
       availabilityForDay.deliveryType.AvailabilitySettings?.duration ?? 0;
-
-    if (!lunchStart || !lunchEnd || !activityDuration) {
-      return NextResponse.json(
-        { message: "Lunch time or activity duration not found" },
-        { status: 404 },
-      );
-    }
 
     const startHour = availabilityForDay.startTime;
     const endHour = availabilityForDay.endTime;
