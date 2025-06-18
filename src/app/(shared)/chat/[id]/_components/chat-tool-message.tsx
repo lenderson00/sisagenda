@@ -10,16 +10,13 @@ import { useState } from "react";
 export const ToolCall = ({ toolInvocation }: { toolInvocation: any }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log("toolInvocation", toolInvocation);
   // Guard against invalid or incomplete toolInvocation objects
   if (!toolInvocation?.toolName) {
     return null;
   }
 
-  const title = toolInvocation.toolName
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (l: string) => l.toUpperCase());
-  const { type } = toolInvocation;
+  const { toolName, toolCallId, state, result } = toolInvocation;
+
   const hasArgs =
     toolInvocation.args && Object.keys(toolInvocation.args).length > 0;
 
@@ -34,6 +31,15 @@ export const ToolCall = ({ toolInvocation }: { toolInvocation: any }) => {
       </div>
     );
   }
+
+  // if (toolInvocation.state === "result") {
+  //   switch (toolName) {
+  //     case "getInformationAboutContract":
+  //       return <div>{result}</div>;
+  //     default:
+  //       return null;
+  //   }
+  // }
 
   return (
     <Collapsible

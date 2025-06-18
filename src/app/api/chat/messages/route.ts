@@ -29,7 +29,7 @@ export const GET = async (request: NextRequest) => {
       id: message.id,
       role: message.role,
       content: message.content,
-      toolInvocations: message.toolInvocations || null,
+      parts: message.parts,
     })),
   );
 };

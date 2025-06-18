@@ -391,7 +391,7 @@ model Message {
   chatId String
   chat   Chat   @relation(fields: [chatId], references: [id])
 
-  toolInvocations Json?
+  parts           Json?
   MessageFeedback MessageFeedback[]
 }
 

@@ -40,12 +40,14 @@ export async function POST(request: NextRequest) {
       where: { chatId },
     });
 
+    console.log("messages", messages);
+
     const messagesToSave = messages.map((message: Message) => ({
       id: message.id,
       chatId,
       content: message.content,
       role: message.role,
-      toolInvocations: message.parts ?? undefined,
+      parts: message.parts,
     })).filter((message: Message) => !persistedMessages.some((m) => m.id === message.id));
 
     console.log("messagesToSave", messagesToSave);
