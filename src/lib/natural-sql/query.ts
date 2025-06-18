@@ -147,22 +147,20 @@ export const generateQuery = async (input: string) => {
 
 
 export const runGenerateSQLQuery = async (query: string) => {
-  "use server";
-  // Check if the query is a SELECT statement
-  if (
-    !query.trim().toLowerCase().startsWith("select") ||
-    query.trim().toLowerCase().includes("drop") ||
-    query.trim().toLowerCase().includes("delete") ||
-    query.trim().toLowerCase().includes("insert") ||
-    query.trim().toLowerCase().includes("update") ||
-    query.trim().toLowerCase().includes("alter") ||
-    query.trim().toLowerCase().includes("truncate") ||
-    query.trim().toLowerCase().includes("create") ||
-    query.trim().toLowerCase().includes("grant") ||
-    query.trim().toLowerCase().includes("revoke")
-  ) {
-    throw new Error("Only SELECT queries are allowed");
-  }
+  // if (
+  //   !query.trim().includes("SELECT") ||
+  //   query.trim().toLowerCase().includes("drop") ||
+  //   query.trim().toLowerCase().includes("delete") ||
+  //   query.trim().toLowerCase().includes("insert") ||
+  //   query.trim().toLowerCase().includes("update") ||
+  //   query.trim().toLowerCase().includes("alter") ||
+  //   query.trim().toLowerCase().includes("truncate") ||
+  //   query.trim().toLowerCase().includes("create") ||
+  //   query.trim().toLowerCase().includes("grant") ||
+  //   query.trim().toLowerCase().includes("revoke")
+  // ) {
+  //   throw new Error("Only SELECT queries are allowed");
+  // }
 
   let data: any;
   try {

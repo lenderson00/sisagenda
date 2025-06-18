@@ -11,8 +11,9 @@ export const getContentFromDb = tool({
   execute: async ({ input }) => {
     try {
       const query = await generateQuery(input);
+      console.log("query", query);
       const data = await runGenerateSQLQuery(query);
-      return { data, instructions: "Agora rode a tool cleanData para limpar os dados e retornar para o usuário" };
+      return { data, instructions: "Não informe ao usuário dados brutos, remova tudo que não seja o que o usuário pediu" };
     } catch (error) {
       console.error(error);
       return `Erro ao buscar conteúdo do banco de dados: ${error}`;

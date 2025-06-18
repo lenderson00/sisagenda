@@ -4,11 +4,21 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import type { Config } from "@/lib/natural-sql/query";
 import { ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ToolResults } from "./chat-tool-result";
 
 export const ToolCall = ({ toolInvocation }: { toolInvocation: any }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [results, setResults] = useState<any[]>([]);
+  const [chartConfig, setChartConfig] = useState<Config | null>(null);
+
+  useEffect(() => {
+    if (toolInvocation?.result?.config) {
+      setChartConfig(toolInvocation.result.config);
+    }
+  }, [toolInvocation]);
 
   // Guard against invalid or incomplete toolInvocation objects
   if (!toolInvocation?.toolName) {
@@ -32,14 +42,14 @@ export const ToolCall = ({ toolInvocation }: { toolInvocation: any }) => {
     );
   }
 
-  if (toolInvocation.state === "result") {
-    switch (toolName) {
-      case "getInformationAboutContract":
-        return <div className="px-2">{result}</div>;
-      default:
-        return null;
-    }
-  }
+  // if (toolInvocation.state === "result") {
+  //   switch (toolName) {
+  //     case "getInformationAboutContract":
+  //       return <div className="px-2">{result}</div>;
+  //     default:
+  //       return null;
+  //   }
+  // }
 
   return (
     <Collapsible
