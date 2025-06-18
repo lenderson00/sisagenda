@@ -308,7 +308,7 @@ model AvailabilityRule {
   id   String @id @default(cuid())
   rule Json
 
-  organizationId String
+  organizationId String       @unique
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   deliveryTypes DeliveryType[]

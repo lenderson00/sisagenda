@@ -9,17 +9,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const deliveryTypes = await prisma.deliveryType.findMany({
+  const organization = await prisma.organization.findUnique({
     where: {
-      organizationId: session.user.organizationId,
+      id: session.user.organizationId,
     },
     include: {
-      availabilityRules: true,
+      AvailabilityRule: true
     },
   });
 
+  const rules = organization?.AvailabilityRule || [];
 
-  return NextResponse.json(deliveryTypes);
+  return NextResponse.json(rules);
 }
 
 const createRuleSchema = z.object({
@@ -29,32 +30,35 @@ const createRuleSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session) {
+  if (!session || !session.user.organizationId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await request.json();
   const { deliveryTypeIds, rules } = createRuleSchema.parse(body);
 
-  for (const deliveryTypeId of deliveryTypeIds) {
-    // Upsert the rule - create if doesn't exist, update if it does
-    await prisma.availabilityRule.upsert({
-      where: {
-        deliveryTypeId: deliveryTypeId,
+  // Upsert the rule - create if doesn't exist, update if it does
+  const { rule } = await prisma.availabilityRule.upsert({
+    where: {
+      organizationId: session.user.organizationId,
+    },
+    create: {
+      organizationId: session.user.organizationId,
+      deliveryTypes: {
+        connect: deliveryTypeIds.map((id) => ({ id })),
       },
-      create: {
-        deliveryTypeId: deliveryTypeId,
-        rule: rules,
+      rule: rules,
+    },
+    update: {
+      organizationId: session.user.organizationId,
+      deliveryTypes: {
+        connect: deliveryTypeIds.map((id) => ({ id })),
       },
-      update: {
-        rule: rules,
-      },
-    });
-  }
+      rule: rules,
+    },
+  });
 
-
-
-  return NextResponse.json({ rules });
+  return NextResponse.json({ rule });
 }
 
 export async function PUT(request: NextRequest) {
@@ -99,10 +103,10 @@ export async function PUT(request: NextRequest) {
   // Upsert the rule - create if doesn't exist, update if it does
   const rule = await prisma.availabilityRule.upsert({
     where: {
-      deliveryTypeId: deliveryTypeId,
+      organizationId: session.user.organizationId,
     },
     create: {
-      deliveryTypeId: deliveryTypeId,
+      organizationId: session.user.organizationId,
       rule: rules,
     },
     update: {
@@ -147,10 +151,10 @@ export async function DELETE(request: NextRequest) {
   // Instead of deleting, we'll set an empty array of rules
   const rule = await prisma.availabilityRule.upsert({
     where: {
-      deliveryTypeId: deliveryTypeId,
+      organizationId: session.user.organizationId,
     },
     create: {
-      deliveryTypeId: deliveryTypeId,
+      organizationId: session.user.organizationId,
       rule: [],
     },
     update: {
