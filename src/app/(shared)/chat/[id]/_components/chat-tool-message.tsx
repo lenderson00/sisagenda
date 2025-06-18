@@ -32,14 +32,14 @@ export const ToolCall = ({ toolInvocation }: { toolInvocation: any }) => {
     );
   }
 
-  // if (toolInvocation.state === "result") {
-  //   switch (toolName) {
-  //     case "getInformationAboutContract":
-  //       return <div>{result}</div>;
-  //     default:
-  //       return null;
-  //   }
-  // }
+  if (toolInvocation.state === "result") {
+    switch (toolName) {
+      case "getInformationAboutContract":
+        return <div className="px-2">{result}</div>;
+      default:
+        return null;
+    }
+  }
 
   return (
     <Collapsible

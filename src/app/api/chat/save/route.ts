@@ -40,8 +40,6 @@ export async function POST(request: NextRequest) {
       where: { chatId },
     });
 
-    console.log("messages", messages);
-
     const messagesToSave = messages.map((message: Message) => ({
       id: message.id,
       chatId,
@@ -50,7 +48,6 @@ export async function POST(request: NextRequest) {
       parts: message.parts,
     })).filter((message: Message) => !persistedMessages.some((m) => m.id === message.id));
 
-    console.log("messagesToSave", messagesToSave);
     const result = await prisma.message.createMany({
       data: messagesToSave,
     });

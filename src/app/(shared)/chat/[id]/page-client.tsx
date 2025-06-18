@@ -91,8 +91,6 @@ function ChatView({
     [handleInputChange],
   );
 
-  console.log("messages", messages);
-
   return (
     <AnimatePresence mode="wait">
       <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col bg-white">

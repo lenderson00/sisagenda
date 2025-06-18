@@ -2,18 +2,8 @@ import { auth } from "@/lib/auth";
 import { openai } from "@ai-sdk/openai";
 import { streamText, tool } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { tools } from "./_tools";
 
-const getInformationAboutContract = tool({
-  description: "Get information about a contract",
-  parameters: z.object({
-    input: z.string().describe("The input to get information about"),
-  }),
-  execute: async ({ input }) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    return `Information about: ${input}`;
-  },
-});
 
 const systemPrompt = `
 Você é o **Assistente do SisAgenda**, uma IA especializada em gestão de agendamentos
@@ -66,9 +56,7 @@ export async function POST(request: NextRequest) {
       system: systemPrompt,
       messages,
       maxSteps: 10,
-      tools: {
-        getInformationAboutContract,
-      },
+      tools,
     });
 
     return result.toDataStreamResponse();
