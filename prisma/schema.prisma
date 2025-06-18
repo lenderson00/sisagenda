@@ -91,15 +91,16 @@ model Organization {
 
   militares User[]
 
-  deliveryTypes     DeliveryType[]
-  availabilityRules AvailabilityRule[]
-  appointments      Appointment[]
+  deliveryTypes DeliveryType[]
+  appointments  Appointment[]
+
+  Availability     Availability[]
+  AvailabilityRule AvailabilityRule[]
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   deletedAt    DateTime?
   Organization Organization[] @relation("ComimsupRelation")
-  Availability Availability[]
   Account      Account[]
 
   @@index([sigla])
@@ -135,8 +136,8 @@ model DeliveryType {
   slug     String  @unique
   isActive Boolean @default(true)
 
-  availability         Availability[]
-  availabilityRules    AvailabilityRule[]
+  availability Availability[]
+
   AvailabilitySettings AvailabilitySettings?
 
   appointments Appointment[]
@@ -144,9 +145,11 @@ model DeliveryType {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  deletedAt          DateTime?
+  AvailabilityRule   AvailabilityRule? @relation(fields: [availabilityRuleId], references: [id])
+  availabilityRuleId String?
 
   @@index([organizationId])
 }
@@ -303,7 +306,6 @@ model AvailabilitySettings {
 /// Stores rules for availability slots
 model AvailabilityRule {
   id   String @id @default(cuid())
-  name String
   rule Json
 
   organizationId String
@@ -314,13 +316,13 @@ model AvailabilityRule {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([organizationId])
+  @@index([id])
 }
 
 /// Represents different types of audit actions
 enum AuditAction {
-  CREATE_USER
-  UPDATE_USER
+  CREATE
+  UPDATE
   DELETE
   LOGIN
   LOGOUT
