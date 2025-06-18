@@ -5,12 +5,10 @@ import {
   signIn as signInAction,
   signOut as signOutAction,
 } from "@/lib/auth";
-import { unstable_update } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { NextResponse } from "next/server";
 
 export const baseSignIn = async (credentials: {
   email: string;
