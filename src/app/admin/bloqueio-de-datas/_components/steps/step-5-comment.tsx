@@ -7,23 +7,35 @@ import { cn } from "@/lib/utils";
 import { CalendarX, MessageSquare, Repeat } from "lucide-react";
 import { ruleTypeOptions } from "../constants";
 import { StepTitle } from "../step-title";
+import type { AvailabilityExceptionRule } from "../types";
 
-interface Step4CommentProps {
-  ruleType: string;
-  recurrenceType: string;
-  commentValue: string;
-  onCommentValueChange: (value: string) => void;
+interface Step5CommentProps {
+  comment: string;
+  onCommentChange: (comment: string) => void;
+  rule: AvailabilityExceptionRule;
 }
 
-export function Step4Comment({
-  ruleType,
-  recurrenceType,
-  commentValue,
-  onCommentValueChange,
-}: Step4CommentProps) {
+export function Step5Comment({
+  comment,
+  onCommentChange,
+  rule,
+}: Step5CommentProps) {
   const selectedRuleType = ruleTypeOptions.find(
-    (option) => option.value === ruleType,
+    (option) => option.value === rule.type,
   );
+
+  const getRuleSummary = () => {
+    switch (rule.type) {
+      case "BLOCK_WHOLE_DAY":
+        return "Bloquear todo o dia";
+      case "BLOCK_TIME_RANGE":
+        return "Bloquear um intervalo de tempo";
+      case "BLOCK_SPECIFIC_WEEK_DAYS":
+        return "Bloquear dias específicos da semana";
+      default:
+        return "Regra desconhecida";
+    }
+  };
 
   return (
     <>
@@ -58,12 +70,12 @@ export function Step4Comment({
           </Label>
           <Textarea
             id="comment"
-            value={commentValue}
-            onChange={(e) => onCommentValueChange(e.target.value)}
+            value={comment}
+            onChange={(e) => onCommentChange(e.target.value)}
             placeholder="Ex: Feriado nacional, Reunião importante, Manutenção do sistema, Compromisso pessoal, etc."
             className="min-h-[120px] text-sm"
           />
-          {!commentValue.trim() && (
+          {!comment.trim() && (
             <p className="text-xs text-red-600">
               Justificativa é obrigatória para criar a regra.
             </p>
@@ -80,11 +92,11 @@ export function Step4Comment({
               <div
                 className={cn(
                   "p-1.5 rounded",
-                  ruleType === "BLOCK_WHOLE_DAY"
+                  rule.type === "BLOCK_WHOLE_DAY"
                     ? "bg-red-100 text-red-700"
-                    : ruleType === "BLOCK_TIME_RANGE"
+                    : rule.type === "BLOCK_TIME_RANGE"
                       ? "bg-orange-100 text-orange-700"
-                      : ruleType === "BLOCK_SPECIFIC_WEEK_DAYS"
+                      : rule.type === "BLOCK_SPECIFIC_WEEK_DAYS"
                         ? "bg-blue-100 text-blue-700"
                         : "bg-indigo-100 text-indigo-700",
                 )}
@@ -93,18 +105,18 @@ export function Step4Comment({
               </div>
             )}
             <span className="text-sm font-medium text-slate-700">
-              {selectedRuleType?.label}
+              {getRuleSummary()}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            {recurrenceType === "RECURRING" ? (
+            {rule.recurrence === "RECURRING" ? (
               <Repeat className="w-3 h-3 text-purple-600" />
             ) : (
               <CalendarX className="w-3 h-3 text-teal-600" />
             )}
             <span className="text-sm text-slate-700">
-              {recurrenceType === "RECURRING" ? "Recorrente" : "Uma vez"}
+              {rule.recurrence === "RECURRING" ? "Recorrente" : "Uma vez"}
             </span>
           </div>
         </div>

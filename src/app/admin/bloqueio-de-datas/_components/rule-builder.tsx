@@ -27,7 +27,8 @@ import { StepIndicator } from "./step-indicator";
 import { Step1RuleType } from "./steps/step-1-rule-type";
 import { Step2Recurrence } from "./steps/step-2-recurrence";
 import { Step3Configuration } from "./steps/step-3-configuration";
-import { Step4Comment } from "./steps/step-4-comment";
+import { Step4DeliveryTypes } from "./steps/step-4-delivery-types";
+import { Step5Comment } from "./steps/step-5-comment";
 import type {
   AvailabilityExceptionRule,
   RecurrenceType,
@@ -43,11 +44,12 @@ export default function RuleBuilder({
   onClose,
   editingRule,
   rules,
+  deliveryTypeIds: initialDeliveryTypeIds,
   onRuleCreated,
   onRulesUpdated,
 }: RulesSidebarProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const [ruleType, setRuleType] = useState<string>("BLOCK_WHOLE_DAY");
   const [dateValue, setDateValue] = useState<string>(
@@ -64,6 +66,7 @@ export default function RuleBuilder({
   const [recurrenceType, setRecurrenceType] =
     useState<RecurrenceType>("ONE_TIME");
   const [commentValue, setCommentValue] = useState<string>("");
+  const [deliveryTypeIds, setDeliveryTypeIds] = useState<string[]>([]);
 
   const isEditMode = editingRule !== null;
 
@@ -97,8 +100,9 @@ export default function RuleBuilder({
       } else {
         resetFields();
       }
+      setDeliveryTypeIds(initialDeliveryTypeIds);
     }
-  }, [open, editingRule, isEditMode]);
+  }, [open, editingRule, isEditMode, initialDeliveryTypeIds]);
 
   const validateRule = (): boolean => {
     if (ruleType === "BLOCK_SPECIFIC_WEEK_DAYS") {
@@ -141,6 +145,8 @@ export default function RuleBuilder({
         }
         return true;
       case 4:
+        return true;
+      case 5:
         return !!commentValue.trim();
       default:
         return true;
@@ -168,7 +174,7 @@ export default function RuleBuilder({
         timeToMinutes(startTimeValue) >= timeToMinutes(endTimeValue)
       ) {
         errorMessage = "End time must be after start time.";
-      } else if (currentStep === 4 && !commentValue.trim()) {
+      } else if (currentStep === 5 && !commentValue.trim()) {
         errorMessage = "Justification is required to create the rule.";
       }
       toast.error("Validation failed", { description: errorMessage });
@@ -220,10 +226,10 @@ export default function RuleBuilder({
       if (!editingRule) return;
       const newRules = [...rules];
       newRules[editingRule.index] = newRule;
-      onRulesUpdated?.(newRules);
+      onRulesUpdated?.(newRules, deliveryTypeIds);
       toast.success("Rule updated successfully!");
     } else {
-      onRuleCreated?.(newRule);
+      onRuleCreated?.(newRule, deliveryTypeIds);
       toast.success("Rule created successfully!");
     }
     onClose();
@@ -240,6 +246,7 @@ export default function RuleBuilder({
     setUseSpecificDate(true);
     setRecurrenceType("ONE_TIME");
     setCommentValue("");
+    setDeliveryTypeIds([]);
     setCurrentStep(1);
   }
 
@@ -247,7 +254,7 @@ export default function RuleBuilder({
     if (isEditMode) {
       if (!editingRule) return;
       const newRules = rules.filter((_, i) => i !== editingRule.index);
-      onRulesUpdated?.(newRules);
+      onRulesUpdated?.(newRules, deliveryTypeIds);
       toast.success("Rule removed successfully!");
       onClose();
     }
@@ -259,11 +266,11 @@ export default function RuleBuilder({
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="min-h-[320px] p-1"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-auto p-1"
         >
           {renderStepContent()}
         </motion.div>
@@ -289,31 +296,59 @@ export default function RuleBuilder({
           <Step3Configuration
             ruleType={ruleType}
             recurrenceType={recurrenceType}
-            useSpecificDate={useSpecificDate}
             dateValue={dateValue}
-            weekDayValue={weekDayValue}
-            weekOfMonthValue={weekOfMonthValue}
-            startTimeValue={startTimeValue}
-            endTimeValue={endTimeValue}
-            specificWeekDays={specificWeekDays}
-            onUseSpecificDateChange={setUseSpecificDate}
             onDateValueChange={setDateValue}
+            weekDayValue={weekDayValue}
             onWeekDayValueChange={setWeekDayValue}
+            weekOfMonthValue={weekOfMonthValue}
             onWeekOfMonthValueChange={setWeekOfMonthValue}
+            startTimeValue={startTimeValue}
             onStartTimeValueChange={setStartTimeValue}
+            endTimeValue={endTimeValue}
             onEndTimeValueChange={setEndTimeValue}
+            specificWeekDays={specificWeekDays}
             onSpecificWeekDaysChange={setSpecificWeekDays}
+            useSpecificDate={useSpecificDate}
+            onUseSpecificDateChange={setUseSpecificDate}
           />
         );
       case 4:
         return (
-          <Step4Comment
-            ruleType={ruleType}
-            recurrenceType={recurrenceType}
-            commentValue={commentValue}
-            onCommentValueChange={setCommentValue}
+          <Step4DeliveryTypes
+            selectedDeliveryTypeIds={deliveryTypeIds}
+            onDeliveryTypeIdsChange={setDeliveryTypeIds}
           />
         );
+      case 5: {
+        const tempRule: AvailabilityExceptionRule = {
+          type: ruleType,
+          recurrence: recurrenceType,
+          comment: commentValue,
+          ...(ruleType === "BLOCK_WHOLE_DAY" && {
+            date: useSpecificDate ? dateValue : undefined,
+            weekDay: !useSpecificDate ? weekDayValue : undefined,
+            weekOfMonth: !useSpecificDate ? weekOfMonthValue : undefined,
+          }),
+          ...(ruleType === "BLOCK_TIME_RANGE" && {
+            date: useSpecificDate ? dateValue : undefined,
+            weekDay: !useSpecificDate ? weekDayValue : undefined,
+            weekOfMonth: !useSpecificDate ? weekOfMonthValue : undefined,
+            startTime: timeToMinutes(startTimeValue),
+            endTime: timeToMinutes(endTimeValue),
+          }),
+          ...(ruleType === "BLOCK_SPECIFIC_WEEK_DAYS" && {
+            weekDays: specificWeekDays,
+          }),
+        } as AvailabilityExceptionRule;
+
+        return (
+          <Step5Comment
+            comment={commentValue}
+            onCommentChange={setCommentValue}
+            rule={tempRule}
+          />
+        );
+      }
       default:
         return null;
     }

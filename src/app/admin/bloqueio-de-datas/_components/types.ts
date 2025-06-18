@@ -38,6 +38,13 @@ export interface RulesSidebarProps {
   onClose: () => void;
   editingRule?: { rule: AvailabilityExceptionRule; index: number } | null;
   rules: AvailabilityExceptionRule[];
-  onRuleCreated?: (rule: AvailabilityExceptionRule) => void;
-  onRulesUpdated?: (rules: AvailabilityExceptionRule[]) => void;
+  deliveryTypeIds: string[];
+  onRuleCreated?: (
+    rule: AvailabilityExceptionRule,
+    deliveryTypeIds: string[],
+  ) => void;
+  onRulesUpdated?: (
+    rules: AvailabilityExceptionRule[],
+    deliveryTypeIds: string[],
+  ) => void;
 }
