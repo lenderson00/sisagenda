@@ -34,7 +34,7 @@ export function Step3Comment({
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                "p-2 rounded-lg flex items-center justify-center bg-indigo-100 text-indigo-700",
+                "p-2 rounded-lg flex items-center justify-center bg-primary-foreground text-primary",
               )}
             >
               <Calendar className="w-4 h-4" />
@@ -80,7 +80,7 @@ export function Step3Comment({
             className="min-h-[120px] text-sm"
           />
           {!comment.trim() && (
-            <p className="text-xs text-red-600">
+            <p className="text-xs text-destructive">
               A justificativa é obrigatória.
             </p>
           )}
