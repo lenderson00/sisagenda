@@ -13,7 +13,7 @@ export const getAvailabilityPerDay = async (
       deliveryType: {
         include: {
           AvailabilitySettings: true,
-          availabilityRules: true,
+          AvailabilityRule: true,
         },
       },
     },
@@ -32,7 +32,7 @@ export const getAvailabilityPerDay = async (
       availability.deliveryType.AvailabilitySettings?.duration ?? 0,
     startHour: availability.startTime,
     endHour: availability.endTime,
-    availabilityRule: availability.deliveryType.availabilityRules || [],
+    availabilityRule: availability.deliveryType.AvailabilityRule || [],
   };
 
   return {
