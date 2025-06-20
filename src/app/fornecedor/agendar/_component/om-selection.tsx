@@ -13,6 +13,7 @@ type OmSelectionProps = {
   omSigla: string;
   omDescription: string;
   position?: "top" | "bottom" | "middle";
+  unique?: boolean;
 };
 
 export default function OmSelection({
@@ -20,6 +21,7 @@ export default function OmSelection({
   omSigla,
   omDescription,
   position = "top",
+  unique = false,
 }: OmSelectionProps) {
   return (
     <Link href={`/agendar/${omSigla}`}>
@@ -29,7 +31,7 @@ export default function OmSelection({
           position === "top" && "rounded-b-none",
           position === "bottom" && "rounded-t-none border-t-0",
           position === "middle" && "rounded-none border-t-0",
-
+          unique && "rounded-md",
           "shadow-none hover:bg-muted cursor-pointer group duration-300 transition-all ease-in-out",
         )}
       >

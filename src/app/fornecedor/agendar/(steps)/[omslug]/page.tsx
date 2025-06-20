@@ -55,7 +55,7 @@ export default async function AgendarOM({
 
   return (
     <>
-      <Stepper step={2} totalSteps={3} />
+      <Stepper step={2} totalSteps={6} />
       <div className="w-full flex flex-col">
         {organization.deliveryTypes.map((deliveryType, index) => (
           <DeliveryTypeSelection

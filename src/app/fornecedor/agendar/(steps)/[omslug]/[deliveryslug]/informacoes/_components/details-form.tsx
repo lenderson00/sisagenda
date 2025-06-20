@@ -20,39 +20,69 @@ import { Form } from "@/components/ui/form";
 import { clearFormData, loadFormData, saveFormData } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
-import dayjs from "dayjs";
 import { useScheduleStore } from "../../_store";
-import { Step1BasicInfo } from "./step-1-basic-info";
-import { Step2Items } from "./step-2-items";
+import { Step1SupplierInfo } from "./step-1-supplier-info";
+import { Step2DeliveryDetails } from "./step-2-delivery-details";
+import { Step3Items } from "./step-3-items";
 
 const itemSchema = z.object({
-  name: z.string().min(1, "Nome do item é obrigatório."),
-  quantity: z.coerce.number().min(0.01, "Quantidade deve ser maior que zero."),
-  unit: z.string().min(1, "Unidade é obrigatória."),
-  price: z.coerce.number().min(0, "Valor não pode ser negativo."),
+  pi: z.string().min(1, "PI do item é obrigatório."),
+  // Adicione outros campos do item aqui, se necessário
 });
 
 export const detailsFormSchema = z.object({
+  // Step 1
+  cnpj: z.string().min(1, "CNPJ é obrigatório."),
+  razaoSocial: z.string().min(1, "Razão Social é obrigatória."),
+  email: z.string().email("E-mail inválido."),
+  driverName: z.string().min(1, "Nome do motorista é obrigatório."),
+  vehiclePlate: z.string().min(1, "Placa do veículo é obrigatória."),
+  contactPhone: z.string().min(1, "Telefone de contato é obrigatório."),
+  additionalNotes: z.string().optional(),
+
+  // Step 2
+  notaFiscal: z.string().min(1, "Nota Fiscal é obrigatória."),
   ordemDeCompra: z.string().min(1, "Ordem de Compra é obrigatória."),
-  notaFiscal: z.string().optional(),
-  motorista: z.string().optional(),
-  placaVeiculo: z.string().optional(),
-  observacoesGerais: z.string().optional(),
-  items: z.array(itemSchema).optional(),
+  isFirstDelivery: z.enum(["yes", "no"], {
+    required_error: "Selecione uma opção.",
+  }),
+  processNumber: z.string().min(1, "Número do processo é obrigatório."),
+  needsLabAnalysis: z.enum(["yes", "no"], {
+    required_error: "Selecione uma opção.",
+  }),
+  // extraDocumentation: z.any().optional(), // Para anexo de arquivo
+
+  // Step 3
+  items: z
+    .array(itemSchema)
+    .min(1, "É necessário adicionar pelo menos um item."),
 });
 
 export type DetailsFormValues = z.infer<typeof detailsFormSchema>;
 
 const steps = [
   {
-    id: "basic-info",
-    name: "Informações Básicas",
+    id: "supplier-info",
+    name: "Informações do Fornecedor",
     fields: [
-      "ordemDeCompra",
+      "cnpj",
+      "razaoSocial",
+      "email",
+      "driverName",
+      "vehiclePlate",
+      "contactPhone",
+      "additionalNotes",
+    ],
+  },
+  {
+    id: "delivery-details",
+    name: "Detalhes da Entrega",
+    fields: [
       "notaFiscal",
-      "motorista",
-      "placaVeiculo",
-      "observacoesGerais",
+      "ordemDeCompra",
+      "isFirstDelivery",
+      "processNumber",
+      "needsLabAnalysis",
     ],
   },
   { id: "items", name: "Itens da Entrega", fields: ["items"] },
@@ -83,11 +113,6 @@ export function DetailsForm() {
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsFormSchema),
     defaultValues: {
-      ordemDeCompra: "",
-      notaFiscal: "",
-      motorista: "",
-      placaVeiculo: "",
-      observacoesGerais: "",
       items: [],
     },
   });
@@ -231,8 +256,9 @@ export function DetailsForm() {
             </CardHeader>
 
             <CardContent>
-              {currentStep === 0 && <Step1BasicInfo />}
-              {currentStep === 1 && <Step2Items />}
+              {currentStep === 0 && <Step1SupplierInfo />}
+              {currentStep === 1 && <Step2DeliveryDetails />}
+              {currentStep === 2 && <Step3Items />}
             </CardContent>
 
             <CardFooter className="flex justify-between">
@@ -242,7 +268,7 @@ export function DetailsForm() {
                 </Button>
               )}
 
-              {currentStep < steps.length - 1 && (
+              {currentStep < steps.length - 1 ? (
                 <Button
                   type="button"
                   variant="default"
@@ -251,19 +277,17 @@ export function DetailsForm() {
                 >
                   Próximo
                 </Button>
-              )}
-
-              {currentStep === steps.length - 1 && (
+              ) : (
                 <Button
                   type="submit"
+                  className="ml-auto"
                   disabled={
                     createAppointmentMutation.isPending || !items?.length
                   }
-                  className="ml-auto"
                 >
                   {createAppointmentMutation.isPending
                     ? "Agendando..."
-                    : "Confirmar Agendamento"}
+                    : "Finalizar Agendamento"}
                 </Button>
               )}
             </CardFooter>

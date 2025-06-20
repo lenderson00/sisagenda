@@ -1,9 +1,13 @@
+import { Stepper } from "@/app/fornecedor/agendar/_component/stepper";
 import { DetailsForm } from "./_components/details-form";
 
 export default function AppointmentDetailsPage() {
   return (
-    <div className="container mx-auto py-10">
-      <DetailsForm />
-    </div>
+    <>
+      <Stepper step={5} totalSteps={6} />
+      <div className="container mx-auto w-full">
+        <DetailsForm />
+      </div>
+    </>
   );
 }

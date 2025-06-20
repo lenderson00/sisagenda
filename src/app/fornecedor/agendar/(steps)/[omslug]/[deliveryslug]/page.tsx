@@ -28,7 +28,7 @@ export default async function DataPage({
 
   return (
     <>
-      <Stepper step={4} totalSteps={5} />
+      <Stepper step={3} totalSteps={6} />
       <DataPageClient
         organizationId={organizationId}
         deliveryTypeId={deliveryTypeId}

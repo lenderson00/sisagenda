@@ -67,9 +67,9 @@ export function TimePicker({
   };
 
   return (
-    <div className="h-full bg-white flex flex-col">
+    <div className="h-full bg-background flex flex-col">
       {/* Fixed Header */}
-      <div className="flex-shrink-0 p-6 border-b border-slate-100">
+      <div className="flex-shrink-0 px-6 py-4 border-b bg-background">
         <motion.div
           key={dateKey} // Re-animate when date changes
           initial={{ opacity: 0, y: -10 }}
@@ -134,7 +134,7 @@ export function TimePicker({
               transition={{ duration: 0.3 }}
               className="space-y-4"
             >
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium text-slate-700">
                   Horários disponíveis
                 </h3>
@@ -144,7 +144,7 @@ export function TimePicker({
                     {availability.possibleTimes.length}
                   </span>
                 )}
-              </div>
+              </div> */}
 
               <div className="space-y-2">
                 {availability?.possibleTimes?.map((hour: any, index: any) => {
@@ -161,7 +161,7 @@ export function TimePicker({
                       onClick={() => isAvailable && handleSelectTime(hour)}
                       disabled={!isAvailable}
                       className={cn(
-                        "w-full p-3 text-sm font-medium rounded-lg transition-all duration-200",
+                        "w-full px-3 py-1 text-sm font-medium rounded transition-all duration-200",
                         "border text-left group relative overflow-hidden",
                         "focus:outline-none focus:ring-2 focus:ring-offset-1",
                         // Available states
@@ -178,62 +178,37 @@ export function TimePicker({
                     >
                       <div className="flex items-center justify-between relative z-10">
                         <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "w-2 h-2 rounded-full transition-colors",
-                              isSelected
-                                ? "bg-white"
-                                : isAvailable
-                                  ? "bg-green-500"
-                                  : "bg-slate-300",
-                            )}
-                          />
                           <span className="font-mono">{hour}</span>
                         </div>
 
                         <div className="flex items-center gap-2">
-                          {isSelected && (
+                          {
                             <motion.div
                               initial={{ scale: 0, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
                               transition={{ duration: 0.2 }}
                               className="flex items-center gap-1"
                             >
-                              <Check className="w-4 h-4" />
-                              <span className="text-xs font-medium">
-                                Selecionado
+                              <span
+                                className={cn(
+                                  "text-xs font-medium",
+                                  isAvailable
+                                    ? isSelected
+                                      ? "text-white"
+                                      : "text-green-500"
+                                    : null,
+                                )}
+                              >
+                                {isAvailable
+                                  ? isSelected
+                                    ? "Selecionado"
+                                    : "Disponível"
+                                  : "Ocupado"}
                               </span>
                             </motion.div>
-                          )}
-
-                          {!isSelected && (
-                            <span
-                              className={cn(
-                                "text-xs px-2 py-1 rounded-full font-medium transition-colors",
-                                isAvailable
-                                  ? "text-green-700 bg-green-50"
-                                  : "text-slate-500 bg-slate-100",
-                              )}
-                            >
-                              {isAvailable ? "Disponível" : "Ocupado"}
-                            </span>
-                          )}
+                          }
                         </div>
                       </div>
-
-                      {/* Hover effect background for available slots */}
-                      {isAvailable && !isSelected && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-sky-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      )}
-
-                      {/* Selected state background animation */}
-                      {isSelected && (
-                        <motion.div
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          className="absolute inset-0 bg-gradient-to-r from-sky-600 to-sky-500"
-                        />
-                      )}
                     </motion.button>
                   );
                 })}
@@ -261,7 +236,7 @@ export function TimePicker({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
-          className="flex-shrink-0 border-t border-slate-100 p-6"
+          className="flex-shrink-0 border-t border-slate-100 p-2 mx-4"
         >
           <motion.div
             animate={{
@@ -274,7 +249,7 @@ export function TimePicker({
               onClick={handleContinue}
               disabled={!selectedTime}
               className={cn(
-                "w-full h-12 text-sm font-medium transition-all duration-200",
+                "w-full h-8 text-sm font-medium transition-all duration-200",
                 "flex items-center justify-center gap-2",
                 selectedTime
                   ? "bg-sky-500 hover:bg-sky-600 text-white"

@@ -20,7 +20,7 @@ const AgendarOM = async () => {
 
   return (
     <>
-      <Stepper step={1} totalSteps={3} />
+      <Stepper step={1} totalSteps={6} />
       <div className="w-full flex flex-col">
         {oms.map((om, index) => (
           <OmSelection
@@ -35,6 +35,7 @@ const AgendarOM = async () => {
                   ? "bottom"
                   : "middle"
             }
+            unique={oms.length === 1}
           />
         ))}
       </div>

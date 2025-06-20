@@ -46,11 +46,11 @@ export function DataPageClient({
     <div className=" flex flex-col items-center justify-center">
       {/* Three-column layout */}
       <div className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_420px] xl:grid-cols-[320px_1fr_440px] min-h-[600px]">
-          {/* Meeting Info - Left Column */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] xl:grid-cols-[1fr_400px] min-h-[400px]">
+          {/* Meeting Info - Left Column
           <div className="border-r border-slate-200 bg-slate-50/30">
             <MeetingInfo profileName="Antoine Milkoff" duration={30} />
-          </div>
+          </div> */}
 
           {/* Calendar - Center Column */}
           <div className="relative">
