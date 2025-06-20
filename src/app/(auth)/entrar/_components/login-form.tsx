@@ -58,10 +58,8 @@ export const LoginForm: React.FC = () => {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Welcome back</CardTitle>
-        <CardDescription>
-          Login with your Apple or Google account
-        </CardDescription>
+        <CardTitle className="text-xl">Bem-vindo de volta</CardTitle>
+        <CardDescription>Faça login para continuar</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

@@ -76,7 +76,7 @@ export function AppointmentFormDetailsSidebar({
       </Card>
 
       {/* Client Information */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <UserIcon className="h-5 w-5 text-gray-600" />
@@ -128,7 +128,7 @@ export function AppointmentFormDetailsSidebar({
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Service Information */}
       <Card>
