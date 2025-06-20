@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ActivityIcon } from "lucide-react";
+import { Comment } from "./_activity-item/comment";
 
 const getActivityDescription = (activity: AppointmentActivity) => {
   switch (activity.type) {
@@ -138,73 +139,94 @@ export function AppointmentActivityItem({
 
   const activityDetails = getActivityDetails(activity);
 
-  return (
-    <>
-      <div className="flex items-start gap-3">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm text-gray-700 leading-relaxed">
-            <span className="font-medium text-gray-900">
-              {activity.user.name}
-            </span>{" "}
-            <button
-              type="button"
-              onClick={handleActivityClick}
-              className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
-            >
-              {getActivityDescription(activity)}
-            </button>{" "}
-            <span className="text-gray-500">
-              •{" "}
-              {formatDistanceToNow(new Date(activity.createdAt), {
-                addSuffix: true,
-                locale: ptBR,
-              })}
-            </span>
-          </p>
-        </div>
-      </div>
-      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ActivityIcon className="h-5 w-5 text-blue-600" />
-              {getActivityTitle(activity)}
-            </DialogTitle>
-            <DialogDescription>
-              Por {activity.user?.name || "Usuário"} •{" "}
-              {format(new Date(activity.createdAt), "PPP 'às' p", {
-                locale: ptBR,
-              })}
-            </DialogDescription>
-          </DialogHeader>
+  switch (activity.type) {
+    case "COMMENT":
+      return <Comment activity={activity} />;
+    case "CREATED":
+      return <div>CreatedActivity</div>;
+    case "UPDATED":
+      return <div>UpdatedActivity</div>;
+    case "CANCELLED":
+      return <div>CancelledActivity</div>;
+    case "RESCHEDULE_REQUESTED":
+      return <div>RescheduleRequestedActivity</div>;
+    case "RESCHEDULE_CONFIRMED":
+      return <div>RescheduleConfirmedActivity</div>;
+    case "RESCHEDULE_REJECTED":
+      return <div>RescheduleRejectedActivity</div>;
+    case "STATUS_CHANGE":
+      return <div>StatusChangeActivity</div>;
+    default:
+      return null;
+  }
 
-          {activityDetails && (
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900 mb-2">
-                  {activityDetails.description}
-                </h4>
-                <div className="p-3 bg-gray-50 rounded-md border">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {activityDetails.content}
-                  </p>
-                </div>
-              </div>
+  // return (
+  //   <>
+  //     <div className="flex items-start gap-3">
+  //       <div className="flex-1 min-w-0">
+  //         <p className="text-sm text-gray-700 leading-relaxed">
+  //           <span className="font-medium text-gray-900">
+  //             {activity.user.name}
+  //           </span>{" "}
+  //           <button
+  //             type="button"
+  //             onClick={handleActivityClick}
+  //             className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+  //           >
+  //             {getActivityDescription(activity)}
+  //           </button>{" "}
+  //           <span className="text-gray-500">
+  //             •{" "}
+  //             {formatDistanceToNow(new Date(activity.createdAt), {
+  //               addSuffix: true,
+  //               locale: ptBR,
+  //             })}
+  //           </span>
+  //         </p>
+  //       </div>
+  //     </div>
+  //     <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+  //       <DialogContent className="sm:max-w-[500px]">
+  //         <DialogHeader>
+  //           <DialogTitle className="flex items-center gap-2">
+  //             <ActivityIcon className="h-5 w-5 text-blue-600" />
+  //             {getActivityTitle(activity)}
+  //           </DialogTitle>
+  //           <DialogDescription>
+  //             Por {activity.user?.name || "Usuário"} •{" "}
+  //             {format(new Date(activity.createdAt), "PPP 'às' p", {
+  //               locale: ptBR,
+  //             })}
+  //           </DialogDescription>
+  //         </DialogHeader>
 
-              {activityDetails.details && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">
-                    Detalhes Adicionais
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    {activityDetails.details}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+  //         {activityDetails && (
+  //           <div className="space-y-4">
+  //             <div>
+  //               <h4 className="text-sm font-medium text-gray-900 mb-2">
+  //                 {activityDetails.description}
+  //               </h4>
+  //               <div className="p-3 bg-gray-50 rounded-md border">
+  //                 <p className="text-sm text-gray-700 whitespace-pre-wrap">
+  //                   {activityDetails.content}
+  //                 </p>
+  //               </div>
+  //             </div>
+
+  //             {activityDetails.details && (
+  //               <div>
+  //                 <h4 className="text-sm font-medium text-gray-900 mb-2">
+  //                   Detalhes Adicionais
+  //                 </h4>
+  //                 <p className="text-sm text-gray-600">
+  //                   {activityDetails.details}
+  //                 </p>
+  //               </div>
+  //             )}
+  //           </div>
+  //         )}
+  //       </DialogContent>
+  //     </Dialog>
+  //   </>
+  // );
 }

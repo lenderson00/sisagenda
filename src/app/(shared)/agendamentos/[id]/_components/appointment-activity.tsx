@@ -12,16 +12,18 @@ import { ptBR } from "date-fns/locale";
 import {
   Calendar,
   FileText,
+  Loader2,
   MessageCircle,
   RotateCcw,
   Send,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { AppointmentActivityItem } from "./appointment-activity-item";
 import { useSession } from "next-auth/react";
+import { IconArrowUp } from "@tabler/icons-react";
 
 interface AppointmentActivityListProps {
   appointmentId: string;
@@ -106,62 +108,65 @@ export function AppointmentActivityList({
     }
   };
 
+  useEffect(() => {
+    if (commentErrors.content) {
+      toast.error(commentErrors.content.message);
+    }
+  }, [commentErrors]);
+
   return (
     <div className="space-y-4">
       <div>
         <div>
           <div className="text-xl flex items-center gap-2">Atividades</div>
         </div>
-        <div>
-          {/* Activities Timeline */}
-          <div className="space-y-3">
-            {activities.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <MessageCircle className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                <p>Nenhuma atividade registrada ainda.</p>
-                <p className="text-sm">Seja o primeiro a comentar!</p>
-              </div>
-            ) : (
-              activities.map((activity) => (
-                <AppointmentActivityItem
-                  key={activity.id}
-                  activity={activity}
-                />
-              ))
-            )}
+        <div className="flex flex-col gap-4">
+          <div className="space-y-3 my-2">
+            {activities.length !== 0 &&
+              activities
+                .sort(
+                  (a, b) =>
+                    new Date(a.createdAt).getTime() -
+                    new Date(b.createdAt).getTime(),
+                )
+                .map((activity) => (
+                  <AppointmentActivityItem
+                    key={activity.id}
+                    activity={activity}
+                  />
+                ))}
           </div>
 
           {/* Comment Form */}
-          <div className="border-t pt-4">
+          <div className=" relative">
             <form onSubmit={handleSubmitComment(onCommentSubmit)}>
               <div className="flex gap-3">
-                <Avatar className="h-8 w-8 flex-shrink-0">
-                  <AvatarFallback className="bg-blue-500 text-white text-xs">
-                    {currentUser.name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-3">
+                <div className="flex-1  bg-background">
                   <Textarea
                     placeholder="Deixe um comentário..."
-                    className="min-h-[80px] resize-none border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="min-h-[80px] p-4 resize-none border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     {...registerComment("content", {
                       required: "O comentário não pode estar vazio",
                     })}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        onCommentSubmit({ content: e.currentTarget.value });
+                      }
+                    }}
                   />
-                  {commentErrors.content && (
-                    <p className="text-sm text-red-600">
-                      {commentErrors.content.message}
-                    </p>
-                  )}
-                  <div className="flex justify-end">
+
+                  <div className="flex justify-end absolute bottom-2 right-2">
                     <Button
                       type="submit"
-                      size="sm"
                       disabled={isSubmittingComment}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="border rounded-full bg-background size-8 hover:bg-accent"
                     >
-                      <Send className="h-4 w-4 mr-2" />
-                      {isSubmittingComment ? "Enviando..." : "Comentar"}
+                      {isSubmittingComment ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <IconArrowUp className="size-4 text-foreground" />
+                      )}
                     </Button>
                   </div>
                 </div>
