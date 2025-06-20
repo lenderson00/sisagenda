@@ -27,10 +27,10 @@ export default async function TransportPage() {
           <div className="flex md:flex-row flex-col md:items-center justify-between mt-4 gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                Tipos de Transporte
+                Tipos de Entrega
               </h1>
               <p className="text-gray-600">
-                Gerencie os tipos de transporte disponíveis
+                Gerencie os tipos de entrega disponíveis
               </p>
             </div>
             <CreateDeliveryTypeDialog orgId={orgId} />

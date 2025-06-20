@@ -18,7 +18,7 @@ export function OrganizationList() {
 
   return (
     <>
-      <div className="container mx-auto px-6 py-8 flex-1 h-full flex flex-col">
+      <div className="max-w-5xl mx-auto px-6 py-8 flex-1 h-full flex flex-col">
         {data.length > 0 ? (
           <DataTable columns={columns} data={data} />
         ) : (

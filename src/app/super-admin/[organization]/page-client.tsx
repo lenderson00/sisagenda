@@ -21,7 +21,7 @@ export function OrganizationAdminClient({
   return (
     <div className="h-full">
       <div className="border-b  py-4 md:py-8 px-4 md:px-0 ">
-        <div className="container mx-auto flex items-center justify-between mt-4">
+        <div className="max-w-5xl mx-auto flex items-center justify-between mt-4">
           <div>
             <div className="flex gap-2">
               <h1 className="text-xl md:max-w-xl text-balance md:text-3xl font-bold tracking-tight">
@@ -47,7 +47,7 @@ export function OrganizationAdminClient({
         </div>
       </div>
 
-      <div className="container mx-auto py-8 px-4 md:px-0">
+      <div className="max-w-5xl mx-auto py-8 px-4 md:px-0">
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">Loading...</p>
