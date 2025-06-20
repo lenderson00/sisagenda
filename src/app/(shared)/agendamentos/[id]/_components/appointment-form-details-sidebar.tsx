@@ -32,31 +32,16 @@ export function AppointmentFormDetailsSidebar({
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sticky top-20">
       {/* Action Cards */}
-      <Card className="border-l-4 border-l-blue-500">
+      <Card className="">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-blue-600" />
             Ações Disponíveis
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-gray-600 mb-4">
-            Você pode realizar as seguintes ações neste agendamento:
-          </p>
-
           <div className="space-y-2">
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <MessageCircle className="h-4 w-4 text-blue-600" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-blue-900">Comentários</p>
-                <p className="text-xs text-blue-700">
-                  Adicione comentários na seção de atividades abaixo
-                </p>
-              </div>
-            </div>
-
             <Button
               onClick={() => setShowRescheduleDialog(true)}
               variant="outline"
@@ -67,9 +52,7 @@ export function AppointmentFormDetailsSidebar({
                 <p className="text-sm font-medium text-orange-900">
                   Solicitar Reagendamento
                 </p>
-                <p className="text-xs text-orange-700">
-                  Propor nova data para este agendamento
-                </p>
+                <p className="text-xs text-orange-700">Propor nova data.</p>
               </div>
             </Button>
 
