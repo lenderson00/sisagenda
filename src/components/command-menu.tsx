@@ -1,12 +1,11 @@
 "use client";
 
 import type { DialogProps } from "@radix-ui/react-dialog";
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconArrowRight, IconSearch } from "@tabler/icons-react";
 import { CornerDownLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { copyToClipboardWithMeta } from "@/components/copy-button";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -31,48 +30,41 @@ import { cn } from "@/lib/utils";
 
 export function CommandMenu({
   tree,
-  colors,
+  isIcon = false,
   ...props
 }: DialogProps & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tree: any;
-  colors: any;
+  isIcon?: boolean;
 }) {
   const router = useRouter();
   const isMac = useIsMac();
-  const [open, setOpen] = React.useState(false);
-  const [selectedType, setSelectedType] = React.useState<
+  const [open, setOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<
     "color" | "page" | "component" | "block" | null
   >(null);
-  const [copyPayload, setCopyPayload] = React.useState("");
+  const [copyPayload, setCopyPayload] = useState("");
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  const handlePageHighlight = React.useCallback(
-    (isComponent: boolean, item: { url: string; name?: React.ReactNode }) => {
+  const handlePageHighlight = useCallback(
+    (isComponent: boolean) => {
       if (isComponent) {
-        const componentName = item.url.split("/").pop();
         setSelectedType("component");
       } else {
         setSelectedType("page");
         setCopyPayload("");
       }
     },
-    [setSelectedType, setCopyPayload],
+    [setSelectedType],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  const handleBlockHighlight = React.useCallback(
-    (block: { name: string; description: string; categories: string[] }) => {
-      setSelectedType("block");
-    },
-    [setSelectedType, setCopyPayload],
-  );
-
-  const runCommand = React.useCallback((command: () => unknown) => {
+  const runCommand = useCallback((command: () => unknown) => {
     setOpen(false);
     command();
   }, []);
 
-  React.useEffect(() => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || e.key === "/") {
         if (
@@ -87,31 +79,6 @@ export function CommandMenu({
         e.preventDefault();
         setOpen((open) => !open);
       }
-
-      if (e.key === "c" && (e.metaKey || e.ctrlKey)) {
-        runCommand(() => {
-          if (selectedType === "color") {
-            copyToClipboardWithMeta(copyPayload, {
-              name: "copy_color",
-              properties: { color: copyPayload },
-            });
-          }
-
-          if (selectedType === "block") {
-            copyToClipboardWithMeta(copyPayload, {
-              name: "copy_npm_command",
-              properties: { command: copyPayload },
-            });
-          }
-
-          if (selectedType === "page" || selectedType === "component") {
-            copyToClipboardWithMeta(copyPayload, {
-              name: "copy_npm_command",
-              properties: { command: copyPayload },
-            });
-          }
-        });
-      }
     };
 
     document.addEventListener("keydown", down);
@@ -122,18 +89,25 @@ export function CommandMenu({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="secondary"
+          variant={isIcon ? "ghost" : "secondary"}
           className={cn(
-            "bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64",
+            "cursor-pointer bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64",
+            isIcon && "!w-8 !p-0 justify-center ",
           )}
           onClick={() => setOpen(true)}
           {...props}
         >
-          <span className="inline-flex">Pesquisar...</span>
-          <div className="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">
-            <CommandMenuKbd>{isMac ? "⌘" : "Ctrl"}</CommandMenuKbd>
-            <CommandMenuKbd className="aspect-square">K</CommandMenuKbd>
-          </div>
+          {isIcon ? (
+            <IconSearch className="size-4" />
+          ) : (
+            <>
+              <span className="inline-flex">Pesquisar...</span>
+              <div className="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">
+                <CommandMenuKbd>{isMac ? "⌘" : "Ctrl"}</CommandMenuKbd>
+                <CommandMenuKbd className="aspect-square">K</CommandMenuKbd>
+              </div>
+            </>
+          )}
         </Button>
       </DialogTrigger>
       <DialogContent className="rounded-xl border-none bg-clip-padding p-2 pb-11 shadow-2xl ring-4 ring-neutral-200/80 dark:bg-neutral-900 dark:ring-neutral-800">
@@ -147,6 +121,7 @@ export function CommandMenu({
             <CommandEmpty className="text-muted-foreground py-12 text-center text-sm">
               Nenhum resultado encontrado.
             </CommandEmpty>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {tree.children.map((group: any) => (
               <CommandGroup
                 key={group.$id}
@@ -154,6 +129,7 @@ export function CommandMenu({
                 className="!p-0 [&_[cmdk-group-heading]]:scroll-mt-16 [&_[cmdk-group-heading]]:!p-3 [&_[cmdk-group-heading]]:!pb-1"
               >
                 {group.type === "folder" &&
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   group.children.map((item: any) => {
                     if (item.type === "page") {
                       const isComponent = item.url.includes("/components/");
@@ -167,9 +143,7 @@ export function CommandMenu({
                               : ""
                           }
                           keywords={isComponent ? ["component"] : undefined}
-                          onHighlight={() =>
-                            handlePageHighlight(isComponent, item)
-                          }
+                          onHighlight={() => handlePageHighlight(isComponent)}
                           onSelect={() => {
                             runCommand(() => router.push(item.url));
                           }}
@@ -195,9 +169,8 @@ export function CommandMenu({
               <CornerDownLeftIcon />
             </CommandMenuKbd>{" "}
             {selectedType === "page" || selectedType === "component"
-              ? "Go to Page"
+              ? "Ir para página"
               : null}
-            {selectedType === "color" ? "Copy OKLCH" : null}
           </div>
           {copyPayload && (
             <>
@@ -225,7 +198,7 @@ function CommandMenuItem({
   "data-selected"?: string;
   "aria-selected"?: string;
 }) {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useMutationObserver(ref, (mutations) => {
     for (const mutation of mutations) {

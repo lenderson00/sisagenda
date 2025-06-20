@@ -7,10 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function MainNav({
-  items = [
-    { href: "/", label: "Principal" },
-    { href: "/chat", label: "Chat" },
-  ],
+  items = [{ href: "/", label: "Principal" }],
   className,
   ...props
 }: React.ComponentProps<"nav"> & {
