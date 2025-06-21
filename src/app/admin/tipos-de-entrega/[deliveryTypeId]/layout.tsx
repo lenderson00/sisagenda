@@ -10,11 +10,11 @@ const createSidebarNavItems = (deliveryTypeId: string) => {
   return [
     {
       title: "Disponibilidade",
-      href: `/transporte/${deliveryTypeId}`,
+      href: `/tipos-de-entrega/${deliveryTypeId}`,
     },
     {
       title: "Configurações",
-      href: `/transporte/${deliveryTypeId}/configuracoes`,
+      href: `/tipos-de-entrega/${deliveryTypeId}/configuracoes`,
     },
   ];
 };
@@ -56,17 +56,16 @@ const DeliveryTypeLayout = async ({
   }
 
   return (
-    <div>
+    <>
       <PageHeader title={deliveryType.name} backButton />
-      <div className="container mx-auto md:px-6 px-4 md:py-8 py-6">
-        <div className="flex flex-col space-y-8 md:flex-row lg:space-x-12 lg:space-y-0 gap-0 md:gap-8">
-          <aside className="md:-ml-4 md:w-1/4 w-full md:pr-2">
-            <SidebarNav items={sidebarNavItems} />
-          </aside>
-          <div className="w-full md:w-3/4">{children}</div>
-        </div>
+
+      <div className="flex gap-4 p-4">
+        <aside className="md:w-[220px]">
+          <SidebarNav items={sidebarNavItems} />
+        </aside>
+        <div className="w-full md:w-3/4">{children}</div>
       </div>
-    </div>
+    </>
   );
 };
 

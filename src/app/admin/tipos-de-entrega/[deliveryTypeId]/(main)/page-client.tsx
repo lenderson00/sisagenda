@@ -13,7 +13,7 @@ import { z } from "zod";
 import {
   useAvailability,
   useUpdateAvailability,
-} from "../(main)/_hooks/use-availability";
+} from "./_hooks/use-availability";
 
 interface Availability {
   weekDay: number;
