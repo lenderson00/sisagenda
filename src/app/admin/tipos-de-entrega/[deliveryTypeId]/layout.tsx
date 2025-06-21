@@ -9,12 +9,18 @@ import { PageHeader } from "../../_components/page-header";
 const createSidebarNavItems = (deliveryTypeId: string) => {
   return [
     {
-      title: "Disponibilidade",
+      title: "Configurações da Entrega",
       href: `/tipos-de-entrega/${deliveryTypeId}`,
     },
     {
-      title: "Configurações",
-      href: `/tipos-de-entrega/${deliveryTypeId}/configuracoes`,
+      title: "Disponibilidade",
+      href: `/tipos-de-entrega/${deliveryTypeId}/disponibilidade`,
+    },
+    {
+      title: "Limites",
+      href: `/tipos-de-entrega/${deliveryTypeId}/limites`,
+      label:
+        "Com que frequência você pode receber pedidos deste tipo de entrega?",
     },
   ];
 };
