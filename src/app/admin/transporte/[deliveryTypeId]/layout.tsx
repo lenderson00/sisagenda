@@ -12,10 +12,6 @@ const createSidebarNavItems = (deliveryTypeId: string) => {
       href: `/transporte/${deliveryTypeId}`,
     },
     {
-      title: "Regras de Disponibilidade",
-      href: `/transporte/${deliveryTypeId}/regras-de-disponibilidade`,
-    },
-    {
       title: "Configurações",
       href: `/transporte/${deliveryTypeId}/configuracoes`,
     },
