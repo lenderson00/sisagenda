@@ -1,7 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
 import DeleteForm from "./_component/delete-form";
-import DurationForm from "./_component/duration-form";
 import LunchForm from "./_component/lunch-form";
 import { useDeliveryTypeConfig } from "./_hooks/use-delivery-type-config";
 import { useDeliveryTypeMutations } from "./_hooks/use-delivery-type-mutations";
@@ -10,15 +9,7 @@ export default function ConfiguracoesPageClient() {
   const params = useParams();
   const deliveryTypeId = params.deliveryTypeId as string;
   const { data: config, isLoading } = useDeliveryTypeConfig(deliveryTypeId);
-  const { updateDuration, updateLunchTime, deleteDeliveryType } =
-    useDeliveryTypeMutations();
-
-  const handleUpdateDuration = async (data: { [key: string]: string }) => {
-    await updateDuration.mutateAsync({
-      deliveryTypeId,
-      duration: Number.parseInt(data.time, 10),
-    });
-  };
+  const { updateLunchTime, deleteDeliveryType } = useDeliveryTypeMutations();
 
   const handleUpdateLunchTime = async (data: {
     startTime: string;
@@ -56,13 +47,6 @@ export default function ConfiguracoesPageClient() {
 
   return (
     <div className="flex flex-col gap-4">
-      <DurationForm
-        title="Duração da entrega"
-        description="Defina a duração da entrega para o tipo de transporte."
-        helpText="Esse valor impacta na duração do agendamento."
-        onSubmit={handleUpdateDuration}
-        initialDuration={config.duration}
-      />
       <LunchForm
         title="Horário de almoço"
         description="Defina o horário de almoço o qual não será considerado para o agendamento."
