@@ -1,47 +1,47 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState } from "react";
 
 export function useChatDraft(chatId?: string | null | undefined) {
-  const storageKey = chatId ? `chat-draft-${chatId}` : "chat-draft-new"
+  const storageKey = chatId ? `chat-draft-${chatId}` : "chat-draft-new";
 
   const [draftValue, setDraftValueState] = useState<string>(() => {
-    if (typeof window === "undefined") return ""
-    return localStorage.getItem(storageKey) || ""
-  })
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem(storageKey) || "";
+  });
 
   const setDraftValue = useCallback(
     (value: string) => {
-      setDraftValueState(value)
+      setDraftValueState(value);
 
       if (typeof window !== "undefined") {
         if (value) {
-          localStorage.setItem(storageKey, value)
+          localStorage.setItem(storageKey, value);
         } else {
-          localStorage.removeItem(storageKey)
+          localStorage.removeItem(storageKey);
         }
       }
     },
-    [storageKey]
-  )
+    [storageKey],
+  );
 
   const setDraftValueWithChatId = useCallback(
     (chatId: string, value: string) => {
-      setDraftValue(value)
-      localStorage.setItem(`chat-draft-${chatId}`, value)
+      setDraftValue(value);
+      localStorage.setItem(`chat-draft-${chatId}`, value);
     },
-    [setDraftValue]
-  )
+    [setDraftValue],
+  );
 
   const clearDraft = useCallback(() => {
-    setDraftValueState("")
+    setDraftValueState("");
     if (typeof window !== "undefined") {
-      localStorage.removeItem(storageKey)
+      localStorage.removeItem(storageKey);
     }
-  }, [storageKey])
+  }, [storageKey]);
 
   return {
     draftValue,
     setDraftValue,
     setDraftValueWithChatId,
     clearDraft,
-  }
+  };
 }

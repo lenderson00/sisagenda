@@ -95,10 +95,10 @@ export const useSaveMessage = (chatId: string | null) => {
         "messages",
         chatId,
       ]);
-      queryClient.setQueryData(
-        ["messages", chatId],
-        (old: Message[] = []) => [...old, newMessage],
-      );
+      queryClient.setQueryData(["messages", chatId], (old: Message[] = []) => [
+        ...old,
+        newMessage,
+      ]);
       return { previousMessages };
     },
     onSuccess: (_, newMessage) => {

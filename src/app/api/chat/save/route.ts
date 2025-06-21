@@ -40,18 +40,22 @@ export async function POST(request: NextRequest) {
       where: { chatId },
     });
 
-    const messagesToSave = messages.map((message: Message) => ({
-      id: message.id,
-      chatId,
-      content: message.content,
-      role: message.role,
-      parts: message.parts,
-    })).filter((message: Message) => !persistedMessages.some((m) => m.id === message.id));
+    const messagesToSave = messages
+      .map((message: Message) => ({
+        id: message.id,
+        chatId,
+        content: message.content,
+        role: message.role,
+        parts: message.parts,
+      }))
+      .filter(
+        (message: Message) =>
+          !persistedMessages.some((m) => m.id === message.id),
+      );
 
     const result = await prisma.message.createMany({
       data: messagesToSave,
     });
-
 
     return NextResponse.json({ success: true, saved: result !== null });
   } catch (error) {

@@ -42,7 +42,6 @@ export const feedbackAction = async (
     },
   });
 
-
   if (existingFeedback) {
     if (existingFeedback.type === type) {
       // User clicked the same button again, so remove feedback

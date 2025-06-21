@@ -32,10 +32,7 @@ export async function POST(
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Check if appointment exists and belongs to the user
@@ -54,7 +51,11 @@ export async function POST(
       );
     }
 
-    if (["COMPLETED", "CANCELLATION_REQUESTED", "CANCELLED"].includes(appointment.status)) {
+    if (
+      ["COMPLETED", "CANCELLATION_REQUESTED", "CANCELLED"].includes(
+        appointment.status,
+      )
+    ) {
       return NextResponse.json(
         { error: "Appointment already completed or cancelled" },
         { status: 400 },

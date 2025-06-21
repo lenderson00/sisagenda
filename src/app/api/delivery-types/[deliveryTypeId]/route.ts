@@ -64,3 +64,31 @@ export async function DELETE(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ deliveryTypeId: string }> },
+) {
+  try {
+    const session = await auth();
+    if (!session) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const { deliveryTypeId } = await params;
+    const body = await req.json();
+
+    const deliveryType = await prisma.deliveryType.update({
+      where: {
+        id: deliveryTypeId,
+        organizationId: session.user.organizationId,
+      },
+      data: body,
+    });
+
+    return NextResponse.json(deliveryType);
+  } catch (error) {
+    console.error("[DELIVERY_TYPE_PATCH]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}

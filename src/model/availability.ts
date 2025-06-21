@@ -26,8 +26,7 @@ export const getAvailabilityPerDay = async (
   const config = {
     lunchStart:
       availability.deliveryType.AvailabilitySettings?.lunchTimeStart ?? 0,
-    lunchEnd:
-      availability.deliveryType.AvailabilitySettings?.lunchTimeEnd ?? 0,
+    lunchEnd: availability.deliveryType.AvailabilitySettings?.lunchTimeEnd ?? 0,
     activityDuration:
       availability.deliveryType.AvailabilitySettings?.duration ?? 0,
     startHour: availability.startTime,

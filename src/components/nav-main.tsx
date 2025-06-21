@@ -15,14 +15,12 @@ import { usePathname } from "next/navigation";
 export function NavMain({
   items,
   className,
-  title,
 }: {
   items: {
     name: string;
     url: string;
     icon: TablerIcon;
   }[];
-  title: string;
   className?: string;
 }) {
   const pathname = usePathname();
@@ -33,7 +31,6 @@ export function NavMain({
 
   return (
     <SidebarGroup className={cn(className)}>
-      {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem

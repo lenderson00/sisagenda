@@ -24,7 +24,6 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-
   const organization = await prisma.organization.findUnique({
     where: {
       id: session.user.organizationId,
@@ -64,7 +63,6 @@ export async function GET() {
 
     return NextResponse.json(appointments);
   } catch (error) {
-
     console.error("Failed to fetch appointments:", error);
     return NextResponse.json(
       { error: "Failed to fetch appointments" },
@@ -131,7 +129,6 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify(appointment), { status: 201 });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 400 });
     }

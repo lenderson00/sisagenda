@@ -68,7 +68,7 @@ export const getStatusColor = (status: string) => {
     RESCHEDULE_REJECTED: "bg-red-400",
     RESCHEDULED: "bg-indigo-500",
     COMPLETED: "bg-green-600",
-    SUPPLIER_NO_SHOW: "bg-red-700"
+    SUPPLIER_NO_SHOW: "bg-red-700",
   };
 
   return statusColors[status] || "bg-gray-300";
@@ -87,7 +87,7 @@ export const getStatusReadableName = (status: string) => {
     RESCHEDULE_REJECTED: "Reagendamento Rejeitado",
     RESCHEDULED: "Reagendado",
     COMPLETED: "Concluído",
-    SUPPLIER_NO_SHOW: "Fornecedor Não Compareceu"
+    SUPPLIER_NO_SHOW: "Fornecedor Não Compareceu",
   };
 
   return statusNames[status] || status;

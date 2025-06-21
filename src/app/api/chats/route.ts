@@ -36,11 +36,11 @@ export const GET = async (request: NextRequest) => {
     take: limit + 1,
     ...(cursor
       ? {
-        cursor: {
-          id: cursor,
-        },
-        skip: 1,
-      }
+          cursor: {
+            id: cursor,
+          },
+          skip: 1,
+        }
       : {}),
   });
 

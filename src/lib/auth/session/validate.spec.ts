@@ -22,7 +22,7 @@ describe("validateSession", () => {
 
     const session = await validateSession();
     expect(session).toEqual({
-      user: { id: "1", email: "test@test.com" }
+      user: { id: "1", email: "test@test.com" },
     });
   });
 });

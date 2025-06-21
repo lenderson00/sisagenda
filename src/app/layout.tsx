@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
-import { Fira_Mono, Roboto } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import { Fira_Mono } from "next/font/google";
 import { auth } from "@/lib/auth/auth";
 import type { Session } from "next-auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { Providers } from "./providers";
 
-const roboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
+const calFont = localFont({
+  src: "../../public/fonts/cal.ttf",
+  variable: "--font-cal",
+  preload: true,
+  display: "block",
+  weight: "600",
 });
 
 const firaMono = Fira_Mono({
@@ -17,6 +19,24 @@ const firaMono = Fira_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1.0,
+  maximumScale: 1.0,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: [
+    {
+      media: "(prefers-color-scheme: light)",
+      color: "#f9fafb",
+    },
+    {
+      media: "(prefers-color-scheme: dark)",
+      color: "#1C1C1C",
+    },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "Sisgenda",
@@ -33,7 +53,7 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`${roboto.variable} ${firaMono.variable} antialiased font-[family-name:var(--font-roboto)]`}
+        className={`${calFont.variable} ${firaMono.variable} antialiased font-[family-name:var(--font-cal)]`}
       >
         <Providers session={session}>{children}</Providers>
       </body>

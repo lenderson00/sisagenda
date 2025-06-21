@@ -5,8 +5,6 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { getStatusColor, getStatusReadableName } from "./utils";
 
-
-
 export function exportAppointmentsToPDF(
   appointments: AppointmentWithRelations[],
   user: User,
@@ -40,7 +38,7 @@ export function exportAppointmentsToPDF(
 
     // Map status colors to PDF colors
     const statusColor = getStatusColor(appointment.status);
-    const pdfColor = statusColor.replace('bg-', '').replace('-', '');
+    const pdfColor = statusColor.replace("bg-", "").replace("-", "");
     statusColors.push(pdfColor);
   }
 
@@ -53,17 +51,17 @@ export function exportAppointmentsToPDF(
       if (data.column.index === 4 && data.row.index > 0) {
         const statusColor = statusColors[data.row.index - 1];
         data.cell.styles.fillColor = statusColor;
-        data.cell.styles.textColor = '#FFFFFF';
+        data.cell.styles.textColor = "#FFFFFF";
       }
     },
     didDrawPage: (data) => {
       // Footer
-      const currentDate = new Date().toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      const currentDate = new Date().toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
 
       doc.setFontSize(8);
@@ -73,23 +71,23 @@ export function exportAppointmentsToPDF(
       doc.text(
         `Relatório gerado em: ${currentDate}`,
         data.settings.margin.left,
-        pageHeight - 20
+        pageHeight - 20,
       );
 
       // App signature
       doc.text(
-        'SISAgenda - Sistema de Agendamentos',
+        "SISAgenda - Sistema de Agendamentos",
         data.settings.margin.left,
-        pageHeight - 15
+        pageHeight - 15,
       );
 
       // Page number
       doc.text(
         `Página ${data.pageNumber}`,
         data.settings.margin.left,
-        pageHeight - 10
+        pageHeight - 10,
       );
-    }
+    },
   });
 
   doc.save("agendamentos.pdf");

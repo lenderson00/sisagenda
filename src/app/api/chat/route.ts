@@ -4,7 +4,6 @@ import { streamText, tool } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
 import { tools } from "./_tools";
 
-
 const systemPrompt = `
 Você é o **Assistente do SisAgenda**, uma IA especializada em gestão de agendamentos
 e relatórios operacionais. Seu objetivo principal é:

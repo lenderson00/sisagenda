@@ -25,7 +25,6 @@ const schema = z.object({
 });
 
 export async function GET(request: Request) {
-
   try {
     await validateSession();
     const { searchParams } = new URL(request.url);

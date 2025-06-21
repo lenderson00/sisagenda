@@ -125,10 +125,9 @@ Deve haver pelo menos duas colunas.
 Se o usuário pedir apenas uma coluna, retorne a coluna e a contagem dela (COUNT).
 Se for uma taxa, retorne o valor como decimal. Por exemplo, 0.1 representa 10%.
 
-`
+`;
 
 export const generateQuery = async (input: string) => {
-
   try {
     const result = await generateObject({
       model: openai("gpt-4o"),
@@ -144,7 +143,6 @@ export const generateQuery = async (input: string) => {
     throw new Error("Failed to generate query");
   }
 };
-
 
 export const runGenerateSQLQuery = async (query: string) => {
   // if (
@@ -185,7 +183,6 @@ export const runGenerateSQLQuery = async (query: string) => {
   return data.rows;
 };
 
-
 // Define the schema for chart configuration
 export const configSchema = z
   .object({
@@ -198,10 +195,29 @@ export const configSchema = z
     type: z.enum(["bar", "line", "area", "pie"]).describe("Type of chart"),
     title: z.string(),
     xKey: z.string().describe("Key for x-axis or category"),
-    yKeys: z.array(z.string()).describe("Key(s) for y-axis values this is typically the quantitative column"),
-    multipleLines: z.boolean().describe("For line charts only: whether the chart is comparing groups of data.").optional(),
-    measurementColumn: z.string().describe("For line charts only: key for quantitative y-axis column to measure against (eg. values, counts etc.)").optional(),
-    lineCategories: z.array(z.string()).describe("For line charts only: Categories used to compare different lines or data series. Each category represents a distinct line in the chart.").optional(),
+    yKeys: z
+      .array(z.string())
+      .describe(
+        "Key(s) for y-axis values this is typically the quantitative column",
+      ),
+    multipleLines: z
+      .boolean()
+      .describe(
+        "For line charts only: whether the chart is comparing groups of data.",
+      )
+      .optional(),
+    measurementColumn: z
+      .string()
+      .describe(
+        "For line charts only: key for quantitative y-axis column to measure against (eg. values, counts etc.)",
+      )
+      .optional(),
+    lineCategories: z
+      .array(z.string())
+      .describe(
+        "For line charts only: Categories used to compare different lines or data series. Each category represents a distinct line in the chart.",
+      )
+      .optional(),
     colors: z
       .record(
         z.string().describe("Any of the yKeys"),
@@ -213,9 +229,7 @@ export const configSchema = z
   })
   .describe("Chart configuration object");
 
-
 export type Config = z.infer<typeof configSchema>;
-
 
 export const generateChartConfig = async (
   results: any[],

@@ -66,3 +66,40 @@ export function useDeleteDeliveryType(orgId: string) {
     },
   });
 }
+
+export function useUpdateDeliveryType(orgId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<DeliveryTypeData> & { isActive?: boolean };
+    }) => {
+      const response = await fetch(`/api/delivery-types/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update delivery type");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: deliveryTypeKeys.list(orgId),
+      });
+      queryClient.setQueryData(deliveryTypeKeys.detail(orgId, data.id), data);
+      toast.success("Tipo de transporte atualizado com sucesso");
+    },
+    onError: (error) => {
+      toast.error("Falha ao atualizar tipo de transporte");
+      console.error("Update delivery type error:", error);
+    },
+  });
+}

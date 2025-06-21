@@ -25,31 +25,22 @@ import {
 
 const main = [
   {
-    name: "Dashboard",
-    url: "/",
-    icon: IconDashboard,
-  },
-];
-
-const gerenciamentoMain = [
-  {
-    name: "Agendamentos",
-    url: "/agendamentos",
-    icon: IconCalendar,
-  },
-  {
-    name: "Transportes",
-    url: "/transporte",
+    name: "Tipos de Entrega",
+    url: "/tipos-de-entrega",
     icon: IconTruck,
   },
   {
-    name: "Bloqueio de Datas",
-    url: "/bloqueio-de-datas",
+    name: "Agenda",
+    url: "/agenda",
+    icon: IconCalendar,
+  },
+
+  {
+    name: "Disponibilidade",
+    url: "/regras-de-disponibilidade",
     icon: IconCalendarOff,
   },
-];
 
-const adminMain = [
   {
     name: "Usuários",
     url: "/usuarios",
@@ -60,9 +51,7 @@ const adminMain = [
     url: "/fornecedores",
     icon: IconBuilding,
   },
-];
 
-const configMain = [
   {
     name: "Configurações",
     url: "/configuracoes",
@@ -74,7 +63,7 @@ export const AdminSidebar = ({
   ...props
 }: React.ComponentProps<typeof Sidebar>) => {
   return (
-    <Sidebar collapsible="icon" variant="inset" {...props}>
+    <Sidebar variant="sidebar" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -93,10 +82,7 @@ export const AdminSidebar = ({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={main} title="Principal" className="mt-4" />
-        <NavMain items={gerenciamentoMain} title="Gerenciamento" />
-        <NavMain items={adminMain} title="Administração" />
-        <NavMain items={configMain} title="" className="mt-auto" />
+        <NavMain items={main} className="my-0" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
