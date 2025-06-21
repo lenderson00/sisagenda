@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { SidebarNav } from "./_components/sidebar";
 import { PageHeader } from "../../_components/page-header";
+import Footer from "@/components/footer";
 
 const createSidebarNavItems = (deliveryTypeId: string) => {
   return [
@@ -70,10 +71,17 @@ const DeliveryTypeLayout = async ({
       <PageHeader title={deliveryType.name} backButton />
 
       <div className="flex gap-4 p-4">
-        <aside className="md:w-[220px]">
+        <aside className="md:w-[220px] ">
           <SidebarNav items={sidebarNavItems} />
         </aside>
-        <div className="w-full md:w-3/4">{children}</div>
+        <div className="w-full md:w-3/4">
+          {children}
+          <div className="flex justify-center items-center mt-16 mb-4">
+            <p className="text-sm text-gray-500">
+              SisAgenda. Grupo X - MPI CIANB - 2025
+            </p>
+          </div>
+        </div>
       </div>
     </>
   );

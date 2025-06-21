@@ -26,7 +26,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
   return (
     <nav
       className={cn(
-        "flex space-x-2 flex-row md:space-x-0 md:space-y-1  md:flex-col px-4 md:px-0",
+        "flex space-x-2 sticky top-4 flex-row md:space-x-0 md:space-y-1  md:flex-col px-4 md:px-0",
         isMobile && "bg-neutral-100 px-1 py-1 rounded-lg w-full",
         className,
       )}
