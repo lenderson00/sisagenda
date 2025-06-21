@@ -26,9 +26,9 @@ export const CreateDeliveryTypeDialog = ({ orgId }: { orgId: string }) => {
 
   return (
     <DrawerDialog
-      title="Adicionar Tipo de Transporte"
-      description="Adicione um novo tipo de transporte"
-      action="Adicionar Tipo de Transporte"
+      title="Adicionar Tipo de Entrega"
+      description="Crie um novo tipo de entrega para as empresas agendarem horários."
+      action="Adicionar Tipo de Entrega"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >

@@ -6,6 +6,7 @@ import { z } from "zod";
 const createDeliveryTypeSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
   description: z.string().optional(),
+  duration: z.number().min(1, "Duração é obrigatória"),
   organizationId: z.string(),
 });
 
@@ -13,15 +14,11 @@ export async function GET() {
   try {
     const session = await auth();
 
-    if (!session) {
+    if (!session || !session.user.organizationId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const orgId = session.user.organizationId;
-
-    if (!orgId) {
-      return new NextResponse("Organization ID is required", { status: 400 });
-    }
 
     const deliveryTypes = await prisma.deliveryType.findMany({
       where: {
@@ -68,6 +65,10 @@ export async function POST(req: Request) {
         name: validatedData.name,
         description: validatedData.description,
         slug,
+        duration: validatedData.duration || 60, // 60 minutes
+        lunchTimeStart: 12 * 60, // 12:00
+        lunchTimeEnd: 13 * 60, // 13:00
+        isVisible: true,
         organizationId: validatedData.organizationId,
       },
     });

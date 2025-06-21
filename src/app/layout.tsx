@@ -1,17 +1,16 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Fira_Mono } from "next/font/google";
+import { Fira_Mono, Urbanist, Carlito } from "next/font/google";
 import { auth } from "@/lib/auth/auth";
 import type { Session } from "next-auth";
 import { Providers } from "./providers";
 
-const calFont = localFont({
-  src: "../../public/fonts/cal.ttf",
-  variable: "--font-cal",
+const urbanist = Urbanist({
+  variable: "--font-urbanist",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
   preload: true,
-  display: "block",
-  weight: "600",
 });
 
 const firaMono = Fira_Mono({
@@ -53,7 +52,7 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`${calFont.variable} ${firaMono.variable} antialiased font-[family-name:var(--font-cal)]`}
+        className={`${urbanist.variable} ${firaMono.variable} antialiased font-[family-name:var(--font-urbanist)]`}
       >
         <Providers session={session}>{children}</Providers>
       </body>

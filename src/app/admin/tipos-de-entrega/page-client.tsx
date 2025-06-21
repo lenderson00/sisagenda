@@ -112,96 +112,83 @@ export function DeliveryTypesPageClient({
         </div>
       </div>
 
-      {deliveryTypes.length === 0 ? (
-        <EmptyCard
-          icon={IconTruck}
-          title="Nenhum tipo de transporte encontrado"
-          description="Adicione um novo tipo de transporte para começar"
-        >
-          <CreateDeliveryTypeDialog orgId={organizationId} />
-        </EmptyCard>
-      ) : (
-        <Card>
-          <div className="divide-y">
-            {deliveryTypes.map((deliveryType: DeliveryType) => (
-              <div
-                key={deliveryType.id}
-                className="flex items-center justify-between p-4"
-              >
+      <div className="divide-y divide-neutral-200 border border-neutral-200 rounded-lg overflow-hidden">
+        {deliveryTypes.map((deliveryType: DeliveryType, index: number) => {
+          return (
+            <div
+              key={deliveryType.id}
+              className="flex items-center justify-between p-4 hover:bg-neutral-50"
+            >
+              <Link href={`/admin/tipos-de-entrega/${deliveryType.id}`}>
                 <div className="flex items-center gap-4">
-                  <div className="space-y-1">
-                    <Link
-                      href={`/admin/tipos-de-entrega/${deliveryType.id}`}
-                      className="font-medium hover:underline"
-                    >
+                  <div className="space-y-2 ">
+                    <p className="font-medium">
                       {deliveryType.name}
-                    </Link>
+                      <span className="text-sm text-muted-foreground ml-2">
+                        /{organization?.sigla.toLowerCase()}/{deliveryType.slug}
+                      </span>
+                    </p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       {deliveryType.AvailabilitySettings?.duration && (
-                        <Badge variant="outline" className="gap-1.5">
+                        <Badge variant="secondary" className="gap-1.5">
                           <Clock className="h-3 w-3" />
                           {deliveryType.AvailabilitySettings.duration}m
                         </Badge>
                       )}
-                      <span>
-                        /{organization?.sigla.toLowerCase()}/{deliveryType.slug}
-                      </span>
                     </div>
                   </div>
                 </div>
+              </Link>
 
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={deliveryType.isActive}
-                    onCheckedChange={() => handleToggleActive(deliveryType)}
-                  />
-                  <Button variant="outline" size="icon" asChild>
-                    <Link
-                      href={`/agendar/${organization?.sigla.toLowerCase()}/${
-                        deliveryType.slug
-                      }`}
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={deliveryType.isActive}
+                  onCheckedChange={() => handleToggleActive(deliveryType)}
+                />
+                <Button variant="outline" size="icon" asChild>
+                  <Link
+                    href={`/agendar/${organization?.sigla.toLowerCase()}/${
+                      deliveryType.slug
+                    }`}
+                  >
+                    <Link2 className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href={`/admin/tipos-de-entrega/${deliveryType.id}`}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        Configurações
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setSelectedDeliveryType(deliveryType);
+                        setIsDeleteDialogOpen(true);
+                      }}
                     >
-                      <Link2 className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/admin/tipos-de-entrega/${deliveryType.id}`}
-                        >
-                          <Settings className="mr-2 h-4 w-4" />
-                          Configurações
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setSelectedDeliveryType(deliveryType);
-                          setIsDeleteDialogOpen(true);
-                        }}
-                      >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                      <Trash className="mr-2 h-4 w-4" />
+                      Excluir
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-            ))}
-          </div>
-        </Card>
-      )}
+            </div>
+          );
+        })}
+      </div>
 
       <AlertDialog
         open={isDeleteDialogOpen}

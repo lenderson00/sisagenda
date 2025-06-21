@@ -19,6 +19,7 @@ import * as z from "zod";
 const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
   description: z.string().optional(),
+  duration: z.number().min(1, "Duração é obrigatória"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -39,6 +40,7 @@ export function DeliveryTypeForm({
     defaultValues: initialData || {
       name: "",
       description: "",
+      duration: 30,
     },
   });
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -94,6 +96,31 @@ export function DeliveryTypeForm({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="duration"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-900">Duração</FormLabel>
+              <FormControl className="relative">
+                <div className="flex items-center relative">
+                  <Input
+                    placeholder="Digite a duração do tipo de entrega em minutos"
+                    {...field}
+                    type="number"
+                    className="border-gray-300 pr-[72px]"
+                    defaultValue={field.value}
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">
+                    minutos
+                  </span>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="flex justify-end space-x-2">
           {!isMobile && (
             <Button
@@ -110,7 +137,7 @@ export function DeliveryTypeForm({
             type="submit"
             className="bg-gray-900 hover:bg-gray-800 text-white w-full md:w-auto"
           >
-            {initialData ? "Atualizar Transporte" : "Criar Transporte"}
+            {initialData ? "Atualizar Entrega" : "Criar Entrega"}
           </Button>
         </div>
       </form>
