@@ -135,9 +135,7 @@ export function DeliveryTypesPageClient({
           icon={IconPackage}
         >
           <Button asChild>
-            <Link href="/admin/tipos-de-entrega/novo">
-              Criar tipo de entrega
-            </Link>
+            <Link href="/tipos-de-entrega/novo">Criar tipo de entrega</Link>
           </Button>
         </EmptyCard>
       ) : filteredDeliveryTypes.length === 0 ? (
@@ -153,7 +151,7 @@ export function DeliveryTypesPageClient({
                   key={deliveryType.id}
                   className="flex items-center justify-between p-4 hover:bg-neutral-50"
                 >
-                  <Link href={`/admin/tipos-de-entrega/${deliveryType.id}`}>
+                  <Link href={`/tipos-de-entrega/${deliveryType.id}`}>
                     <div className="flex items-center gap-4">
                       <div className="space-y-2 ">
                         <p className="font-medium">
@@ -236,9 +234,7 @@ export function DeliveryTypesPageClient({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
-                            <Link
-                              href={`/admin/tipos-de-entrega/${deliveryType.id}`}
-                            >
+                            <Link href={`/tipos-de-entrega/${deliveryType.id}`}>
                               <Settings className="mr-2 h-4 w-4" />
                               Configurações
                             </Link>
