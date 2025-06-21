@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { useOrganization } from "@/hooks/use-organization";
 import {
@@ -46,6 +47,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { IconPackage } from "@tabler/icons-react";
 
 export function DeliveryTypesPageClient({
   organizationId,
@@ -53,6 +55,7 @@ export function DeliveryTypesPageClient({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedDeliveryType, setSelectedDeliveryType] =
     useState<DeliveryType | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: organization } = useOrganization(organizationId);
   const { data: deliveryTypes = [], isLoading } =
@@ -60,6 +63,11 @@ export function DeliveryTypesPageClient({
 
   const deleteMutation = useDeleteDeliveryType(organizationId);
   const updateMutation = useUpdateDeliveryType(organizationId);
+
+  const filteredDeliveryTypes = deliveryTypes.filter(
+    (deliveryType: DeliveryType) =>
+      deliveryType.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const handleDelete = async () => {
     if (!selectedDeliveryType) return;
@@ -78,16 +86,29 @@ export function DeliveryTypesPageClient({
     });
   };
 
-  console.log(deliveryTypes);
-
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto" />
-          <p className="mt-4 text-gray-600">
-            Carregando tipos de transporte...
-          </p>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div className="relative w-full max-w-sm">
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+        <div className="divide-y divide-neutral-200 border border-neutral-200 rounded-lg overflow-hidden">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-4 w-full">
+                <div className="space-y-2 w-full">
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-6 w-12" />
+                <Skeleton className="h-10 w-24" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -97,116 +118,153 @@ export function DeliveryTypesPageClient({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="relative w-full max-w-sm">
-          <Input placeholder="Procurar" className="pl-8" />
+          <Input
+            placeholder="Procurar"
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
       </div>
 
-      <div className="divide-y divide-neutral-200 border border-neutral-200 rounded-lg overflow-hidden">
-        {deliveryTypes.map((deliveryType: DeliveryType, index: number) => {
-          return (
-            <div
-              key={deliveryType.id}
-              className="flex items-center justify-between p-4 hover:bg-neutral-50"
-            >
-              <Link href={`/admin/tipos-de-entrega/${deliveryType.id}`}>
-                <div className="flex items-center gap-4">
-                  <div className="space-y-2 ">
-                    <p className="font-medium">
-                      {deliveryType.name}
-                      <span className="text-sm text-muted-foreground ml-2">
-                        /{organization?.sigla.toLowerCase()}/{deliveryType.slug}
-                      </span>
-                    </p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      {deliveryType.duration && (
-                        <Badge variant="secondary" className="gap-1.5">
-                          <Clock className="h-3 w-3" />
-                          {deliveryType.duration}m
-                        </Badge>
-                      )}
+      {deliveryTypes.length === 0 && !isLoading ? (
+        <EmptyCard
+          title="Nenhum tipo de entrega"
+          description="Você ainda não criou nenhum tipo de entrega."
+          icon={IconPackage}
+        >
+          <Button asChild>
+            <Link href="/admin/tipos-de-entrega/novo">
+              Criar tipo de entrega
+            </Link>
+          </Button>
+        </EmptyCard>
+      ) : filteredDeliveryTypes.length === 0 ? (
+        <p className="p-4 text-center text-muted-foreground">
+          Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
+        </p>
+      ) : (
+        <div className="divide-y divide-neutral-200 border border-neutral-200 rounded-lg overflow-hidden">
+          {filteredDeliveryTypes.map(
+            (deliveryType: DeliveryType, index: number) => {
+              return (
+                <div
+                  key={deliveryType.id}
+                  className="flex items-center justify-between p-4 hover:bg-neutral-50"
+                >
+                  <Link href={`/admin/tipos-de-entrega/${deliveryType.id}`}>
+                    <div className="flex items-center gap-4">
+                      <div className="space-y-2 ">
+                        <p className="font-medium">
+                          {deliveryType.name}
+                          <span className="text-sm text-muted-foreground ml-2">
+                            /{organization?.sigla.toLowerCase()}/
+                            {deliveryType.slug}
+                          </span>
+                        </p>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          {deliveryType.duration && (
+                            <Badge variant="secondary" className="gap-1.5">
+                              <Clock className="h-3 w-3" />
+                              {deliveryType.duration}m
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </Link>
+                  </Link>
 
-              <div className="flex items-center gap-2 justify-center">
-                {!deliveryType.isVisible && (
-                  <Badge variant="secondary" className="gap-1.5">
-                    Escondido
-                  </Badge>
-                )}
-                <Tooltip>
-                  <TooltipTrigger className="flex items-center justify-center">
-                    <Switch
-                      checked={deliveryType.isVisible}
-                      onCheckedChange={() => handleToggleVisible(deliveryType)}
-                      className="scale-115 mx-2 cursor-pointer"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {deliveryType.isVisible
-                      ? "Ocultar no agendamento"
-                      : "Exibir no agendamento"}
-                  </TooltipContent>
-                </Tooltip>
-                <div className="rounded-sm border overflow-hidden divide-x">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    asChild
-                    className="rounded-none"
-                  >
-                    <Link
-                      href={`/agendar/${organization?.sigla.toLowerCase()}/${
-                        deliveryType.slug
-                      }`}
-                    >
-                      <Link2 className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" size="icon" className="rounded-none ">
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                  <div className="flex items-center gap-2 justify-center">
+                    {!deliveryType.isVisible && (
+                      <Badge variant="secondary" className="gap-1.5">
+                        Escondido
+                      </Badge>
+                    )}
+                    <Tooltip>
+                      <TooltipTrigger
+                        className="flex items-center justify-center"
+                        asChild
+                      >
+                        <div>
+                          <Switch
+                            checked={deliveryType.isVisible}
+                            onCheckedChange={() =>
+                              handleToggleVisible(deliveryType)
+                            }
+                            className="scale-115 mx-2 cursor-pointer"
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {deliveryType.isVisible
+                          ? "Ocultar no agendamento"
+                          : "Exibir no agendamento"}
+                      </TooltipContent>
+                    </Tooltip>
+                    <div className="rounded-sm border overflow-hidden divide-x">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="rounded-none"
+                      >
+                        <Link
+                          href={`/agendar/${organization?.sigla.toLowerCase()}/${
+                            deliveryType.slug
+                          }`}
+                        >
+                          <Link2 className="h-4 w-4" />
+                        </Link>
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         className="rounded-none "
                       >
-                        <MoreHorizontal className="h-4 w-4" />
+                        <Copy className="h-4 w-4" />
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/admin/tipos-de-entrega/${deliveryType.id}`}
-                        >
-                          <Settings className="mr-2 h-4 w-4" />
-                          Configurações
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setSelectedDeliveryType(deliveryType);
-                          setIsDeleteDialogOpen(true);
-                        }}
-                      >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-none "
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href={`/admin/tipos-de-entrega/${deliveryType.id}`}
+                            >
+                              <Settings className="mr-2 h-4 w-4" />
+                              Configurações
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedDeliveryType(deliveryType);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            Excluir
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              );
+            },
+          )}
+        </div>
+      )}
 
       <AlertDialog
         open={isDeleteDialogOpen}
