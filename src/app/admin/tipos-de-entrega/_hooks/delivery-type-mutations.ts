@@ -76,7 +76,7 @@ export function useUpdateDeliveryType(orgId: string) {
       data,
     }: {
       id: string;
-      data: Partial<DeliveryTypeData> & { isActive?: boolean };
+      data: Partial<DeliveryTypeData> & { isVisible?: boolean };
     }) => {
       const response = await fetch(`/api/delivery-types/${id}`, {
         method: "PATCH",
