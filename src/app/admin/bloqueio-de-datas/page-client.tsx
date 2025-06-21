@@ -17,6 +17,8 @@ import type { AvailabilityRule } from "@prisma/client";
 import { toast } from "sonner";
 import { RuleCard } from "./_components/rule-card";
 import type { AvailabilityExceptionRule } from "./_components/types";
+import { EmptyCard } from "@/components/empty-card";
+import { IconPlus, IconShieldCheckered } from "@tabler/icons-react";
 
 export default function BlockPageClient() {
   const router = useRouter();
@@ -111,22 +113,18 @@ export default function BlockPageClient() {
             ))}
           </div>
         ) : (
-          <Card className="flex h-60 flex-col items-center justify-center">
-            <CardHeader>
-              <CardTitle>Nenhuma regra de bloqueio encontrada</CardTitle>
-              <CardDescription>
-                Crie uma nova regra para bloquear datas específicas.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild>
-                <Link href="/bloqueio-de-datas/novo">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Criar Primeira Regra
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <EmptyCard
+            title="Nenhuma regra de bloqueio encontrada"
+            description="Crie uma nova regra para bloquear datas específicas."
+            icon={IconShieldCheckered}
+          >
+            <Button asChild>
+              <Link href="/bloqueio-de-datas/novo">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Criar Primeira Regra
+              </Link>
+            </Button>
+          </EmptyCard>
         )}
       </div>
     </>
