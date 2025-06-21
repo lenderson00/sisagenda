@@ -1,15 +1,10 @@
 "use client";
 
+import type { DeliveryType } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type DeliveryType = {
-  id: string;
-  name: string;
-  description: string | null;
-  duration: number;
-  slug: string;
-};
+
 
 async function getDeliveryType(id: string): Promise<DeliveryType> {
   const res = await fetch(`/api/delivery-types/${id}`);

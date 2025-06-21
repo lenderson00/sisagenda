@@ -11,6 +11,22 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+const minutesToTime = (minutes: number | undefined | null) => {
+  if (minutes === null || minutes === undefined) {
+    return "";
+  }
+  const hours = Math.floor(minutes / 60)
+    .toString()
+    .padStart(2, "0");
+  const mins = (minutes % 60).toString().padStart(2, "0");
+  return `${hours}:${mins}`;
+};
+
+const timeToMinutes = (time: string) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
 type FormValues = {
   startTime: string;
   endTime: string;
@@ -57,10 +73,11 @@ type TeamNameFormProps = {
   title: string;
   description: string;
   helpText: string;
-  onSubmit?: (data: { startTime: string; endTime: string }) => void;
+  onSubmit?: (data: { startTime: number; endTime: number }) => void;
   className?: string;
-  initialStartTime?: string;
-  initialEndTime?: string;
+  initialStartTime?: number;
+  initialEndTime?: number;
+  isSubmitting?: boolean;
 };
 
 export default function LunchForm({
@@ -76,13 +93,18 @@ export default function LunchForm({
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      startTime: initialStartTime || "12:00",
-      endTime: initialEndTime || "13:00",
+      startTime: minutesToTime(initialStartTime) || "12:00",
+      endTime: minutesToTime(initialEndTime) || "13:00",
     },
   });
 
-  const handleSubmit = async (data: { startTime: string; endTime: string }) => {
-    onSubmit?.(data);
+  const handleSubmit = async (data: FormValues) => {
+    if (onSubmit) {
+      onSubmit({
+        startTime: timeToMinutes(data.startTime),
+        endTime: timeToMinutes(data.endTime),
+      });
+    }
     await queryClient.invalidateQueries({ queryKey: ["deliveryTypeConfig"] });
   };
 

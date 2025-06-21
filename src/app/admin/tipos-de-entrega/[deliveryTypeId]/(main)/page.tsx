@@ -1,13 +1,14 @@
 import DeliveryTypePageClient from "./page-client";
 
 type DeliveryTypePageProps = {
-  params: {
+  params: Promise<{
     deliveryTypeId: string;
-  };
+  }>;
 };
 
-const DeliveryTypePage = ({ params }: DeliveryTypePageProps) => {
-  return <DeliveryTypePageClient deliveryTypeId={params.deliveryTypeId} />;
+const DeliveryTypePage = async ({ params }: DeliveryTypePageProps) => {
+  const { deliveryTypeId } = await params;
+  return <DeliveryTypePageClient deliveryTypeId={deliveryTypeId} />;
 };
 
 export default DeliveryTypePage;

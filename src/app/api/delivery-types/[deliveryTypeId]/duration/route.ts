@@ -25,15 +25,34 @@ export async function PATCH(
       return new NextResponse("Organização não encontrada", { status: 400 });
     }
 
-    const deliveryType = await prisma.availabilitySettings.upsert({
+    const orgDeliveryTypes = await prisma.organization.findUnique({
       where: {
-        deliveryTypeId,
+        id: organizationId,
       },
-      update: {
-        duration,
+      include: {
+        deliveryTypes: true,
       },
-      create: {
-        deliveryTypeId,
+    });
+
+    if (!orgDeliveryTypes) {
+      return new NextResponse("Organização não encontrada", { status: 400 });
+    }
+
+    const deliveryTypeToUpdate = orgDeliveryTypes.deliveryTypes.find(
+      (dt) => dt.id === deliveryTypeId,
+    );
+
+    if (!deliveryTypeToUpdate) {
+      return new NextResponse("Tipo de entrega não encontrado", {
+        status: 400,
+      });
+    }
+
+    const deliveryType = await prisma.deliveryType.update({
+      where: {
+        id: deliveryTypeToUpdate.id,
+      },
+      data: {
         duration,
       },
     });

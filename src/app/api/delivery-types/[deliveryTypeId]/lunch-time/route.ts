@@ -20,6 +20,29 @@ export async function PATCH(
       return new NextResponse("Organização não encontrada", { status: 400 });
     }
 
+    const orgDeliveryTypes = await prisma.organization.findUnique({
+      where: {
+        id: organizationId,
+      },
+      include: {
+        deliveryTypes: true,
+      },
+    });
+
+    if (!orgDeliveryTypes) {
+      return new NextResponse("Organização não encontrada", { status: 400 });
+    }
+
+    const deliveryTypeToUpdate = orgDeliveryTypes.deliveryTypes.find(
+      (dt) => dt.id === deliveryTypeId,
+    );
+
+    if (!deliveryTypeToUpdate) {
+      return new NextResponse("Tipo de entrega não encontrado", {
+        status: 400,
+      });
+    }
+
     const body = await req.json();
     const { startTime, endTime } = body;
 
@@ -29,18 +52,13 @@ export async function PATCH(
       });
     }
 
-    const deliveryType = await prisma.availabilitySettings.upsert({
+    const deliveryType = await prisma.deliveryType.update({
       where: {
-        deliveryTypeId,
+        id: deliveryTypeToUpdate.id,
       },
-      update: {
-        lunchTimeStart: convertTimeToMinutes(startTime),
-        lunchTimeEnd: convertTimeToMinutes(endTime),
-      },
-      create: {
-        deliveryTypeId,
-        lunchTimeStart: convertTimeToMinutes(startTime),
-        lunchTimeEnd: convertTimeToMinutes(endTime),
+      data: {
+        lunchTimeStart: startTime,
+        lunchTimeEnd: endTime,
       },
     });
 
@@ -50,8 +68,3 @@ export async function PATCH(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
-
-const convertTimeToMinutes = (time: string) => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
-};

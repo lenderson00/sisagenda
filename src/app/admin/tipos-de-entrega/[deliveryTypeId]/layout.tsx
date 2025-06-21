@@ -22,6 +22,10 @@ const createSidebarNavItems = (deliveryTypeId: string) => {
       label:
         "Com que frequência você pode receber pedidos deste tipo de entrega?",
     },
+    {
+      title: "Avançado",
+      href: `/tipos-de-entrega/${deliveryTypeId}/avancado`,
+    },
   ];
 };
 

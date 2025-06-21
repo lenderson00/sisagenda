@@ -1,5 +1,3 @@
-import ConfiguracoesPageClient from "./page-client";
-
-export default function ConfiguracoesPage() {
-  return <ConfiguracoesPageClient />;
+export default function Page() {
+  return <div>Limites</div>;
 }

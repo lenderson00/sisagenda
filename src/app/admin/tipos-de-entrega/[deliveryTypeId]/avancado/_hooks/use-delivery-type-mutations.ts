@@ -7,12 +7,6 @@ interface UpdateDurationParams {
   duration: number;
 }
 
-interface UpdateLunchTimeParams {
-  deliveryTypeId: string;
-  startTime: string;
-  endTime: string;
-}
-
 interface DeleteDeliveryTypeParams {
   deliveryTypeId: string;
 }
@@ -49,38 +43,6 @@ export const useDeliveryTypeMutations = () => {
     },
   });
 
-  const updateLunchTime = useMutation({
-    mutationFn: async ({
-      deliveryTypeId,
-      startTime,
-      endTime,
-    }: UpdateLunchTimeParams) => {
-      const response = await fetch(
-        `/api/delivery-types/${deliveryTypeId}/lunch-time`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ startTime, endTime }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update lunch time");
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["delivery-type"] });
-      toast.success("Lunch time updated successfully");
-    },
-    onError: () => {
-      toast.error("Failed to update lunch time");
-    },
-  });
-
   const deleteDeliveryType = useMutation({
     mutationFn: async ({ deliveryTypeId }: DeleteDeliveryTypeParams) => {
       const response = await fetch(`/api/delivery-types/${deliveryTypeId}`, {
@@ -96,7 +58,7 @@ export const useDeliveryTypeMutations = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["delivery-types"] });
       toast.success("Delivery type deleted successfully");
-      router.push("/transporte");
+      router.push("/admin/tipos-de-entrega");
     },
     onError: () => {
       toast.error("Failed to delete delivery type");
@@ -105,7 +67,6 @@ export const useDeliveryTypeMutations = () => {
 
   return {
     updateDuration,
-    updateLunchTime,
     deleteDeliveryType,
   };
 };

@@ -1,5 +1,5 @@
-const DeliveryTypePage = () => {
-  return <div>DeliveryTypePage</div>;
-};
+import AvancadoPageClient from "./page-client";
 
-export default DeliveryTypePage;
+export default function Page() {
+  return <AvancadoPageClient />;
+}
