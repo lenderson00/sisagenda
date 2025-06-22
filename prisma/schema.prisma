@@ -102,6 +102,7 @@ model Organization {
   deletedAt    DateTime?
   Organization Organization[] @relation("ComimsupRelation")
   Account      Account[]
+  Schedule     Schedule[]
 
   @@index([sigla])
 }
@@ -278,6 +279,22 @@ model AppointmentActivity {
   @@index([parentId])
 }
 
+model Schedule {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  name         String
+  availability Availability[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([organizationId])
+}
+
 /// Represents availability slots for deliveries
 model Availability {
   id String @id @default(cuid())
@@ -293,8 +310,11 @@ model Availability {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  deliveryTypeId String
-  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+  deliveryTypeId String?
+  deliveryType   DeliveryType? @relation(fields: [deliveryTypeId], references: [id])
+
+  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  scheduleId String?
 
   @@index([organizationId])
   @@index([weekDay])

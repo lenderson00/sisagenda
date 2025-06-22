@@ -17,7 +17,7 @@ export function useCreateAvailability(
 
   return useMutation({
     mutationFn: async (data: AvailabilityData) => {
-      const response = await fetch("/api/availability", {
+      const response = await fetch("/api/schedules", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, organizationId: orgId }),
@@ -46,7 +46,7 @@ export function useDeleteDeliveryType(orgId: string) {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/delivery-types/${id}`, {
+      const response = await fetch(`/api/schedules/${id}`, {
         method: "DELETE",
       });
 
