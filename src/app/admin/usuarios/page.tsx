@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { CreateUserDialog } from "./_components/create-user-dialog";
 import { UsersPageClient } from "./page-client";
+import { PageHeader } from "../_components/page-header";
 
 export default async function UsersPage() {
   const session = await auth();
@@ -22,22 +23,12 @@ export default async function UsersPage() {
 
   return (
     <>
-      <div className="border-b ">
-        <div className="container mx-auto md:px-6 px-4 md:py-8 pb-8">
-          {/* <BreadcrumbNav items={breadcrumbItems} /> */}
-          <div className="flex md:flex-row flex-col md:items-center justify-between mt-4 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                Usuários
-              </h1>
-              <p className="text-gray-600">
-                Gerencie os usuários, papéis e permissões do sistema
-              </p>
-            </div>
-            <CreateUserDialog orgId={orgId} />
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Usuários"
+        subtitle="Gerencie os usuários, papéis e permissões do sistema"
+      >
+        <CreateUserDialog orgId={orgId} />
+      </PageHeader>
       <UsersPageClient organizationId={orgId} />
     </>
   );

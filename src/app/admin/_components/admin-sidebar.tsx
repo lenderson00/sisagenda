@@ -37,7 +37,7 @@ const main = [
 
   {
     name: "Disponibilidade",
-    url: "/regras-de-disponibilidade",
+    url: "/disponibilidade",
     icon: IconCalendarOff,
   },
 

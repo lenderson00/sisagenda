@@ -114,7 +114,7 @@ export function SuppliersPageClient({
 
   return (
     <div className="min-h-[80vh]">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto pt-2">
         {/* Stats Cards */}
         <div className="grid gap-6 md:grid-cols-3 mb-8">
           <Card className="border-gray-200 shadow-none">
