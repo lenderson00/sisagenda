@@ -21,9 +21,8 @@ import { clearFormData, loadFormData, saveFormData } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
 import { useScheduleStore } from "../../_store";
-import { Step1SupplierInfo } from "./step-1-supplier-info";
-import { Step2DeliveryDetails } from "./step-2-delivery-details";
-import { Step3Items } from "./step-3-items";
+import { Step1DeliveryDetails } from "./step-1-delivery-details";
+import { Step2Items } from "./step-2-items";
 
 const itemSchema = z.object({
   pi: z.string().min(1, "PI do item é obrigatório."),
@@ -61,19 +60,6 @@ export const detailsFormSchema = z.object({
 export type DetailsFormValues = z.infer<typeof detailsFormSchema>;
 
 const steps = [
-  {
-    id: "supplier-info",
-    name: "Informações do Fornecedor",
-    fields: [
-      "cnpj",
-      "razaoSocial",
-      "email",
-      "driverName",
-      "vehiclePlate",
-      "contactPhone",
-      "additionalNotes",
-    ],
-  },
   {
     id: "delivery-details",
     name: "Detalhes da Entrega",
@@ -256,9 +242,8 @@ export function DetailsForm() {
             </CardHeader>
 
             <CardContent>
-              {currentStep === 0 && <Step1SupplierInfo />}
-              {currentStep === 1 && <Step2DeliveryDetails />}
-              {currentStep === 2 && <Step3Items />}
+              {currentStep === 0 && <Step1DeliveryDetails />}
+              {currentStep === 1 && <Step2Items />}
             </CardContent>
 
             <CardFooter className="flex justify-between">
@@ -284,6 +269,9 @@ export function DetailsForm() {
                   disabled={
                     createAppointmentMutation.isPending || !items?.length
                   }
+                  onClick={() => {
+                    console.log(form.getValues());
+                  }}
                 >
                   {createAppointmentMutation.isPending
                     ? "Agendando..."

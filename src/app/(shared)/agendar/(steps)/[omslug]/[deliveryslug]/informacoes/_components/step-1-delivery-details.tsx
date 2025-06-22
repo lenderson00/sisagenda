@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useFormContext } from "react-hook-form";
 
-export function Step2DeliveryDetails() {
+export function Step1DeliveryDetails() {
   const form = useFormContext();
 
   return (
