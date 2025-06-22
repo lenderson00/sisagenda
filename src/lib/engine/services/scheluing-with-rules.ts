@@ -46,8 +46,32 @@ export async function getAvailableSlotsForDate({
 }): Promise<Slot[]> {
   const deliveryType = await prisma.deliveryType.findUnique({
     where: { id: deliveryTypeId },
-    select: { limitFutureBookings: true, futureBookingLimitDays: true },
+    select: {
+      limitFutureBookings: true,
+      futureBookingLimitDays: true,
+      limitPerDay: true,
+      maxBookingsPerDay: true,
+    },
   });
+
+  if (deliveryType?.limitPerDay) {
+    const startOfDay = dayjs(date).startOf("day").toDate();
+    const endOfDay = dayjs(date).endOf("day").toDate();
+
+    const appointmentsCount = await prisma.appointment.count({
+      where: {
+        deliveryTypeId,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    if (appointmentsCount >= deliveryType.maxBookingsPerDay) {
+      return [];
+    }
+  }
 
   if (deliveryType?.limitFutureBookings) {
     const today = dayjs().startOf("day");
