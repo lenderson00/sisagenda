@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { SchedulePageClient } from "./page-client";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
+import { IconPlus } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 
 export default async function SchedulePage({
   params,
@@ -23,16 +25,5 @@ export default async function SchedulePage({
     notFound();
   }
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title={schedule.name}
-        subtitle="Edite o horário de disponibilidade existente."
-        backButton
-      />
-      <div className="p-4 pt-0">
-        <SchedulePageClient />
-      </div>
-    </div>
-  );
+  return <SchedulePageClient />;
 }

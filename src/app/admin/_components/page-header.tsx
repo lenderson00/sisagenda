@@ -36,7 +36,7 @@ export const PageHeader = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="mr-2"
                 onClick={() => router.back()}
@@ -47,7 +47,7 @@ export const PageHeader = ({
             <TooltipContent>Voltar</TooltipContent>
           </Tooltip>
         )}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <h3
             className={cn(
               "font-cal text-emphasis max-w-28 sm:max-w-72 md:max-w-80 inline truncate text-lg font-semibold tracking-wide sm:text-xl md:block xl:max-w-full",
