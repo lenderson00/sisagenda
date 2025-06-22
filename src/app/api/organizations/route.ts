@@ -71,18 +71,69 @@ export async function POST(req: Request) {
 
     console.log(validatedData);
 
-    const organization = await prisma.organization.create({
-      data: {
-        name: validatedData.name,
-        sigla: validatedData.sigla,
-        description: validatedData.description,
-        role: validatedData.role,
-        isActive: validatedData.isActive,
-        comimsupId:
-          validatedData.role === "DEPOSITO" && validatedData.comimsupId !== ""
-            ? validatedData.comimsupId
-            : null,
-      },
+    const organization = await prisma.$transaction(async (prisma) => {
+      const organization = await prisma.organization.create({
+        data: {
+          name: validatedData.name,
+          sigla: validatedData.sigla,
+          description: validatedData.description,
+          role: validatedData.role,
+          isActive: validatedData.isActive,
+          comimsupId:
+            validatedData.role === "DEPOSITO" && validatedData.comimsupId !== ""
+              ? validatedData.comimsupId
+              : null,
+        },
+      });
+
+      // 1. Create a default schedule
+      const defaultSchedule = await prisma.schedule.create({
+        data: {
+          name: "Horário Padrão",
+          organizationId: organization.id,
+          isDefault: true,
+          availability: {
+            createMany: {
+              data: [
+                // Monday to Friday, 9 AM to 5 PM
+                { weekDay: 1, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
+                { weekDay: 2, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
+                { weekDay: 3, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
+                { weekDay: 4, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
+                { weekDay: 5, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
+              ],
+            },
+          },
+        },
+      });
+
+      // 2. Create two default delivery types linked to the default schedule
+      await prisma.deliveryType.createMany({
+        data: [
+          {
+            name: "Entrega Normal",
+            slug: `entrega-normal-${organization.sigla}`,
+            isVisible: true,
+            organizationId: organization.id,
+            scheduleId: defaultSchedule.id,
+            duration: 90,
+            lunchTimeStart: 12 * 60,
+            lunchTimeEnd: 13 * 60,
+          },
+          {
+            name: "Entrega Secreta",
+            slug: `entrega-secreta-${organization.sigla}`,
+            isVisible: false,
+            organizationId: organization.id,
+            scheduleId: defaultSchedule.id,
+            duration: 60,
+            lunchTimeStart: 12 * 60,
+            lunchTimeEnd: 13 * 60,
+          },
+        ],
+      });
+
+      return organization;
     });
 
     return NextResponse.json(organization);

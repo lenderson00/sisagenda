@@ -290,6 +290,8 @@ model Schedule {
   availability  Availability[]
   deliveryTypes DeliveryType[]
 
+  isDefault Boolean @default(false)
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?

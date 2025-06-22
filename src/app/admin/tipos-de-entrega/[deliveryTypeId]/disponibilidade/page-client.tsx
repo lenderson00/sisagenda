@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -21,6 +22,9 @@ import { useDeliveryType } from "./_hooks/use-delivery-type";
 import { useSchedules } from "./_hooks/use-schedules";
 import { useUpdateDeliveryType } from "./_hooks/use-update-delivery-type";
 import type { Schedule } from "@prisma/client";
+import { cn } from "@/lib/utils";
+import LoadingDots from "@/components/icons/loading-dots";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Availability {
   weekDay: number;
@@ -37,6 +41,43 @@ function formatTimeFromMinutes(minutes: number): string {
   return `${hours.toString().padStart(2, "0")}:${mins
     .toString()
     .padStart(2, "0")}`;
+}
+
+function DeliveryTypeSkeleton() {
+  return (
+    <Card className="pb-0 overflow-hidden">
+      <CardHeader className="border-b">
+        <CardTitle>Horário de Trabalho</CardTitle>
+        <CardDescription>
+          Selecione um horário de trabalho pré-definido para este tipo de
+          entrega.
+        </CardDescription>
+        <div className="max-w-md">
+          <Skeleton className="h-10 w-full mt-4" />
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <div className="space-y-4">
+          {weekDays.map((day, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <span>{day}</span>
+              <div className="text-right">
+                <Skeleton className="h-4 w-20" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+
+      <CardFooter className="flex justify-between items-center bg-neutral-100 h-14 mt-2 border-t !p-4">
+        <p className="text-xs text-muted-foreground">
+          A duração será usada para calcular os horários disponíveis.
+        </p>
+        <Skeleton className="h-8 w-20" />
+      </CardFooter>
+    </Card>
+  );
 }
 
 export function DeliveryTypePageClient() {
@@ -86,64 +127,52 @@ export function DeliveryTypePageClient() {
   }, [selectedSchedule]);
 
   if (isLoadingDeliveryType || isLoadingSchedules) {
-    return (
-      <div className="flex min-h-[80vh] items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
-          <p className="mt-4 text-gray-600">Carregando...</p>
-        </div>
-      </div>
-    );
+    return <DeliveryTypeSkeleton />;
   }
 
+  console.log(schedules);
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Horário de Trabalho</CardTitle>
-          <CardDescription>
-            Selecione um horário de trabalho pré-definido para este tipo de
-            entrega.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="max-w-md">
-            <Select
-              value={selectedScheduleId ?? ""}
-              onValueChange={(value) => setSelectedScheduleId(value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecione um horário" />
-              </SelectTrigger>
-              <SelectContent>
-                {schedules?.map((schedule: Schedule) => (
-                  <SelectItem key={schedule.id} value={schedule.id}>
-                    {schedule.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+    <Card className=" pb-0 overflow-hidden">
+      <CardHeader className="border-b">
+        <CardTitle>Horário de Trabalho</CardTitle>
+        <CardDescription>
+          Selecione um horário de trabalho pré-definido para este tipo de
+          entrega.
+        </CardDescription>
+        <div className="max-w-md">
+          <Select
+            value={selectedScheduleId ?? ""}
+            onValueChange={(value) => setSelectedScheduleId(value)}
+          >
+            <SelectTrigger className="w-full h-10 mt-4">
+              <SelectValue placeholder="Selecione um horário" />
+            </SelectTrigger>
+            <SelectContent>
+              {schedules?.map((schedule: Schedule) => (
+                <SelectItem key={schedule.id} value={schedule.id}>
+                  {schedule.name} {schedule.isDefault && "(Padrão)"}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </CardHeader>
 
       {selectedSchedule && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Pré-visualização da Disponibilidade</CardTitle>
-            <CardDescription>
-              Estes são os horários para o agendamento de{" "}
-              <strong>{selectedSchedule.name}</strong>.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {weekDays.map((day, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
-                  <span className="font-semibold">{day}</span>
+        <CardContent>
+          <div className="space-y-4">
+            {weekDays.map((day, index) => {
+              const isAvailable = availabilityByDay.has(index);
+              return (
+                <div key={index} className="flex items-center justify-between ">
+                  <span
+                    className={cn(
+                      !isAvailable && "line-through text-muted-foreground",
+                    )}
+                  >
+                    {day}
+                  </span>
                   <div className="text-right">
                     {availabilityByDay.has(index) ? (
                       availabilityByDay.get(index)?.map((avail, i) => (
@@ -154,22 +183,37 @@ export function DeliveryTypePageClient() {
                         </div>
                       ))
                     ) : (
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-muted-foreground">
                         Indisponível
                       </span>
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              );
+            })}
+          </div>
+        </CardContent>
       )}
 
-      <Button onClick={handleSave} disabled={isUpdating}>
-        {isUpdating ? "Salvando..." : "Salvar Alterações"}
-      </Button>
-    </div>
+      <CardFooter className="flex justify-between items-center bg-neutral-100 h-14 mt-2 border-t !p-4">
+        <p className="text-xs text-muted-foreground">
+          A duração será usada para calcular os horários disponíveis.
+        </p>
+        <Button
+          type="submit"
+          className={cn(
+            "flex !h-8 md:w-fit px-4 text-xs items-center justify-center space-x-2 rounded-md w-full border  transition-all focus:outline-none sm:h-10 ",
+            isUpdating
+              ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400  "
+              : "border-black bg-black text-white  hover:opacity-80 cursor-pointer  ",
+          )}
+          onClick={handleSave}
+          disabled={isUpdating}
+        >
+          {isUpdating ? <LoadingDots color="#808080" /> : <p>Salvar</p>}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 
