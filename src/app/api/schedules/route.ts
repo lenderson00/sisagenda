@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { prisma as db } from "@/lib/prisma";
+import { getSchedules } from "@/lib/services/schedule-service";
 
 const ScheduleFormSchema = z.object({
   name: z.string(),
@@ -44,5 +45,15 @@ export async function POST(req: Request) {
       return new NextResponse(JSON.stringify(error.issues), { status: 422 });
     }
     return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const schedules = await getSchedules();
+    return NextResponse.json(schedules);
+  } catch (error) {
+    console.error("[SCHEDULES_GET]", error);
+    return new NextResponse("Internal error", { status: 500 });
   }
 }

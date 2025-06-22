@@ -149,8 +149,6 @@ model DeliveryType {
 
   isVisible Boolean @default(true)
 
-  availability Availability[]
-
   AvailabilitySettings AvailabilitySettings?
 
   appointments Appointment[]
@@ -163,6 +161,9 @@ model DeliveryType {
   deletedAt          DateTime?
   AvailabilityRule   AvailabilityRule? @relation(fields: [availabilityRuleId], references: [id])
   availabilityRuleId String?
+
+  scheduleId String?
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
 
   @@index([organizationId])
 }
@@ -285,8 +286,9 @@ model Schedule {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  name         String
-  availability Availability[]
+  name          String
+  availability  Availability[]
+  deliveryTypes DeliveryType[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -310,11 +312,8 @@ model Availability {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  deliveryTypeId String?
-  deliveryType   DeliveryType? @relation(fields: [deliveryTypeId], references: [id])
-
-  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
   scheduleId String?
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
 
   @@index([organizationId])
   @@index([weekDay])
