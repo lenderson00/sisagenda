@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import OmSelection from "../../_component/om-selection";
 import { Stepper } from "../../_component/stepper";
+import { EmptyScreen } from "@/app/admin/agenda/_components/empty-screen";
+import { IconBuildingCommunity } from "@tabler/icons-react";
 
 const AgendarOM = async () => {
   const oms = await prisma.organization.findMany({
@@ -15,7 +17,13 @@ const AgendarOM = async () => {
   });
 
   if (oms.length === 0) {
-    return <div>Nenhuma OM encontrada</div>;
+    return (
+      <EmptyScreen
+        Icon={IconBuildingCommunity}
+        headline="Nenhuma OM encontrada"
+        description="Ainda não há OM cadastradas. Assim que uma OM for cadastrada, ela aparecerá aqui."
+      />
+    );
   }
 
   return (

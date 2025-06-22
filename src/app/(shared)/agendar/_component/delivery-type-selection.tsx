@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { IconChevronRight } from "@tabler/icons-react";
+import { IconChevronRight, IconClock } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -18,6 +18,7 @@ interface DeliveryTypeSelectionProps {
   organizationSlug: string;
   position: "top" | "middle" | "bottom";
   unique?: boolean;
+  duration?: number;
 }
 
 export default function DeliveryTypeSelection({
@@ -27,6 +28,7 @@ export default function DeliveryTypeSelection({
   organizationSlug,
   position,
   unique = false,
+  duration,
 }: DeliveryTypeSelectionProps) {
   return (
     <Link href={`/agendar/${organizationSlug}/${deliveryTypeSlug}`}>
@@ -43,6 +45,12 @@ export default function DeliveryTypeSelection({
         <CardHeader className="relative">
           <CardTitle>{name}</CardTitle>
           <CardDescription>{description}</CardDescription>
+          {duration && (
+            <div className="flex items-center gap-2 absolute right-6 top-1/2 -translate-y-1/2">
+              <IconClock size={24} />
+              <span>{duration} min</span>
+            </div>
+          )}
           <div className="flex items-center gap-2 absolute right-6 top-1/2 -translate-y-1/2">
             <IconChevronRight
               size={24}

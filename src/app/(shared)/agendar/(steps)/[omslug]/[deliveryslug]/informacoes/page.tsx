@@ -1,4 +1,4 @@
-import { Stepper } from "@/app/fornecedor/agendar/_component/stepper";
+import { Stepper } from "@/app/(shared)/agendar/_component/stepper";
 import { DetailsForm } from "./_components/details-form";
 
 export default function AppointmentDetailsPage() {

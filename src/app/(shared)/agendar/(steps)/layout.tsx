@@ -1,4 +1,4 @@
-import { BackButton } from "@/app/fornecedor/agendar/_component/back-button";
+import { BackButton } from "@/app/(shared)/agendar/_component/back-button";
 
 export default function AgendarLayout({
   children,

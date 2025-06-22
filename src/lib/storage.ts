@@ -1,4 +1,4 @@
-import type { DetailsFormValues } from "@/app/fornecedor/agendar/(steps)/[omslug]/[deliveryslug]/informacoes/_components/details-form";
+import type { DetailsFormValues } from "@/app/(shared)/agendar/(steps)/[omslug]/[deliveryslug]/informacoes/_components/details-form";
 
 const STORAGE_KEY_PREFIX = "appointment_form_";
 

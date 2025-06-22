@@ -28,6 +28,7 @@ import { useOrganization } from "@/hooks/use-organization";
 import {
   Clock,
   Copy,
+  ExternalLink,
   Link2,
   MoreHorizontal,
   Search,
@@ -201,27 +202,33 @@ export function DeliveryTypesPageClient({
                       </TooltipContent>
                     </Tooltip>
                     <div className="rounded-sm border overflow-hidden divide-x">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="rounded-none"
-                      >
-                        <Link
-                          href={`/agendar/${organization?.sigla.toLowerCase()}/${
-                            deliveryType.slug
-                          }`}
-                        >
-                          <Link2 className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-none "
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link
+                            href={`/agendar/${organization?.sigla.toLowerCase()}/${
+                              deliveryType.slug
+                            }`}
+                          >
+                            <Button variant="ghost" size="icon">
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent sideOffset={10}>
+                          Pré-visualizar
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent sideOffset={0}>
+                          Copiar link do tipo de entrega
+                        </TooltipContent>
+                      </Tooltip>
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button

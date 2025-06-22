@@ -1,7 +1,7 @@
-import { Stepper } from "@/app/fornecedor/agendar/_component/stepper";
+import { Stepper } from "@/app/(shared)/agendar/_component/stepper";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import DeliveryTypeSelection from "../../_component/delivery-type-selection";
 
 export default async function AgendarOM({
@@ -11,15 +11,14 @@ export default async function AgendarOM({
 }) {
   const session = await auth();
 
-  if (!session || session.user.role !== "FORNECEDOR") {
+  if (!session) {
     redirect("/");
   }
 
   const { omslug: omSlug } = await params;
 
   if (!omSlug) {
-    console.log("OM slug is required");
-    return;
+    notFound();
   }
 
   const organization = await prisma.organization.findFirst({
@@ -34,6 +33,7 @@ export default async function AgendarOM({
       deliveryTypes: {
         where: {
           deletedAt: null,
+          isVisible: true,
         },
         orderBy: {
           name: "asc",

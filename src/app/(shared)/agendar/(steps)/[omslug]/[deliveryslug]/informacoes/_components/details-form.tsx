@@ -8,7 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { useCreateAppointment } from "@/app/fornecedor/agendar/_hooks/use-create-appointment";
+import { useCreateAppointment } from "@/app/(shared)/agendar/_hooks/use-create-appointment";
 import { Button } from "@/components/ui/button";
 import {
   Card,
