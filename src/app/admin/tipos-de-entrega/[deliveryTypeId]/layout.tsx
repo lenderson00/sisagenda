@@ -70,7 +70,7 @@ const DeliveryTypeLayout = async ({
     <>
       <PageHeader title={deliveryType.name} backButton />
 
-      <div className="flex gap-4 p-4">
+      <div className="flex gap-4 p-4 flex-col md:flex-row">
         <aside className="md:w-[220px] ">
           <SidebarNav items={sidebarNavItems} />
         </aside>

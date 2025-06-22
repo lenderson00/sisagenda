@@ -25,6 +25,9 @@ import type { Schedule } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { IconExternalLink } from "@tabler/icons-react";
+import Link from "next/link";
 
 interface Availability {
   weekDay: number;
@@ -149,11 +152,16 @@ export function DeliveryTypePageClient() {
               <SelectValue placeholder="Selecione um horário" />
             </SelectTrigger>
             <SelectContent>
-              {schedules?.map((schedule: Schedule) => (
-                <SelectItem key={schedule.id} value={schedule.id}>
-                  {schedule.name} {schedule.isDefault && "(Padrão)"}
-                </SelectItem>
-              ))}
+              {schedules
+                ?.sort((a: Schedule, b: Schedule) => (b.isDefault ? 1 : -1))
+                .map((schedule: Schedule) => (
+                  <SelectItem key={schedule.id} value={schedule.id}>
+                    {schedule.name}
+                    {schedule.isDefault && (
+                      <Badge variant="secondary">Padrão</Badge>
+                    )}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>
@@ -168,6 +176,7 @@ export function DeliveryTypePageClient() {
                 <div key={index} className="flex items-center justify-between ">
                   <span
                     className={cn(
+                      "font-semibold",
                       !isAvailable && "line-through text-muted-foreground",
                     )}
                   >
@@ -199,19 +208,28 @@ export function DeliveryTypePageClient() {
         <p className="text-xs text-muted-foreground">
           A duração será usada para calcular os horários disponíveis.
         </p>
-        <Button
-          type="submit"
-          className={cn(
-            "flex !h-8 md:w-fit px-4 text-xs items-center justify-center space-x-2 rounded-md w-full border  transition-all focus:outline-none sm:h-10 ",
-            isUpdating
-              ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400  "
-              : "border-black bg-black text-white  hover:opacity-80 cursor-pointer  ",
-          )}
-          onClick={handleSave}
-          disabled={isUpdating}
-        >
-          {isUpdating ? <LoadingDots color="#808080" /> : <p>Salvar</p>}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/disponibilidade/${selectedSchedule?.id}`}
+            target="_blank"
+            className="text-xs text-muted-foreground underline flex w-fit gap-2 mr-2"
+          >
+            Editar horário <IconExternalLink className="w-4 h-4" />
+          </Link>
+          <Button
+            type="submit"
+            className={cn(
+              "flex !h-8 md:w-fit px-4 text-xs items-center justify-center space-x-2 rounded-md w-full border  transition-all focus:outline-none sm:h-10 ",
+              isUpdating
+                ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400  "
+                : "border-black bg-black text-white  hover:opacity-80 cursor-pointer  ",
+            )}
+            onClick={handleSave}
+            disabled={isUpdating}
+          >
+            {isUpdating ? <LoadingDots color="#808080" /> : <p>Salvar</p>}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

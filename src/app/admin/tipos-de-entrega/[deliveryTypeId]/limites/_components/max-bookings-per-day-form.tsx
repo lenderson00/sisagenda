@@ -12,6 +12,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { useLimitBookingsPerDay } from "../_hooks/use-limit-bookings-per-day";
 import { AnimatePresence, motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type FormValues = {
   limitPerDay: boolean;
@@ -37,6 +38,38 @@ type MaxBookingsPerDayFormProps = {
   isLoading?: boolean;
   deliveryTypeId: string;
 };
+
+function MaxBookingsPerDaySkeleton({
+  title,
+  description,
+  helpText,
+  className,
+}: {
+  title: string;
+  description: string;
+  helpText: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <Card className="w-full pb-0 gap-0 overflow-hidden">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <Label className="text-lg font-semibold text-foreground">
+                {title}
+              </Label>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                {description}
+              </p>
+            </div>
+            <Skeleton className="h-6 w-11 rounded-full" />
+          </div>
+        </CardHeader>
+      </Card>
+    </div>
+  );
+}
 
 export default function MaxBookingsPerDayForm({
   title,
@@ -78,6 +111,17 @@ export default function MaxBookingsPerDayForm({
       },
     });
   };
+
+  if (isLoading) {
+    return (
+      <MaxBookingsPerDaySkeleton
+        title={title}
+        description={description}
+        helpText={helpText}
+        className={className}
+      />
+    );
+  }
 
   return (
     <AnimatePresence mode="wait">

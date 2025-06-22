@@ -12,6 +12,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { useLimiteFutureBookings } from "../_hooks/use-limite-future-bookins";
 import { AnimatePresence, motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type FormValues = {
   limitFutureBookings: boolean;
@@ -37,6 +38,38 @@ type FutureBookingLimitFormProps = {
   isLoading?: boolean;
   deliveryTypeId: string;
 };
+
+function FutureBookingLimitSkeleton({
+  title,
+  description,
+  helpText,
+  className,
+}: {
+  title: string;
+  description: string;
+  helpText: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <Card className="w-full pb-0 gap-0 overflow-hidden">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <Label className="text-lg font-semibold text-foreground">
+                {title}
+              </Label>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                {description}
+              </p>
+            </div>
+            <Skeleton className="h-6 w-11 rounded-full" />
+          </div>
+        </CardHeader>
+      </Card>
+    </div>
+  );
+}
 
 export default function FutureBookingLimitForm({
   title,
@@ -82,6 +115,17 @@ export default function FutureBookingLimitForm({
     });
   };
 
+  if (isLoading) {
+    return (
+      <FutureBookingLimitSkeleton
+        title={title}
+        description={description}
+        helpText={helpText}
+        className={className}
+      />
+    );
+  }
+
   return (
     <AnimatePresence mode="wait">
       <form onSubmit={form.handleSubmit(handleSubmit)} className={className}>
@@ -115,7 +159,9 @@ export default function FutureBookingLimitForm({
           </CardHeader>
           <motion.div
             layout
-            animate={{ height: limitFutureBookings ? "auto" : 0 }}
+            animate={{
+              height: limitFutureBookings ? "auto" : 0,
+            }}
           >
             <div className="p-6 pt-0">
               <div
