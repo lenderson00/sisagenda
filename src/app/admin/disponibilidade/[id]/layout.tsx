@@ -9,11 +9,11 @@ import { PageHeader } from "../../_components/page-header";
 const createSidebarNavItems = (scheduleId: string) => {
   return [
     {
-      title: "Configurações da Entrega",
+      title: "Configurações Disponibilidade",
       href: `/disponibilidade/${scheduleId}`,
     },
     {
-      title: "Sobescrever Datas Disponíveis",
+      title: "Sobescrever Datas",
       href: `/disponibilidade/${scheduleId}/sobescrever-datas`,
     },
   ];
