@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const weekDays = getWeekDays();
 
@@ -147,14 +148,7 @@ export function SchedulePageClient() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto" />
-          <p className="mt-4 text-gray-600">Carregando disponibilidade...</p>
-        </div>
-      </div>
-    );
+    return <SchedulePageClientSkeleton />;
   }
 
   return (
@@ -264,6 +258,30 @@ export function SchedulePageClient() {
         {isSubmitting ? "Salvando..." : "Salvar horários"}
       </Button>
     </form>
+  );
+}
+
+function SchedulePageClientSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="mb-6 overflow-hidden rounded-md border border-neutral-200 divide-y">
+        {getWeekDays().map((_, index) => (
+          <div key={index} className="bg-white p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-4 w-4" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <div className="flex w-fit items-center gap-2">
+                <Skeleton className="h-10 w-28" />
+                <Skeleton className="h-10 w-28" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Skeleton className="h-10 w-36" />
+    </div>
   );
 }
 
