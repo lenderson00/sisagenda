@@ -1,4 +1,4 @@
-import { IconCalendar } from "@tabler/icons-react";
+import { IconCalendar, IconDots, IconPencil } from "@tabler/icons-react";
 import { PageHeader } from "../../_components/page-header";
 import { EmptyScreen } from "../../agenda/_components/empty-screen";
 import { CreateAvailabilityDialog } from "./_components/create-availability-dialog";
@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function DisponibilidadePage() {
   const session = await auth();
@@ -38,13 +39,23 @@ export default async function DisponibilidadePage() {
             description="Você não possui disponibilidade cadastrada. Assim que alguém cadastrar uma disponibilidade, ela aparecerá aqui."
           />
         ) : (
-          <div>
+          <div className="border rounded-lg divide-y">
             {schedules.map((schedule) => (
-              <div key={schedule.id}>
-                <Link href={`/admin/disponibilidade/${schedule.id}`}>
+              <Link
+                key={schedule.id}
+                href={`/admin/disponibilidade/${schedule.id}`}
+                className="flex justify-between items-center hover:bg-accent"
+              >
+                <div className="flex items-center gap-2 p-4  cursor-pointer">
+                  <IconCalendar />
                   {schedule.name}
-                </Link>
-              </div>
+                </div>
+                <div className="flex items-center gap-2 p-4">
+                  <Button variant="outline" size="icon">
+                    <IconDots className="w-4 h-4" />
+                  </Button>
+                </div>
+              </Link>
             ))}
           </div>
         )}

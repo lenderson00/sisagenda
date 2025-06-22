@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { prisma as db } from "@/lib/prisma";
-import { ScheduleFormSchema } from "@/app/admin/disponibilidade/[id]/_hooks/use-schedule-form";
 
 export async function GET(
   req: Request,
@@ -37,9 +36,17 @@ export async function GET(
   }
 }
 
+const ScheduleFormSchema = z.object({
+  name: z.string(),
+  availability: z.array(z.array(z.object({
+    start: z.date(),
+    end: z.date(),
+  }))),
+});
+
 export async function PUT(
   req: Request,
-  { params }: { params: { scheduleId: string } }
+  { params }: { params: { scheduleId: string } },
 ) {
   try {
     const session = await auth();

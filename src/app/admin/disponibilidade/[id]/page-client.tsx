@@ -1,119 +1,40 @@
 "use client";
 
-import { useEffect } from "react";
-import { FormProvider } from "react-hook-form";
 import { useParams } from "next/navigation";
-import dayjs from "@/lib/dayjs";
 
-import {
-  useScheduleForm,
-  type ScheduleFormValues,
-} from "./_hooks/use-schedule-form";
+import { IconPlus } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { ScheduleComponent } from "./_components/availability-schedule";
-import {
-  useCreateScheduleMutation,
-  useScheduleQuery,
-  useUpdateScheduleMutation,
-} from "./_hooks/schedule-queries";
+import { useSchedule } from "./_hooks/use-schedule";
 
 export function SchedulePageClient() {
   const params = useParams();
   const scheduleId = params.id as string;
-  const isNew = scheduleId === "novo";
 
-  const form = useScheduleForm();
+  const { data: schedule, isLoading } = useSchedule(scheduleId);
 
-  const { data: scheduleData, isLoading: isLoadingSchedule } =
-    useScheduleQuery(scheduleId);
-  const { mutate: createSchedule, isPending: isCreating } =
-    useCreateScheduleMutation();
-  const { mutate: updateSchedule, isPending: isUpdating } =
-    useUpdateScheduleMutation(scheduleId);
-
-  const isSubmitting = isCreating || isUpdating;
-
-  console.log(scheduleData);
-
-  useEffect(() => {
-    if (scheduleData) {
-      const availability = scheduleData.availability.reduce(
-        (
-          acc: { [key: number]: { start: Date; end: Date }[] },
-          curr: { weekDay: number; startTime: number; endTime: number },
-        ) => {
-          const day = curr.weekDay;
-          if (!acc[day]) {
-            acc[day] = [];
-          }
-          const start = dayjs()
-            .startOf("day")
-            .add(curr.startTime, "minute")
-            .toDate();
-          const end = dayjs()
-            .startOf("day")
-            .add(curr.endTime, "minute")
-            .toDate();
-          acc[day].push({ start, end });
-          return acc;
-        },
-        [] as { start: Date; end: Date }[][],
-      );
-
-      form.reset({ name: scheduleData.name, availability });
-    }
-  }, [scheduleData, form]);
-
-  const onSubmit = async (values: ScheduleFormValues) => {
-    if (isNew) {
-      createSchedule(values);
-    } else {
-      updateSchedule(values);
-    }
-  };
-
-  if (isLoadingSchedule) {
-    return <div>Carregando...</div>;
-  }
+  console.log(schedule);
 
   return (
-    <FormProvider {...form}>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome do Horário</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ex: Horário Padrão" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <ScheduleComponent
-            control={form.control}
-            userTimeFormat="24h"
-            name={["availability"]}
-          />
-
-          <Button type="submit" disabled={isSubmitting}>
-            {isNew ? "Criar Horário" : "Salvar Alterações"}
+    <>
+      <div>
+        <h1>Disponibilidade</h1>
+      </div>
+      <div className="flex gap-4 justify-between mt-12">
+        <div className="flex-1 flex flex-col gap-2">
+          <h2 className="text-lg font-bold">Sobescrever Datas Disponíveis</h2>
+          <p className="text-sm text-muted-foreground max-w-sm text-balance">
+            Sobescreva as datas disponíveis para o usuário. Essas datas serão
+            exibidas no calendário de disponibilidade do usuário.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button className="flex items-center gap-2">
+            <IconPlus className="w-4 h-4" />
+            Adicionar Datas
           </Button>
-        </form>
-      </Form>
-    </FormProvider>
+        </div>
+      </div>
+      <div className="mt-12">Lista das datas sobrescritas</div>
+    </>
   );
 }

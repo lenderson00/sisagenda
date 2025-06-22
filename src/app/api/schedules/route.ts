@@ -3,42 +3,36 @@ import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { prisma as db } from "@/lib/prisma";
-import { ScheduleFormSchema } from "@/app/admin/disponibilidade/[id]/_hooks/use-schedule-form";
+
+const ScheduleFormSchema = z.object({
+  name: z.string(),
+});
 
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session?.user?.organizationId) {
+    const orgId = session?.user?.organizationId;
+
+    if (!orgId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const json = await req.json();
-    const { name, availability } = ScheduleFormSchema.parse(json);
+    const { name } = ScheduleFormSchema.parse(json);
 
     const schedule = await db.schedule.create({
       data: {
         name,
-        organizationId: session.user.organizationId,
+        organizationId: orgId,
         availability: {
-          create: (availability && availability.length > 0)
-            ? availability.flatMap((day, weekDay) =>
-              day.map((slot) => ({
-                weekDay: weekDay,
-                startTime: slot.start.getHours() * 60 + slot.start.getMinutes(),
-                endTime: slot.end.getHours() * 60 + slot.end.getMinutes(),
-                organization: {
-                  connect: { id: session.user.organizationId },
-                },
-              }))
-            )
-            : Array.from({ length: 7 }, (_, weekDay) => ({
-              weekDay: weekDay,
-              startTime: 9 * 60,
-              endTime: 16 * 60,
-              organization: {
-                connect: { id: session.user.organizationId },
-              },
+          createMany: {
+            data: Array.from({ length: 5 }, (_, weekDay) => ({
+              weekDay: weekDay + 1, // De Segunda a Sexta-feira
+              startTime: 9 * 60, // 9:00
+              endTime: 16 * 60, // 16:00
+              organizationId: orgId,
             })),
+          },
         },
       },
     });

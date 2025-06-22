@@ -30,7 +30,7 @@ export default async function SchedulePage({
         subtitle="Edite o horário de disponibilidade existente."
         backButton
       />
-      <div className="p-4">
+      <div className="p-4 pt-0">
         <SchedulePageClient />
       </div>
     </div>

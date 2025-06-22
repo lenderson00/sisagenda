@@ -36,7 +36,7 @@ export const PageHeader = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="mr-2"
                 onClick={() => router.back()}
