@@ -143,13 +143,13 @@ export function DeliveryTypesPageClient({
           Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
         </p>
       ) : (
-        <div className="divide-y divide-neutral-200 border border-neutral-200 rounded-lg overflow-hidden">
+        <div className="divide-y divide-border border rounded-lg overflow-hidden">
           {filteredDeliveryTypes.map(
             (deliveryType: DeliveryType, index: number) => {
               return (
                 <div
                   key={deliveryType.id}
-                  className="flex items-center justify-between p-4 hover:bg-neutral-50"
+                  className="flex items-center justify-between p-4 hover:bg-accent duration-300 transition-all"
                 >
                   <Link href={`/tipos-de-entrega/${deliveryType.id}`}>
                     <div className="flex items-center gap-4">

@@ -10,35 +10,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
-import { useLimiteFutureBookings } from "../_hooks/use-limite-future-bookins";
+import { useLimitBookingsPerDay } from "../_hooks/use-limit-bookings-per-day";
 import { AnimatePresence, motion } from "framer-motion";
 
 type FormValues = {
-  limitFutureBookings: boolean;
-  futureBookingLimitDays: number;
+  limitPerDay: boolean;
+  maxBookingsPerDay: number;
 };
 
 const formSchema = z.object({
-  limitFutureBookings: z.boolean(),
-  futureBookingLimitDays: z
+  limitPerDay: z.boolean(),
+  maxBookingsPerDay: z
     .number()
-    .min(1, "O número de dias deve ser maior que 0")
-    .max(120, "O número de dias deve ser menor que 120"),
+    .min(1, "O número de agendamentos deve ser maior que 0")
+    .max(100, "O número de agendamentos deve ser menor que 100"),
 });
 
-type FutureBookingLimitFormProps = {
+type MaxBookingsPerDayFormProps = {
   title: string;
   description: string;
   helpText: string;
   onSubmit?: (data: FormValues) => void;
   className?: string;
-  initialValues: Partial<FormValues>;
+  initialValues?: Partial<FormValues>;
   isSubmitting?: boolean;
   isLoading?: boolean;
   deliveryTypeId: string;
 };
 
-export default function FutureBookingLimitForm({
+export default function MaxBookingsPerDayForm({
   title,
   description,
   helpText,
@@ -48,20 +48,19 @@ export default function FutureBookingLimitForm({
   isSubmitting,
   isLoading,
   deliveryTypeId,
-}: FutureBookingLimitFormProps) {
+}: MaxBookingsPerDayFormProps) {
   const queryClient = useQueryClient();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      limitFutureBookings: initialValues.limitFutureBookings,
-      futureBookingLimitDays: initialValues.futureBookingLimitDays,
+      limitPerDay: initialValues?.limitPerDay || false,
+      maxBookingsPerDay: initialValues?.maxBookingsPerDay || 10,
     },
   });
 
-  const { mutate: updateLimitFutureBookings } =
-    useLimiteFutureBookings(deliveryTypeId);
+  const { mutate: updateLimitPerDay } = useLimitBookingsPerDay(deliveryTypeId);
 
-  const limitFutureBookings = form.watch("limitFutureBookings");
+  const limitPerDay = form.watch("limitPerDay");
 
   const handleSubmit = async (data: FormValues) => {
     onSubmit?.(data);
@@ -70,10 +69,8 @@ export default function FutureBookingLimitForm({
     });
   };
 
-  const handleUpdateLimitFutureBookings = (data: {
-    limitFutureBookings: boolean;
-  }) => {
-    updateLimitFutureBookings(data, {
+  const handleUpdateLimitPerDay = (data: { limitPerDay: boolean }) => {
+    updateLimitPerDay(data, {
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ["deliveryType", deliveryTypeId],
@@ -97,15 +94,15 @@ export default function FutureBookingLimitForm({
                 </p>
               </div>
               <Controller
-                name="limitFutureBookings"
+                name="limitPerDay"
                 control={form.control}
                 render={({ field }) => (
                   <Switch
                     checked={field.value}
                     onCheckedChange={(e) => {
                       field.onChange(e);
-                      handleUpdateLimitFutureBookings({
-                        limitFutureBookings: e,
+                      handleUpdateLimitPerDay({
+                        limitPerDay: e,
                       });
                     }}
                   />
@@ -113,15 +110,12 @@ export default function FutureBookingLimitForm({
               />
             </div>
           </CardHeader>
-          <motion.div
-            layout
-            animate={{ height: limitFutureBookings ? "auto" : 0 }}
-          >
+          <motion.div layout animate={{ height: limitPerDay ? "auto" : 0 }}>
             <div className="p-6 pt-0">
               <div
                 className={cn(
                   "relative flex items-center gap-6 justify-between transition-opacity",
-                  !limitFutureBookings && "opacity-50 pointer-events-none",
+                  !limitPerDay && "opacity-50 pointer-events-none",
                 )}
               >
                 <div className="flex items-center gap-4 w-full">
@@ -129,28 +123,28 @@ export default function FutureBookingLimitForm({
                     <div className="relative">
                       <Input
                         type="number"
-                        id="futureBookingLimitDays"
-                        {...form.register("futureBookingLimitDays", {
+                        id="maxBookingsPerDay"
+                        {...form.register("maxBookingsPerDay", {
                           valueAsNumber: true,
                         })}
-                        disabled={!limitFutureBookings}
+                        disabled={!limitPerDay}
                         className={cn(
-                          "w-full h-10 pr-[96px]",
-                          form.formState.errors.futureBookingLimitDays &&
+                          "w-full h-10 pr-[160px]",
+                          form.formState.errors.maxBookingsPerDay &&
                             "border-red-500",
                         )}
                       />
                       <Label
-                        htmlFor="futureBookingLimitDays"
+                        htmlFor="maxBookingsPerDay"
                         className="absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
                       >
-                        dias no futuro
+                        agendamentos por dia
                       </Label>
                     </div>
                     <div className="h-5">
-                      {form.formState.errors.futureBookingLimitDays && (
+                      {form.formState.errors.maxBookingsPerDay && (
                         <p className="text-xs text-red-500 mt-1">
-                          {form.formState.errors.futureBookingLimitDays.message}
+                          {form.formState.errors.maxBookingsPerDay.message}
                         </p>
                       )}
                     </div>
