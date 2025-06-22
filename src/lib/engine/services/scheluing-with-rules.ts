@@ -10,6 +10,7 @@ import { type TimeBlock as LunchTimeBlock, splitByLunch } from "../time";
 
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
+import { prisma } from "@/lib/prisma";
 
 export interface Slot {
   start: number; // minutos desde 00:00
@@ -43,6 +44,23 @@ export async function getAvailableSlotsForDate({
   lunchStart: number;
   lunchEnd: number;
 }): Promise<Slot[]> {
+  const deliveryType = await prisma.deliveryType.findUnique({
+    where: { id: deliveryTypeId },
+    select: { limitFutureBookings: true, futureBookingLimitDays: true },
+  });
+
+  if (deliveryType?.limitFutureBookings) {
+    const today = dayjs().startOf("day");
+    const futureLimitDate = today.add(
+      deliveryType.futureBookingLimitDays,
+      "day",
+    );
+    const requestedDate = dayjs(date).startOf("day");
+
+    if (requestedDate.isAfter(futureLimitDate)) {
+      return [];
+    }
+  }
   // 1) Determina o weekday (0=domingo…6=sábado) usando dayjs
   const weekDay = dayjs(date).locale("pt-br").day();
 
@@ -67,7 +85,7 @@ export async function getAvailableSlotsForDate({
   if (rules && rules.length > 0) {
     const allBlocked: LunchTimeBlock[] = [];
     for (const rule of rules) {
-      const intervals = getBlockedIntervalsForDate(rule, date);
+      const intervals = getBlockedIntervalsForDate(rule, dayjs(date));
       allBlocked.push(...intervals);
     }
     // 4.1) Se algum intervalo for [0,1440], bloqueio total do dia

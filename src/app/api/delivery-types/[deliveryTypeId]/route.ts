@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET(
   req: Request,
@@ -64,6 +65,7 @@ export async function DELETE(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
 
 export async function PATCH(
   req: Request,

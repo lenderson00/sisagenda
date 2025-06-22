@@ -66,6 +66,7 @@ const DeliveryTypePageClient = ({
             endTime: data.endTime,
           })
         }
+        isSubmitting={isUpdatingLunchTime}
       />
       <DurationForm
         initialValues={{ duration: deliveryType.duration }}
