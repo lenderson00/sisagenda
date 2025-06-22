@@ -36,7 +36,7 @@ export function useUpdateSchedule(scheduleId: string) {
       const response = await fetch(
         `/api/schedules/${scheduleId}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
@@ -44,6 +44,7 @@ export function useUpdateSchedule(scheduleId: string) {
         },
       );
 
+      console.log(response);
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to save availability");

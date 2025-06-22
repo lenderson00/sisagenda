@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 
 import { IconPlus } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { useSchedule } from "./_hooks/use-schedule";
+import { useSchedule, useUpdateSchedule } from "./_hooks/use-schedule";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,6 +62,8 @@ export function SchedulePageClient() {
   const scheduleId = params.id as string;
 
   const { data: schedule, isLoading } = useSchedule(scheduleId);
+  const { mutate: updateSchedule, isPending: isUpdating } =
+    useUpdateSchedule(scheduleId);
 
   const {
     register,
@@ -138,7 +140,7 @@ export function SchedulePageClient() {
         };
       });
 
-      console.log(availabilityData);
+      updateSchedule(availabilityData);
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error(
@@ -254,8 +256,8 @@ export function SchedulePageClient() {
         </p>
       )}
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Salvando..." : "Salvar horários"}
+      <Button type="submit" disabled={isSubmitting || isUpdating}>
+        {isSubmitting || isUpdating ? "Salvando..." : "Salvar horários"}
       </Button>
     </form>
   );

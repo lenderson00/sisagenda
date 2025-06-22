@@ -37,16 +37,19 @@ export async function GET(
 }
 
 const ScheduleFormSchema = z.object({
-  name: z.string(),
-  availability: z.array(z.array(z.object({
-    start: z.date(),
-    end: z.date(),
-  }))),
+  intervals: z.array(
+    z.object({
+      weekDay: z.number(),
+      startTime: z.number(),
+      endTime: z.number(),
+      organizationId: z.string(),
+    }),
+  ),
 });
 
 export async function PUT(
   req: Request,
-  { params }: { params: { scheduleId: string } },
+  { params }: { params: Promise<{ scheduleId: string }> },
 ) {
   try {
     const session = await auth();
@@ -54,32 +57,25 @@ export async function PUT(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const { scheduleId } = await params;
     const json = await req.json();
-    const { name, availability } = ScheduleFormSchema.parse(json);
+    const { intervals } = ScheduleFormSchema.parse(json);
 
     await db.$transaction(async (tx) => {
       await tx.availability.deleteMany({
-        where: { scheduleId: params.scheduleId },
+        where: { scheduleId },
       });
 
       await tx.schedule.update({
         where: {
-          id: params.scheduleId,
+          id: scheduleId,
           organizationId: session.user.organizationId,
         },
         data: {
-          name,
           availability: {
-            create: availability.flatMap((day, weekDay) =>
-              day.map((slot) => ({
-                weekDay: weekDay,
-                startTime: slot.start.getHours() * 60 + slot.start.getMinutes(),
-                endTime: slot.end.getHours() * 60 + slot.end.getMinutes(),
-                organization: {
-                  connect: { id: session.user.organizationId },
-                },
-              }))
-            ),
+            createMany: {
+              data: intervals,
+            },
           },
         },
       });
@@ -87,6 +83,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error(error);
     if (error instanceof z.ZodError) {
       return new NextResponse(JSON.stringify(error.issues), { status: 422 });
     }
