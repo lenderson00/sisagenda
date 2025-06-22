@@ -53,13 +53,23 @@ export async function GET(request: Request) {
 
     const availabilityForDay = await prisma.availability.findFirst({
       where: {
-        deliveryTypeId,
+        schedule: {
+          deliveryTypes: {
+            some: {
+              id: deliveryTypeId,
+            },
+          },
+        },
         weekDay: referenceDate.day(),
       },
       include: {
-        deliveryType: {
+        schedule: {
           include: {
-            AvailabilitySettings: true,
+            deliveryTypes: {
+              include: {
+                AvailabilitySettings: true,
+              },
+            },
           },
         },
       },
@@ -89,11 +99,14 @@ export async function GET(request: Request) {
     }
 
     const lunchStart =
-      availabilityForDay.deliveryType.AvailabilitySettings?.lunchTimeStart ?? 0;
+      availabilityForDay.schedule?.deliveryTypes[0]?.AvailabilitySettings
+        ?.lunchTimeStart ?? 0;
     const lunchEnd =
-      availabilityForDay.deliveryType.AvailabilitySettings?.lunchTimeEnd ?? 0;
+      availabilityForDay.schedule?.deliveryTypes[0]?.AvailabilitySettings
+        ?.lunchTimeEnd ?? 0;
     const activityDuration =
-      availabilityForDay.deliveryType.AvailabilitySettings?.duration ?? 0;
+      availabilityForDay.schedule?.deliveryTypes[0]?.AvailabilitySettings
+        ?.duration ?? 0;
 
     const startHour = availabilityForDay.startTime;
     const endHour = availabilityForDay.endTime;

@@ -31,9 +31,24 @@ export async function GET(request: Request) {
       );
     }
 
+    const schedule = await prisma.schedule.findFirst({
+      where: {
+        deliveryTypes: {
+          some: { id: deliveryTypeId },
+        },
+      },
+    });
+
+    if (!schedule) {
+      return NextResponse.json(
+        { message: "Horário não encontrado." },
+        { status: 404 },
+      );
+    }
+
     const availableWeekDays = await prisma.availability.findMany({
       where: {
-        deliveryTypeId,
+        scheduleId: schedule?.id,
         organizationId,
       },
       select: {
@@ -62,6 +77,7 @@ export async function GET(request: Request) {
       disabledDays: disabledDays,
       availableWeekDays: availableWeekDaysInMonth,
     });
+
   } catch (err) {
     console.error(err);
     return NextResponse.json(
