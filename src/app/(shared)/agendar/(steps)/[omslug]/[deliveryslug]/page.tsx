@@ -5,9 +5,9 @@ import { DataPageClient } from "./page-client";
 export default async function DataPage({
   params,
 }: {
-  params: Promise<{ omslug: string; deliveryslug: string }>;
+  params: Promise<{ deliveryslug: string }>;
 }) {
-  const { omslug: organizationSlug, deliveryslug: deliverySlug } = await params;
+  const { deliveryslug: deliverySlug } = await params;
 
   const deliveryType = await prisma.deliveryType.findUnique({
     where: {
@@ -19,7 +19,6 @@ export default async function DataPage({
   });
 
   const deliveryTypeId = deliveryType?.id;
-  const organizationName = deliveryType?.organization.name;
   const organizationId = deliveryType?.organization.id;
 
   if (!organizationId || !deliveryTypeId) {
@@ -31,7 +30,6 @@ export default async function DataPage({
       <DataPageClient
         organizationId={organizationId}
         deliveryTypeId={deliveryTypeId}
-        organizationName={organizationName}
       />
     </>
   );
