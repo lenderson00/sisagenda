@@ -30,22 +30,35 @@ export type AppointmentRow = Appointment & {
   user: User;
 };
 
+const translateStatus = (status: string): string => {
+  const statusTranslations: Record<string, string> = {
+    PENDING_CONFIRMATION: "Pendente de Confirmação",
+    CONFIRMED: "Confirmado",
+    REJECTED: "Rejeitado",
+    CANCELLATION_REQUESTED: "Pedido de Cancelamento",
+    CANCELLATION_REJECTED: "Pedido de Cancelamento Rejeitado",
+    CANCELLED: "Cancelado",
+    RESCHEDULE_REQUESTED: "Reagendamento Solicitado",
+    RESCHEDULE_CONFIRMED: "Reagendamento Confirmado",
+    RESCHEDULE_REJECTED: "Reagendamento Rejeitado",
+    RESCHEDULED: "Reagendado",
+    COMPLETED: "Concluído",
+    SUPPLIER_NO_SHOW: "Fornecedor Não Compareceu",
+  };
+
+  return statusTranslations[status] || status;
+};
+
 export const columns: ColumnDef<AppointmentRow>[] = [
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => <div className="w-[100px]">Status</div>,
     cell: ({ row }) => (
-      <Link href={`/agendamento/${row.original.id}`}>
-        <div className="w-32">
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
-            {row.original.status !== "COMPLETED" ? (
-              <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-            ) : (
-              <IconLoader />
-            )}
-            {row.original.status}
-          </Badge>
-        </div>
+      <Link
+        href={`/agendamentos/${row.original.id}`}
+        className="hover:underline"
+      >
+        {translateStatus(row.original.status)}
       </Link>
     ),
   },
@@ -64,7 +77,16 @@ export const columns: ColumnDef<AppointmentRow>[] = [
     cell: ({ row }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.duration}
+          {(() => {
+            const hours = Math.floor(row.original.duration / 60);
+            const minutes = row.original.duration % 60;
+
+            const parts = [];
+            if (hours > 0) parts.push(`${hours} h`);
+            if (minutes > 0) parts.push(`${minutes} m`);
+
+            return parts.join(" ") || "0m";
+          })()}
         </Badge>
       </div>
     ),

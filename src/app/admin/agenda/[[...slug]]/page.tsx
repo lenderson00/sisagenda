@@ -15,6 +15,10 @@ import { PageHeader } from "@/components/page-header";
 import { EmptyScreen } from "./_components/empty-screen";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { DataTable } from "./date-table/data-table";
+import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
+import { PageClient } from "./page-client";
 
 type Params = {
   slug: string[];
@@ -22,83 +26,72 @@ type Params = {
 
 const AvailableTabs = [
   {
-    label: "Pendentes",
-    value: "pendentes",
+    label: "Pendentes de ação",
+    href: "/admin/agenda",
+    slug: "pendentes",
   },
   {
-    label: "Proximos",
-    value: "proximos",
-  },
-  {
-    label: "Não confirmadas",
-    value: "nao-confirmado",
-  },
-  {
-    label: "Anteriores",
-    value: "anteriores",
+    label: "Próximos",
+    href: "/admin/agenda/proximos",
+    slug: "proximos",
   },
   {
     label: "Cancelados",
-    value: "cancelado",
+    href: "/admin/agenda/cancelados",
+    slug: "cancelados",
+  },
+  {
+    label: "Anteriores",
+    href: "/admin/agenda/anteriores",
+    slug: "anteriores",
+  },
+  {
+    label: "Concluídos",
+    href: "/admin/agenda/concluidos",
+    slug: "concluidos",
   },
 ];
+
+const buildWhere = (tab: string): Prisma.AppointmentWhereInput => {
+  switch (tab) {
+    case "pendentes":
+      return {
+        date: {
+          gte: new Date(),
+        },
+        status: {
+          in: ["PENDING_CONFIRMATION", "RESCHEDULE_REQUESTED"],
+        },
+      };
+    case "proximos":
+      return {
+        date: { gte: new Date() },
+        status: { in: ["CONFIRMED", "RESCHEDULE_CONFIRMED"] },
+      };
+    case "anteriores":
+      return { date: { lt: new Date() }, status: { notIn: ["COMPLETED"] } };
+    case "cancelados":
+      return { status: "CANCELLED" };
+    case "concluidos":
+      return { status: "COMPLETED" };
+    default:
+      return {
+        date: { gte: new Date() },
+        status: { in: ["CONFIRMED", "RESCHEDULE_CONFIRMED"] },
+      };
+  }
+};
 
 const AgendamentosPage = async ({ params }: { params: Promise<Params> }) => {
   const { slug } = await params;
 
-  const tab = Array.isArray(slug) ? slug[0] : "proximos";
-
   if (
     Array.isArray(slug) &&
-    !AvailableTabs.some((tab) => tab.value === slug[0])
+    slug.length > 0 &&
+    !AvailableTabs.some((availableTab) => availableTab.slug === slug[0])
   ) {
     notFound();
   }
-
-  const renderContent = () => {
-    switch (tab) {
-      case "proximos":
-        return (
-          <EmptyScreen
-            Icon={IconCalendar}
-            headline="Ainda não tem reservas próximos"
-            description="Você não possui reservas próximos. Assim que alguém reservar uma hora, ela aparecerá aqui."
-          />
-        );
-      case "nao-confirmado":
-        return (
-          <EmptyScreen
-            Icon={IconCalendar}
-            headline="Ainda não tem reservas não confirmadas"
-            description="Você não possui reservas não confirmadas. Assim que alguém reservar uma hora, ela aparecerá aqui."
-          />
-        );
-      case "anteriores":
-        return (
-          <EmptyScreen
-            Icon={IconCalendar}
-            headline="Ainda não tem reservas anteriores"
-            description="Você não possui reservas anteriores. Assim que alguém reservar uma hora, ela aparecerá aqui."
-          />
-        );
-      case "cancelado":
-        return (
-          <EmptyScreen
-            Icon={IconCalendar}
-            headline="Ainda não tem reservas canceladas"
-            description="Você não possui reservas canceladas. Assim que alguém cancelar uma hora, ela aparecerá aqui."
-          />
-        );
-      default:
-        return (
-          <EmptyScreen
-            Icon={IconCalendar}
-            headline="Ainda não tem reservas próximos"
-            description="Você não possui reservas próximos. Assim que alguém reservar uma hora, ela aparecerá aqui."
-          />
-        );
-    }
-  };
 
   return (
     <>
@@ -106,29 +99,7 @@ const AgendamentosPage = async ({ params }: { params: Promise<Params> }) => {
         title="Reservas"
         subtitle="Veja os eventos futuros e passados reservados através dos links de tipos de eventos."
       />
-      <div className="space-y-4 p-4 pt-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex rounded-md border overflow-hidden divide-x">
-              {AvailableTabs.map((mapTab) => (
-                <Link
-                  key={mapTab.value}
-                  href={`/agenda/${mapTab.value}`}
-                  className={`px-3 py-2 text-sm font-medium transition-colors ${
-                    mapTab.value === tab
-                      ? "bg-accent text-accent-foreground"
-                      : "hover:bg-muted"
-                  }`}
-                >
-                  {mapTab.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {renderContent()}
-      </div>
+      <PageClient slug={slug} />
     </>
   );
 };

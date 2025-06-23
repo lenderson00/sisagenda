@@ -1,9 +1,11 @@
+import type { Prisma } from "@prisma/client";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { generateInternalId } from "@/lib/nanoid";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 
 const createAppointmentInput = z.object({
   organizationId: z.string(),
@@ -13,12 +15,46 @@ const createAppointmentInput = z.object({
   observations: z.record(z.any()),
 });
 
-export async function GET() {
+const buildWhere = (tab: string): Prisma.AppointmentWhereInput => {
+  switch (tab) {
+    case "pendentes":
+      return {
+        date: {
+          gte: new Date(),
+        },
+        status: {
+          in: ["PENDING_CONFIRMATION", "RESCHEDULE_REQUESTED"],
+        },
+      };
+    case "proximos":
+      return {
+        date: { gte: new Date() },
+        status: { in: ["CONFIRMED", "RESCHEDULE_CONFIRMED"] },
+      };
+    case "anteriores":
+      return { date: { lt: new Date() }, status: { notIn: ["COMPLETED"] } };
+    case "cancelados":
+      return { status: "CANCELLED" };
+    case "concluidos":
+      return { status: "COMPLETED" };
+    default:
+      return {
+        date: { gte: new Date() },
+        status: { in: ["CONFIRMED", "RESCHEDULE_CONFIRMED"] },
+      };
+  }
+};
+
+export async function GET(req: NextRequest) {
   const session = await auth();
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const tab = req.nextUrl.searchParams.get("tab") || "pendentes";
+
+  const where = buildWhere(tab);
 
   if (!session.user.organizationId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -39,25 +75,14 @@ export async function GET() {
 
   try {
     const appointments = await prisma.appointment.findMany({
-      where: {
-        organizationId: session.user.organizationId,
-        deletedAt: null,
-        userId: session.user.id,
-        status: {
-          notIn: ["COMPLETED"],
-        },
-      },
+      where,
       orderBy: {
         date: "asc",
       },
       include: {
-        organization: {
-          select: {
-            name: true,
-          },
-        },
-        activities: true,
         deliveryType: true,
+        organization: true,
+        user: true,
       },
     });
 

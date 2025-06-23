@@ -1,9 +1,17 @@
+"use client";
+
 import React from "react";
 import { columns, type AppointmentRow } from "./columns";
-import { Table, TableHeader } from "@/components/ui/table";
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -11,10 +19,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
+  type VisibilityState,
 } from "@tanstack/react-table";
 
 export const DataTable: React.FC<{ data: AppointmentRow[] }> = ({
@@ -27,9 +34,21 @@ export const DataTable: React.FC<{ data: AppointmentRow[] }> = ({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+      pagination,
+      columnFilters,
+      columnVisibility,
+    },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
     onSortingChange: setSorting,
@@ -66,14 +85,15 @@ export const DataTable: React.FC<{ data: AppointmentRow[] }> = ({
       </TableHeader>
       <TableBody className="**:data-[slot=table-cell]:first:w-8">
         {table.getRowModel().rows?.length ? (
-          <SortableContext
-            items={dataIds}
-            strategy={verticalListSortingStrategy}
-          >
-            {table.getRowModel().rows.map((row) => (
-              <DraggableRow key={row.id} row={row} />
-            ))}
-          </SortableContext>
+          table.getRowModel().rows.map((row) => (
+            <TableRow key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id} className="p-4">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))
         ) : (
           <TableRow>
             <TableCell colSpan={columns.length} className="h-24 text-center">
