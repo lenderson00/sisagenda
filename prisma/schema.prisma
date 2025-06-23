@@ -94,9 +94,6 @@ model Organization {
   deliveryTypes DeliveryType[]
   appointments  Appointment[]
 
-  Availability     Availability[]
-  AvailabilityRule AvailabilityRule[]
-
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   deletedAt    DateTime?
@@ -156,11 +153,9 @@ model DeliveryType {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  deletedAt          DateTime?
-  AvailabilityRule   AvailabilityRule? @relation(fields: [availabilityRuleId], references: [id])
-  availabilityRuleId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   scheduleId String?
   schedule   Schedule? @relation(fields: [scheduleId], references: [id])
@@ -286,9 +281,10 @@ model Schedule {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  name          String
-  availability  Availability[]
-  deliveryTypes DeliveryType[]
+  name              String
+  availability      Availability[]
+  availabilityRules AvailabilityRule[]
+  deliveryTypes     DeliveryType[]
 
   isDefault Boolean @default(false)
 
@@ -307,9 +303,6 @@ model Availability {
   startTime Int
   endTime   Int
 
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -317,7 +310,6 @@ model Availability {
   scheduleId String?
   schedule   Schedule? @relation(fields: [scheduleId], references: [id])
 
-  @@index([organizationId])
   @@index([weekDay])
 }
 
@@ -338,16 +330,20 @@ model AvailabilitySettings {
 
 /// Stores rules for availability slots
 model AvailabilityRule {
-  id   String @id @default(cuid())
-  rule Json
+  id String @id @default(cuid())
 
-  organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  isAllDay  Boolean   @default(false)
+  date      DateTime?
+  startTime Int?
+  endTime   Int?
 
-  deliveryTypes DeliveryType[]
+  comment String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  scheduleId String?
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
 
   @@index([id])
 }

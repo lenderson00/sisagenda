@@ -76,22 +76,36 @@ export async function GET(request: Request) {
       return NextResponse.json({ possibleTimes: [], availableTimes: [] });
     }
 
-    const orgRule = await prisma.availabilityRule.findUnique({
-      where: { organizationId },
+    const deliveryType = await prisma.deliveryType.findUnique({
+      where: { id: deliveryTypeId },
       include: {
-        deliveryTypes: { select: { id: true } },
+        schedule: {
+          include: {
+            availabilityRules: true,
+          },
+        },
       },
     });
 
+    if (!deliveryType) {
+      return NextResponse.json({ possibleTimes: [], availableTimes: [] });
+    }
+
+    const orgRule = deliveryType.schedule?.availabilityRules;
+
+    if (!orgRule) {
+      return NextResponse.json({ possibleTimes: [], availableTimes: [] });
+    }
+
     let rules: AvailabilityExceptionRule[] = [];
 
-    if (orgRule && Array.isArray(orgRule.rule)) {
-      const deliveryTypeIds = orgRule.deliveryTypes.map((dt) => dt.id);
+    if (orgRule && Array.isArray(orgRule)) {
+      const deliveryTypeIds = orgRule.map((dt) => dt.id);
       if (
         deliveryTypeIds.length === 0 ||
         deliveryTypeIds.includes(deliveryTypeId)
       ) {
-        rules = orgRule.rule as unknown as AvailabilityExceptionRule[];
+        rules = orgRule as unknown as AvailabilityExceptionRule[];
       }
     }
 
