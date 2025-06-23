@@ -19,6 +19,7 @@ import type { AvailabilityRule } from "@prisma/client";
 import Link from "next/link";
 import { EmptyCard } from "@/components/empty-card";
 import { IconCalendarOff } from "@tabler/icons-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.locale("pt-br");
 
@@ -28,6 +29,22 @@ const minutesToTime = (minutes: number | null) => {
   if (minutes === null) return "";
   return dayjs().startOf("day").add(minutes, "minute").format("HH:mm");
 };
+
+// Skeleton for loading state
+function DateOverrideSkeleton() {
+  return (
+    <div className="flex items-center justify-between rounded-lg border p-4">
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-40 mb-1" />
+        <Skeleton className="h-3 w-24" />
+      </div>
+      <div className="flex gap-2">
+        <Skeleton className="h-10 w-10 rounded-full" />
+        <Skeleton className="h-10 w-10 rounded-full" />
+      </div>
+    </div>
+  );
+}
 
 export default function PageClient() {
   const { id: scheduleId } = useParams();
@@ -75,7 +92,14 @@ export default function PageClient() {
     },
   });
 
-  if (isLoading) return <div>Carregando...</div>;
+  if (isLoading)
+    return (
+      <div className="flex flex-col gap-4 mt-4">
+        {[...Array(3)].map((_, i) => (
+          <DateOverrideSkeleton key={i} />
+        ))}
+      </div>
+    );
 
   return (
     <>

@@ -56,6 +56,7 @@ export default function NewOverridePage() {
       <PageHeader
         title="Adicionar nova substituição"
         subtitle="Selecione as datas e horários para substituir a disponibilidade padrão."
+        className="p-0"
       >
         <Button variant="outline" onClick={() => router.back()}>
           Cancelar

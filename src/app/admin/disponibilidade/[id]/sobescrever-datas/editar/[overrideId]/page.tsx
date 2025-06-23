@@ -81,6 +81,7 @@ export default function EditOverridePage() {
       <PageHeader
         title="Editar substituição"
         subtitle="Ajuste os horários para a data selecionada."
+        className="p-0"
       >
         <Button variant="outline" onClick={() => router.back()}>
           Cancelar

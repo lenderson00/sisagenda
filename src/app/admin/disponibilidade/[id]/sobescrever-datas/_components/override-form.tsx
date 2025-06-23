@@ -23,6 +23,7 @@ import type { DateOverride } from "../page-client";
 import { useQuery } from "@tanstack/react-query";
 import type { Schedule, Availability } from "@prisma/client";
 import { cn } from "@/lib/utils";
+import { IconCalendar } from "@tabler/icons-react";
 
 const timeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -258,6 +259,19 @@ export function OverrideForm({
           </div>
 
           <div className="w-full px-2 ">
+            {fields.length === 0 && (
+              <div className="flex flex-col w-full h-full justify-center items-center">
+                <div className="flex flex-col gap-2 items-center bg-muted p-4 rounded-full">
+                  <IconCalendar className="w-10 h-10 text-muted-foreground" />
+                </div>
+                <h2 className="text-lg font-bold mt-4">
+                  Selecione uma data para começar.
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Substitua a disponibilidade padrão para uma data específica.
+                </p>
+              </div>
+            )}
             {fields.length > 0 && (
               <div className="flex flex-wrap gap-2 border-b pb-2">
                 {fields.map((field, index) => (
