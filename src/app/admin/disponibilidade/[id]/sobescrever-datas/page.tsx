@@ -19,9 +19,9 @@ export default async function BlockDatePage({ params }: Params) {
         className="p-0"
       >
         <Button asChild>
-          <Link href={`/disponibilidade/${id}/sobescrever-datas/novo`}>
+          <Link href={`/admin/disponibilidade/${id}/sobescrever-datas/novo`}>
             <PlusCircle className="mr-2 h-4 w-4" />
-            Nova Regra
+            Adicionar uma substituição
           </Link>
         </Button>
       </PageHeader>

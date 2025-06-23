@@ -22,6 +22,7 @@ import { z } from "zod";
 import type { DateOverride } from "../page-client";
 import { useQuery } from "@tanstack/react-query";
 import type { Schedule, Availability } from "@prisma/client";
+import { cn } from "@/lib/utils";
 
 const timeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -115,8 +116,15 @@ export function OverrideForm({
     },
   });
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = form;
+
   const { fields, append, remove } = useFieldArray({
-    control: form.control,
+    control,
     name: "overrides",
     keyName: "fieldId",
   });
@@ -189,8 +197,14 @@ export function OverrideForm({
   const activeIndex = fields.findIndex((field) => field.date === activeDate);
 
   const isDateDisabled = (date: Date) => {
-    const dayOfWeek = dayjs(date).day();
-    const dateStr = dayjs(date).format("YYYY-MM-DD");
+    const today = dayjs().startOf("day");
+    const currentDate = dayjs(date).startOf("day");
+    const dayOfWeek = currentDate.day();
+    const dateStr = currentDate.format("YYYY-MM-DD");
+
+    if (currentDate.isBefore(today)) {
+      return true;
+    }
 
     if (isEditMode) {
       return dateStr !== initialData?.date?.toString().split("T")[0];
@@ -205,121 +219,150 @@ export function OverrideForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <FormLabel>Selecione as datas para substituir</FormLabel>
-          <Calendar
-            mode="multiple"
-            selected={selectedDatesForCalendar}
-            onSelect={isEditMode ? undefined : handleDateSelect}
-            className="mt-2 rounded-md border"
-            disabled={isDateDisabled}
-          />
-          <FormMessage>{form.formState.errors.overrides?.message}</FormMessage>
-        </div>
-
-        {fields.length > 0 && (
-          <div className="flex flex-wrap gap-2 border-b pb-4">
-            {fields.map((field) => (
-              <Button
-                key={field.id}
-                type="button"
-                variant={field.date === activeDate ? "secondary" : "outline"}
-                size="sm"
-                onClick={() => setActiveDate(field.date)}
-              >
-                {dayjs(field.date).format("DD/MM/YY")}
-              </Button>
-            ))}
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="w-full flex flex-1 gap-4">
+          <div className="w-fit min-w-[350px] flex justify-center ">
+            <FormLabel className="sr-only">
+              Selecione as datas para substituir
+            </FormLabel>
+            <Calendar
+              mode="multiple"
+              selected={selectedDatesForCalendar}
+              onSelect={isEditMode ? undefined : handleDateSelect}
+              className="mt-2 w-full rounded-lg [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] "
+              disabled={isDateDisabled}
+              formatters={{
+                formatMonthCaption: (date) => {
+                  return (
+                    date.toLocaleString("pt-BR", { month: "long" }) +
+                    " de " +
+                    date.getFullYear()
+                  );
+                },
+                formatWeekdayName: (date) => {
+                  return date.toLocaleString("pt-BR", { weekday: "short" });
+                },
+              }}
+            />
+            <FormMessage>{errors.overrides?.message}</FormMessage>
           </div>
-        )}
 
-        {activeIndex !== -1 && (
-          <div className="max-h-[40vh] space-y-4 overflow-y-auto pr-2">
-            <Card
-              key={fields[activeIndex].fieldId}
-              className="border-none shadow-none"
-            >
-              <CardHeader className="p-0">
-                <CardTitle className="capitalize">
-                  {dayjs(fields[activeIndex].date).format("dddd, D [de] MMMM")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 p-0 pt-4">
-                <div>
-                  <FormLabel>Que horas você está livre?</FormLabel>
-                  <div className="mt-2 flex items-center gap-2">
+          <div className="w-full px-2 ">
+            {fields.length > 0 && (
+              <div className="flex flex-wrap gap-2 border-b pb-4">
+                {fields.map((field, index) => (
+                  <Button
+                    key={field.id}
+                    type="button"
+                    variant={
+                      field.date === activeDate ? "secondary" : "outline"
+                    }
+                    size="sm"
+                    onClick={() => setActiveDate(field.date)}
+                    className={cn(
+                      "border-2",
+                      errors.overrides?.[index] &&
+                        "border-red-500 bg-red-200 hover:bg-red-100 transition-all",
+                    )}
+                  >
+                    {dayjs(field.date).format("DD/MM/YY")}
+                  </Button>
+                ))}
+              </div>
+            )}
+
+            {activeIndex !== -1 && (
+              <div className="max-h-[40vh] space-y-4 overflow-y-auto px-2">
+                <Card
+                  key={fields[activeIndex].fieldId}
+                  className="border-none shadow-none"
+                >
+                  <CardHeader className="p-0">
+                    <CardTitle className="capitalize">
+                      {dayjs(fields[activeIndex].date).format(
+                        "dddd, D [de] MMMM",
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4 p-0 pt-4">
+                    <div>
+                      <FormLabel>Que horas você está livre?</FormLabel>
+                      <div className="mt-2 flex items-center gap-2">
+                        <FormField
+                          control={control}
+                          name={`overrides.${activeIndex}.startTime`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  type="time"
+                                  {...field}
+                                  disabled={watch(
+                                    `overrides.${activeIndex}.isAllDay`,
+                                  )}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <span>-</span>
+                        <FormField
+                          control={control}
+                          name={`overrides.${activeIndex}.endTime`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  type="time"
+                                  {...field}
+                                  disabled={watch(
+                                    `overrides.${activeIndex}.isAllDay`,
+                                  )}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
                     <FormField
-                      control={form.control}
-                      name={`overrides.${activeIndex}.startTime`}
-                      render={({ field }) => (
-                        <FormItem>
+                      control={control}
+                      name={`overrides.${activeIndex}.isAllDay`}
+                      render={({ field: switchField }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                          <FormLabel>
+                            Marcar indisponível (o dia todo)
+                          </FormLabel>
                           <FormControl>
-                            <Input
-                              type="time"
-                              {...field}
-                              disabled={form.watch(
-                                `overrides.${activeIndex}.isAllDay`,
-                              )}
+                            <Switch
+                              checked={switchField.value}
+                              onCheckedChange={switchField.onChange}
                             />
                           </FormControl>
                         </FormItem>
                       )}
                     />
-                    <span>-</span>
                     <FormField
-                      control={form.control}
-                      name={`overrides.${activeIndex}.endTime`}
+                      control={control}
+                      name={`overrides.${activeIndex}.comment`}
                       render={({ field }) => (
                         <FormItem>
+                          <FormLabel>Justificativa</FormLabel>
                           <FormControl>
-                            <Input
-                              type="time"
-                              {...field}
-                              disabled={form.watch(
-                                `overrides.${activeIndex}.isAllDay`,
-                              )}
-                            />
+                            <Textarea {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name={`overrides.${activeIndex}.isAllDay`}
-                  render={({ field: switchField }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <FormLabel>Marcar indisponível (o dia todo)</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={switchField.value}
-                          onCheckedChange={switchField.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`overrides.${activeIndex}.comment`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Justificativa</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="flex justify-end">
           <Button type="submit" disabled={fields.length === 0}>

@@ -6,7 +6,7 @@ import { prisma as db } from "@/lib/prisma";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ scheduleId: string }> }
+  { params }: { params: Promise<{ scheduleId: string }> },
 ) {
   try {
     const session = await auth();
@@ -42,7 +42,6 @@ const ScheduleFormSchema = z.object({
       weekDay: z.number(),
       startTime: z.number(),
       endTime: z.number(),
-      organizationId: z.string(),
     }),
   ),
 });
@@ -58,6 +57,18 @@ export async function PUT(
     }
 
     const { scheduleId } = await params;
+
+    const schedule = await db.schedule.findUnique({
+      where: {
+        id: scheduleId,
+        organizationId: session.user.organizationId,
+      },
+    });
+
+    if (!schedule) {
+      return new NextResponse("Not Found", { status: 404 });
+    }
+
     const json = await req.json();
     const { intervals } = ScheduleFormSchema.parse(json);
 
@@ -69,7 +80,6 @@ export async function PUT(
       await tx.schedule.update({
         where: {
           id: scheduleId,
-          organizationId: session.user.organizationId,
         },
         data: {
           availability: {

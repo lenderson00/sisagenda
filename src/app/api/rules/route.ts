@@ -10,6 +10,26 @@ export async function GET(request: NextRequest) {
   }
   const { searchParams } = new URL(request.url);
   const scheduleId = searchParams.get("scheduleId");
+  const availabilityRuleId = searchParams.get("availabilityRuleId");
+
+  if (availabilityRuleId) {
+    const availabilityRule = await prisma.availabilityRule.findUnique({
+      where: {
+        id: availabilityRuleId,
+      },
+    });
+    if (
+      availabilityRule?.scheduleId &&
+      scheduleId &&
+      availabilityRule.scheduleId !== scheduleId
+    ) {
+      return NextResponse.json(
+        { error: "Rule not in schedule" },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json(availabilityRule);
+  }
 
   if (!scheduleId) {
     return NextResponse.json(
