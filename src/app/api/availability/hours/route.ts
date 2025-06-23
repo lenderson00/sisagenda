@@ -1,13 +1,10 @@
 // app/api/availability/simple/route.ts
 
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { NextResponse } from "next/server";
-import "dayjs/locale/pt-br";
 
-import { auth } from "@/lib/auth";
 import type { AvailabilityExceptionRule } from "@/lib/engine/availability";
 import { applyRulesToPossibleTimes } from "@/lib/engine/services/rules";
-import { getAvailableSlotsForDate } from "@/lib/engine/services/scheluing-with-rules";
 import {
   findFits,
   formatHHMM,
@@ -99,14 +96,11 @@ export async function GET(request: Request) {
     }
 
     const lunchStart =
-      availabilityForDay.schedule?.deliveryTypes[0]?.AvailabilitySettings
-        ?.lunchTimeStart ?? 0;
+      availabilityForDay.schedule?.deliveryTypes[0]?.lunchTimeStart ?? 0;
     const lunchEnd =
-      availabilityForDay.schedule?.deliveryTypes[0]?.AvailabilitySettings
-        ?.lunchTimeEnd ?? 0;
+      availabilityForDay.schedule?.deliveryTypes[0]?.lunchTimeEnd ?? 0;
     const activityDuration =
-      availabilityForDay.schedule?.deliveryTypes[0]?.AvailabilitySettings
-        ?.duration ?? 0;
+      availabilityForDay.schedule?.deliveryTypes[0]?.duration ?? 0;
 
     const startHour = availabilityForDay.startTime;
     const endHour = availabilityForDay.endTime;
@@ -116,6 +110,7 @@ export async function GET(request: Request) {
       findFits(blocks, activityDuration),
     );
 
+    // MAIN INTERNAL LOGIC
     const possibleTimes = possibleTimesResult.map((time) => formatHHMM(time));
 
     const timesAfterRules = applyRulesToPossibleTimes(
@@ -141,18 +136,17 @@ export async function GET(request: Request) {
       },
     });
 
-    const newActivityDuration = activityDuration; // duration of appointment to be scheduled
-
     const blockedIntervals = blockedTimes.map((bt) => {
       const start = dayjs(bt.date).hour() * 60 + dayjs(bt.date).minute();
       const end = start + bt.duration;
       return { start, end };
     });
 
+    // MAIN LOGIC FOR AVAILABLE TIMES
     const availableTimes = timesAfterRules
       .filter((time) => {
         const newAppointmentStart = time;
-        const newAppointmentEnd = time + newActivityDuration;
+        const newAppointmentEnd = time + activityDuration;
 
         // Check for overlap with any blocked interval
         return !blockedIntervals.some(

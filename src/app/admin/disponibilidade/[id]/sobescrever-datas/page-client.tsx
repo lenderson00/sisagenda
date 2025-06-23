@@ -80,22 +80,6 @@ export default function BlockPageClient() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Bloqueio de Datas
-          </h1>
-          <p className="text-muted-foreground">
-            Gerencie os períodos em que os serviços não estarão disponíveis.
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/bloqueio-de-datas/novo">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Nova Regra
-          </Link>
-        </Button>
-      </div>
       <div className="mt-8">
         {rules.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -25,6 +25,12 @@ import {
 
 const main = [
   {
+    name: "Dashboard",
+    url: "/",
+
+    icon: IconDashboard,
+  },
+  {
     name: "Tipos de Entrega",
     url: "/tipos-de-entrega",
     icon: IconTruck,

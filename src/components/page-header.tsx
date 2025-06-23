@@ -15,6 +15,7 @@ type PageHeaderProps = {
   subtitle?: string;
   children?: React.ReactNode;
   backButton?: boolean;
+  className?: string;
 };
 
 export const PageHeader = ({
@@ -22,12 +23,17 @@ export const PageHeader = ({
   subtitle,
   children,
   backButton,
+  className,
 }: PageHeaderProps) => {
   const router = useRouter();
 
   return (
     <header
-      className={cn("p-4", "flex w-full max-w-full items-center truncate")}
+      className={cn(
+        "p-4",
+        "flex w-full max-w-full items-center truncate",
+        className,
+      )}
     >
       <div
         className={cn("w-full truncate ltr:mr-4 rtl:ml-4 flex items-center")}
