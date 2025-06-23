@@ -84,13 +84,13 @@ export async function POST(req: Request) {
     const json = await req.json();
     const validatedInput = createAppointmentInput.parse(json);
 
-    const deliverySettings = await prisma.availabilitySettings.findUnique({
+    const deliveryType = await prisma.deliveryType.findUnique({
       where: {
-        deliveryTypeId: validatedInput.deliveryTypeId,
+        id: validatedInput.deliveryTypeId,
       },
     });
 
-    if (!deliverySettings) {
+    if (!deliveryType) {
       return new Response(
         JSON.stringify({
           error:
@@ -118,7 +118,7 @@ export async function POST(req: Request) {
         organizationId: validatedInput.organizationId,
         deliveryTypeId: validatedInput.deliveryTypeId,
         date: new Date(validatedInput.dateTime),
-        duration: deliverySettings.duration,
+        duration: deliveryType.duration,
         ordemDeCompra: validatedInput.ordemDeCompra,
         observations: validatedInput.observations,
         userId: user.id,

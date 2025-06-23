@@ -6,14 +6,20 @@ export const getAvailabilityPerDay = async (
 ) => {
   const availability = await prisma.availability.findFirst({
     where: {
-      deliveryTypeId,
+      schedule: {
+        deliveryTypes: {
+          some: {
+            id: deliveryTypeId,
+          },
+        },
+      },
       weekDay,
     },
     include: {
-      deliveryType: {
+      schedule: {
         include: {
-          AvailabilitySettings: true,
-          AvailabilityRule: true,
+          deliveryTypes: true,
+          availabilityRules: true,
         },
       },
     },
@@ -24,14 +30,12 @@ export const getAvailabilityPerDay = async (
   }
 
   const config = {
-    lunchStart:
-      availability.deliveryType.AvailabilitySettings?.lunchTimeStart ?? 0,
-    lunchEnd: availability.deliveryType.AvailabilitySettings?.lunchTimeEnd ?? 0,
-    activityDuration:
-      availability.deliveryType.AvailabilitySettings?.duration ?? 0,
+    lunchStart: availability.schedule?.deliveryTypes[0]?.lunchTimeStart ?? 0,
+    lunchEnd: availability.schedule?.deliveryTypes[0]?.lunchTimeEnd ?? 0,
+    activityDuration: availability.schedule?.deliveryTypes[0]?.duration ?? 0,
     startHour: availability.startTime,
     endHour: availability.endTime,
-    availabilityRule: availability.deliveryType.AvailabilityRule || [],
+    availabilityRule: availability.schedule?.availabilityRules || [],
   };
 
   return {

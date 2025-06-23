@@ -37,13 +37,9 @@ export async function GET(
         name: true,
         isActive: true,
         updatedAt: true,
-        AvailabilitySettings: {
-          select: {
-            duration: true,
-            lunchTimeStart: true,
-            lunchTimeEnd: true,
-          },
-        },
+        duration: true,
+        lunchTimeStart: true,
+        lunchTimeEnd: true,
       },
     });
 
@@ -53,17 +49,11 @@ export async function GET(
       });
     }
 
-    let settings = deliveryType.AvailabilitySettings;
-
-    // If settings don't exist, create them with default values
-    if (!settings) {
-      settings = await prisma.availabilitySettings.create({
-        data: {
-          deliveryTypeId: deliveryType.id,
-          ...DEFAULT_SETTINGS,
-        },
-      });
-    }
+    let settings = {
+      duration: deliveryType.duration,
+      lunchTimeStart: deliveryType.lunchTimeStart,
+      lunchTimeEnd: deliveryType.lunchTimeEnd,
+    };
 
     return NextResponse.json({
       id: deliveryType.id,

@@ -25,9 +25,6 @@ export async function GET() {
         organizationId: orgId,
         deletedAt: null,
       },
-      include: {
-        AvailabilitySettings: true,
-      },
       orderBy: {
         createdAt: "desc",
       },

@@ -62,11 +62,7 @@ export async function GET(request: Request) {
       include: {
         schedule: {
           include: {
-            deliveryTypes: {
-              include: {
-                AvailabilitySettings: true,
-              },
-            },
+            deliveryTypes: true,
             availabilityRules: true,
           },
         },

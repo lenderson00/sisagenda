@@ -146,8 +146,6 @@ model DeliveryType {
 
   isVisible Boolean @default(true)
 
-  AvailabilitySettings AvailabilitySettings?
-
   appointments Appointment[]
 
   organizationId String
@@ -311,21 +309,6 @@ model Availability {
   schedule   Schedule? @relation(fields: [scheduleId], references: [id])
 
   @@index([weekDay])
-}
-
-model AvailabilitySettings {
-  id String @id @default(cuid())
-
-  duration       Int     @default(60) @db.SmallInt
-  isActive       Boolean @default(true)
-  lunchTimeStart Int     @default(720) @db.SmallInt
-  lunchTimeEnd   Int     @default(780) @db.SmallInt
-
-  deliveryTypeId String       @unique
-  deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 /// Stores rules for availability slots
