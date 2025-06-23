@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
   const rulesData = rules.map((rule) => ({
     scheduleId: scheduleId,
     isAllDay: rule.isAllDay,
-    date: rule.date ? new Date(rule.date) : undefined,
+    date: rule.date ? new Date(`${rule.date}T00:00:00`) : undefined,
     startTime: rule.startTime,
     endTime: rule.endTime,
     comment: rule.comment,
@@ -154,7 +154,7 @@ export async function PUT(request: NextRequest) {
     where: { id: availabilityRuleId },
     data: {
       isAllDay,
-      date: date ? new Date(date) : undefined,
+      date: date ? new Date(`${date}T00:00:00`) : undefined,
       startTime: startTime,
       endTime: endTime,
       comment,

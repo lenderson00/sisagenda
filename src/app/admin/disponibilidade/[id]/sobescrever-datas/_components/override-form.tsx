@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { useEffect, useState, useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -121,6 +121,7 @@ export function OverrideForm({
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = form;
 
   const { fields, append, remove } = useFieldArray({
@@ -130,22 +131,25 @@ export function OverrideForm({
   });
 
   useEffect(() => {
-    if (initialData && fields.length === 0) {
-      append({
-        id: initialData.id,
-        date: initialData.date
-          ? dayjs(initialData.date).format("YYYY-MM-DD")
-          : "",
-        isAllDay: initialData.isAllDay,
-        startTime: minutesToTime(initialData.startTime ?? 0),
-        endTime: minutesToTime(initialData.endTime ?? 0),
-        comment: initialData.comment ?? "",
+    if (initialData) {
+      const initialDateStr = initialData.date
+        ? dayjs(initialData.date).format("YYYY-MM-DD")
+        : "";
+      reset({
+        overrides: [
+          {
+            id: initialData.id,
+            date: initialDateStr,
+            isAllDay: initialData.isAllDay,
+            startTime: minutesToTime(initialData.startTime ?? 0),
+            endTime: minutesToTime(initialData.endTime ?? 0),
+            comment: initialData.comment ?? "",
+          },
+        ],
       });
-      setActiveDate(
-        initialData.date ? dayjs(initialData.date).format("YYYY-MM-DD") : null,
-      );
+      setActiveDate(initialDateStr);
     }
-  }, [initialData, append, fields.length]);
+  }, [initialData, reset]);
 
   const handleDateSelect = (dates: Date[] | undefined) => {
     const currentDates = fields.map((f) => f.date);
@@ -193,9 +197,12 @@ export function OverrideForm({
     onSave(formattedValues);
   };
 
-  const selectedDatesForCalendar = fields.map((f) => dayjs(f.date).toDate());
+  const selectedDatesForCalendar = isEditMode
+    ? [dayjs(initialData?.date).toDate()]
+    : fields.map((f) => dayjs(f.date).toDate());
   const activeIndex = fields.findIndex((field) => field.date === activeDate);
 
+  const calendarMode = isEditMode ? "single" : "multiple";
   const isDateDisabled = (date: Date) => {
     const today = dayjs().startOf("day");
     const currentDate = dayjs(date).startOf("day");
@@ -207,7 +214,10 @@ export function OverrideForm({
     }
 
     if (isEditMode) {
-      return dateStr !== initialData?.date?.toString().split("T")[0];
+      const initialDateStr = initialData?.date
+        ? dayjs(initialData.date).format("YYYY-MM-DD")
+        : null;
+      return dateStr !== initialDateStr;
     }
 
     if (existingOverrideDates.includes(dateStr)) {
@@ -219,14 +229,14 @@ export function OverrideForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="w-full flex flex-1 gap-4">
-          <div className="w-fit min-w-[350px] flex justify-center ">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="flex">
+          <div className="w-fit px-2">
             <FormLabel className="sr-only">
               Selecione as datas para substituir
             </FormLabel>
             <Calendar
-              mode="multiple"
+              mode={"multiple"}
               selected={selectedDatesForCalendar}
               onSelect={isEditMode ? undefined : handleDateSelect}
               className="mt-2 w-full rounded-lg [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] "
@@ -249,7 +259,7 @@ export function OverrideForm({
 
           <div className="w-full px-2 ">
             {fields.length > 0 && (
-              <div className="flex flex-wrap gap-2 border-b pb-4">
+              <div className="flex flex-wrap gap-2 border-b pb-2">
                 {fields.map((field, index) => (
                   <Button
                     key={field.id}
@@ -272,7 +282,7 @@ export function OverrideForm({
             )}
 
             {activeIndex !== -1 && (
-              <div className="max-h-[40vh] space-y-4 overflow-y-auto px-2">
+              <div className=" overflow-y-auto px-2">
                 <Card
                   key={fields[activeIndex].fieldId}
                   className="border-none shadow-none"
@@ -284,7 +294,7 @@ export function OverrideForm({
                       )}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4 p-0 pt-4">
+                  <CardContent className="space-y-4 p-0 pt-0">
                     <div>
                       <FormLabel>Que horas você está livre?</FormLabel>
                       <div className="mt-2 flex items-center gap-2">

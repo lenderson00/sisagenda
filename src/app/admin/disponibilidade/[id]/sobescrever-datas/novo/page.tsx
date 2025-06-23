@@ -52,7 +52,7 @@ export default function NewOverridePage() {
   if (isLoading) return <div>Carregando...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="">
       <PageHeader
         title="Adicionar nova substituição"
         subtitle="Selecione as datas e horários para substituir a disponibilidade padrão."
