@@ -20,19 +20,40 @@ type Params = {
   slug: string[];
 };
 
-const AvailableTabs = ["proximos", "nao-confirmado", "anteriores", "cancelado"];
+const AvailableTabs = [
+  {
+    label: "Pendentes",
+    value: "pendentes",
+  },
+  {
+    label: "Proximos",
+    value: "proximos",
+  },
+  {
+    label: "Não confirmadas",
+    value: "nao-confirmado",
+  },
+  {
+    label: "Anteriores",
+    value: "anteriores",
+  },
+  {
+    label: "Cancelados",
+    value: "cancelado",
+  },
+];
 
 const AgendamentosPage = async ({ params }: { params: Promise<Params> }) => {
   const { slug } = await params;
 
+  const tab = Array.isArray(slug) ? slug[0] : "proximos";
+
   if (
     Array.isArray(slug) &&
-    (slug.length > 1 || !AvailableTabs.includes(slug[0]))
+    !AvailableTabs.some((tab) => tab.value === slug[0])
   ) {
     notFound();
   }
-
-  const tab = Array.isArray(slug) ? slug[0] : "proximos";
 
   const renderContent = () => {
     switch (tab) {
@@ -88,50 +109,24 @@ const AgendamentosPage = async ({ params }: { params: Promise<Params> }) => {
       <div className="space-y-4 p-4 pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex rounded-md border overflow-hidden">
-              <Link
-                href="/agenda/proximos"
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  tab === "proximos"
-                    ? "bg-accent text-accent-foreground"
-                    : "hover:bg-muted"
-                }`}
-              >
-                Próximos
-              </Link>
-              <Link
-                href="/agenda/nao-confirmado"
-                className={`px-3 py-2 text-sm font-medium transition-colors duration-500 ${
-                  tab === "nao-confirmado"
-                    ? "bg-accent text-accent-foreground"
-                    : "hover:bg-muted"
-                }`}
-              >
-                Não confirmado
-              </Link>
-              <Link
-                href="/agenda/anteriores"
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  tab === "anteriores"
-                    ? "bg-accent text-accent-foreground"
-                    : "hover:bg-muted"
-                }`}
-              >
-                Anteriores
-              </Link>
-              <Link
-                href="/agenda/cancelado"
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  tab === "cancelado"
-                    ? "bg-accent text-accent-foreground"
-                    : "hover:bg-muted"
-                }`}
-              >
-                Cancelados
-              </Link>
+            <div className="flex rounded-md border overflow-hidden divide-x">
+              {AvailableTabs.map((mapTab) => (
+                <Link
+                  key={mapTab.value}
+                  href={`/agenda/${mapTab.value}`}
+                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                    mapTab.value === tab
+                      ? "bg-accent text-accent-foreground"
+                      : "hover:bg-muted"
+                  }`}
+                >
+                  {mapTab.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
+
         {renderContent()}
       </div>
     </>
