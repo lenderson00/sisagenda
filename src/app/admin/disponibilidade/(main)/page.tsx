@@ -1,6 +1,6 @@
 import { IconCalendar, IconDots, IconPencil } from "@tabler/icons-react";
 import { PageHeader } from "../../_components/page-header";
-import { EmptyScreen } from "../../agenda/_components/empty-screen";
+import { EmptyScreen } from "../../agenda/[[...slug]]/_components/empty-screen";
 import { CreateAvailabilityDialog } from "./_components/create-availability-dialog";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";

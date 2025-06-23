@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import OmSelection from "../../_component/om-selection";
 import { Stepper } from "../../_component/stepper";
-import { EmptyScreen } from "@/app/admin/agenda/_components/empty-screen";
+import { EmptyScreen } from "@/app/admin/agenda/[[...slug]]/_components/empty-screen";
 import { IconBuildingCommunity } from "@tabler/icons-react";
 
 const AgendarOM = async () => {
