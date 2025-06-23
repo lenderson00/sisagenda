@@ -128,7 +128,7 @@ export default function PageClient() {
                   size="icon"
                   onClick={() =>
                     router.push(
-                      `/admin/disponibilidade/${scheduleId}/sobescrever-datas/editar/${override.id}`,
+                      `/disponibilidade/${scheduleId}/sobescrever-datas/editar/${override.id}`,
                     )
                   }
                 >
@@ -153,7 +153,7 @@ export default function PageClient() {
           >
             <Button asChild>
               <Link
-                href={`/admin/disponibilidade/${scheduleId}/sobescrever-datas/novo`}
+                href={`/disponibilidade/${scheduleId}/sobescrever-datas/novo`}
               >
                 Adicionar uma substituição
               </Link>

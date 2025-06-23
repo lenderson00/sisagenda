@@ -88,70 +88,48 @@ const AgendamentosPage = async ({ params }: { params: Promise<Params> }) => {
       <div className="space-y-4 p-4 pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex rounded-md border">
+            <div className="flex rounded-md border overflow-hidden">
               <Link
-                href="/admin/agenda/proximos"
+                href="/agenda/proximos"
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   tab === "proximos"
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-accent text-accent-foreground"
                     : "hover:bg-muted"
                 }`}
               >
                 Próximos
               </Link>
               <Link
-                href="/admin/agenda/nao-confirmado"
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                href="/agenda/nao-confirmado"
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-500 ${
                   tab === "nao-confirmado"
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-accent text-accent-foreground"
                     : "hover:bg-muted"
                 }`}
               >
                 Não confirmado
               </Link>
               <Link
-                href="/admin/agenda/anteriores"
+                href="/agenda/anteriores"
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   tab === "anteriores"
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-accent text-accent-foreground"
                     : "hover:bg-muted"
                 }`}
               >
                 Anteriores
               </Link>
               <Link
-                href="/admin/agenda/cancelado"
+                href="/agenda/cancelado"
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   tab === "cancelado"
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-accent text-accent-foreground"
                     : "hover:bg-muted"
                 }`}
               >
                 Cancelados
               </Link>
             </div>
-            <Button variant="outline">
-              <IconFilter className="mr-2 size-4" />
-              Filtrar
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" disabled>
-              <IconDeviceFloppy className="mr-2 size-4" />
-              Salvar
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  Segmento
-                  <IconChevronDown className="ml-2 size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>Segmento 1</DropdownMenuItem>
-                <DropdownMenuItem>Segmento 2</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
         {renderContent()}
