@@ -28,7 +28,7 @@ const isStale = (data: ScheduleStore | null): boolean => {
   return now - data.lastUpdated > MAX_AGE_MS;
 };
 
-export const scheduleStore = atomWithStorage<ScheduleStore | null>(
+const scheduleStore = atomWithStorage<ScheduleStore | null>(
   STORAGE_KEY,
   null,
   {

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -31,27 +31,15 @@ const itemSchema = z.object({
 
 export const detailsFormSchema = z.object({
   // Step 1
-  cnpj: z.string().min(1, "CNPJ é obrigatório."),
-  razaoSocial: z.string().min(1, "Razão Social é obrigatória."),
-  email: z.string().email("E-mail inválido."),
-  driverName: z.string().min(1, "Nome do motorista é obrigatório."),
-  vehiclePlate: z.string().min(1, "Placa do veículo é obrigatória."),
-  contactPhone: z.string().min(1, "Telefone de contato é obrigatório."),
-  additionalNotes: z.string().optional(),
-
-  // Step 2
   notaFiscal: z.string().min(1, "Nota Fiscal é obrigatória."),
   ordemDeCompra: z.string().min(1, "Ordem de Compra é obrigatória."),
-  isFirstDelivery: z.enum(["yes", "no"], {
-    required_error: "Selecione uma opção.",
-  }),
+  isFirstDelivery: z.enum(["yes", "no"]),
   processNumber: z.string().min(1, "Número do processo é obrigatório."),
   needsLabAnalysis: z.enum(["yes", "no"], {
     required_error: "Selecione uma opção.",
   }),
-  // extraDocumentation: z.any().optional(), // Para anexo de arquivo
 
-  // Step 3
+  // Step 2
   items: z
     .array(itemSchema)
     .min(1, "É necessário adicionar pelo menos um item."),
@@ -103,19 +91,15 @@ export function DetailsForm() {
     },
   });
 
-  const createAppointmentMutation = useCreateAppointment(
+  const {
+    mutate: createAppointment,
+    isPending,
+    isSuccess,
+  } = useCreateAppointment(
     schedule?.organizationId ?? "",
     schedule?.deliveryTypeId ?? "",
     schedule?.dateTime ?? new Date(),
   );
-
-  // Check for stale schedule data
-  useEffect(() => {
-    if (isStale) {
-      clearSchedule();
-      router.push("/agendar");
-    }
-  }, [isStale, clearSchedule, router]);
 
   // Load saved form data on mount
   useEffect(() => {
@@ -136,21 +120,13 @@ export function DetailsForm() {
   }, [form, safeOrgSlug, safeDeliverySlug]);
 
   useEffect(() => {
-    if (createAppointmentMutation.isSuccess) {
+    if (isSuccess) {
       // Clear saved form data and schedule on successful submission
       clearFormData(safeOrgSlug, safeDeliverySlug);
       clearSchedule();
       router.push("/agendar/sucesso");
     }
-  }, [
-    createAppointmentMutation.isSuccess,
-    router,
-    safeOrgSlug,
-    safeDeliverySlug,
-    clearSchedule,
-  ]);
-
-  const items = form.watch("items");
+  }, [isSuccess, router, safeOrgSlug, safeDeliverySlug, clearSchedule]);
 
   async function onSubmit(values: DetailsFormValues) {
     if (!schedule) {
@@ -167,7 +143,7 @@ export function DetailsForm() {
       return;
     }
 
-    createAppointmentMutation.mutate({
+    createAppointment({
       organizationId: schedule.organizationId,
       deliveryTypeId: schedule.deliveryTypeId,
       dateTime: new Date(schedule.dateTime),
@@ -176,7 +152,11 @@ export function DetailsForm() {
     });
   }
 
-  async function nextStep() {
+  async function nextStep(e?: React.MouseEvent) {
+    // Prevent form submission
+    e?.preventDefault();
+    e?.stopPropagation();
+
     const fields = steps[currentStep].fields;
     const isValid = await form.trigger(fields as (keyof DetailsFormValues)[]);
     if (isValid) {
@@ -184,7 +164,11 @@ export function DetailsForm() {
     }
   }
 
-  function prevStep() {
+  function prevStep(e?: React.MouseEvent) {
+    // Prevent form submission
+    e?.preventDefault();
+    e?.stopPropagation();
+
     setCurrentStep((prev) => prev - 1);
   }
 
@@ -193,95 +177,87 @@ export function DetailsForm() {
   }
 
   return (
-    <FormProvider {...form}>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="w-full">
-            <CardHeader>
-              <div className="flex items-center justify-center gap-4">
-                {steps.map((step, index) => (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Card className="w-full">
+          <CardHeader>
+            <div className="flex items-center justify-center gap-4">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex flex-col items-center gap-2">
                   <div
-                    key={step.id}
-                    className="flex flex-col items-center gap-2"
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-full border-2",
+                      currentStep >= index
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-muted-foreground",
+                    )}
                   >
-                    <div
-                      className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-full border-2",
-                        currentStep >= index
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-muted-foreground",
-                      )}
-                    >
-                      {currentStep > index ? (
-                        <Check className="h-4 w-4" />
-                      ) : (
-                        <span
-                          className={cn(
-                            currentStep === index
-                              ? "text-primary-foreground"
-                              : "text-muted-foreground",
-                          )}
-                        >
-                          {index + 1}
-                        </span>
-                      )}
-                    </div>
-                    <p
-                      className={cn(
-                        "text-sm",
-                        currentStep >= index
-                          ? "text-primary"
-                          : "text-muted-foreground",
-                      )}
-                    >
-                      {step.name}
-                    </p>
+                    {currentStep > index ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <span
+                        className={cn(
+                          currentStep === index
+                            ? "text-primary-foreground"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        {index + 1}
+                      </span>
+                    )}
                   </div>
-                ))}
-              </div>
-            </CardHeader>
+                  <p
+                    className={cn(
+                      "text-sm",
+                      currentStep >= index
+                        ? "text-primary"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {step.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </CardHeader>
 
-            <CardContent>
-              {currentStep === 0 && <Step1DeliveryDetails />}
-              {currentStep === 1 && <Step2Items />}
-            </CardContent>
+          <CardContent>
+            {currentStep === 0 && <Step1DeliveryDetails />}
+            {currentStep === 1 && <Step2Items />}
+          </CardContent>
 
-            <CardFooter className="flex justify-between">
-              {currentStep > 0 && (
-                <Button type="button" variant="secondary" onClick={prevStep}>
-                  Anterior
-                </Button>
-              )}
+          <CardFooter className="flex justify-between">
+            {currentStep > 0 && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={(e) => prevStep(e)}
+              >
+                Anterior
+              </Button>
+            )}
 
-              {currentStep < steps.length - 1 ? (
-                <Button
-                  type="button"
-                  variant="default"
-                  onClick={nextStep}
-                  className="ml-auto"
-                >
-                  Próximo
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  className="ml-auto"
-                  disabled={
-                    createAppointmentMutation.isPending || !items?.length
-                  }
-                  onClick={() => {
-                    console.log(form.getValues());
-                  }}
-                >
-                  {createAppointmentMutation.isPending
-                    ? "Agendando..."
-                    : "Finalizar Agendamento"}
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        </form>
-      </Form>
-    </FormProvider>
+            {currentStep < steps.length - 1 ? (
+              <Button
+                type="button"
+                variant="default"
+                onClick={(e) => nextStep(e)}
+                className="ml-auto"
+              >
+                Próximo
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                className="ml-auto"
+                disabled={isPending || !form.formState.isValid}
+              >
+                {isPending ? "Agendando..." : "Finalizar Agendamento"}
+              </Button>
+            )}
+          </CardFooter>
+        </Card>
+      </form>
+    </Form>
   );
 }
