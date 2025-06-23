@@ -43,7 +43,7 @@ export default async function DisponibilidadePage() {
             {schedules.map((schedule) => (
               <Link
                 key={schedule.id}
-                href={`/admin/disponibilidade/${schedule.id}`}
+                href={`/disponibilidade/${schedule.id}`}
                 className="flex justify-between items-center hover:bg-accent"
               >
                 <div className="flex items-center gap-2 p-4  cursor-pointer">
