@@ -175,34 +175,25 @@ export function RescheduleDialog({
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `/api/appointments/${appointmentId}/reschedule`,
+        `/api/appointments/${appointmentId}/action`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            reason: data.reason,
-            newDate: finalDateTime.toISOString(),
+            action: "request_reschedule",
+            payload: {
+              reason: data.reason,
+              newDate: finalDateTime.toISOString(),
+            },
           }),
         },
       );
 
       if (!response.ok) {
-        throw new Error("Failed to request reschedule");
+        throw new Error(await response.text());
       }
-
-      // Create activity for reschedule request
-      await fetch(`/api/appointments/${appointmentId}/activities`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          type: "RESCHEDULE_REQUESTED",
-          content: `Solicitação de reagendamento: ${data.reason}. Nova data proposta: ${finalDateTime.toLocaleDateString("pt-BR")} às ${selectedTime}`,
-        }),
-      });
 
       toast.success("Solicitação de reagendamento enviada com sucesso!");
 
@@ -218,7 +209,11 @@ export function RescheduleDialog({
       router.refresh();
     } catch (error) {
       console.error("Failed to request reschedule:", error);
-      toast.error("Erro ao enviar solicitação de reagendamento");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erro ao enviar solicitação de reagendamento",
+      );
     } finally {
       setIsSubmitting(false);
     }

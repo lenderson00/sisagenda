@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AppointmentActivityList } from "./_components/appointment-activity";
 import { AppointmentDetailsCard } from "./_components/appointment-details-card";
 import { AppointmentFormDetailsSidebar } from "./_components/appointment-form-details-sidebar";
+import { AppointmentActions } from "./_components/appointment-actions";
 
 interface AppointmentPageProps {
   params: Promise<{ id: string }>;
@@ -12,7 +13,7 @@ interface AppointmentPageProps {
 async function getAppointment(id: string) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id || !session?.user?.role) {
     return null;
   }
 
@@ -35,7 +36,30 @@ async function getAppointment(id: string) {
     },
   });
 
-  return appointment;
+  if (!appointment) {
+    notFound();
+  }
+
+  const { user } = session;
+  const userRole = user.role;
+
+  if (userRole === "SUPER_ADMIN" || userRole === "COMIMSUP") {
+    return appointment;
+  }
+
+  if (userRole === "FORNECEDOR") {
+    if (appointment.userId === user.id) {
+      return appointment;
+    }
+  }
+
+  if (userRole === "ADMIN" || userRole === "USER") {
+    if (appointment.deliveryType.organizationId === user.organizationId) {
+      return appointment;
+    }
+  }
+
+  return null;
 }
 
 export default async function AppointmentPage({
@@ -63,7 +87,8 @@ export default async function AppointmentPage({
           />
         </div>
         {/* Right Column: Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-6">
+          <AppointmentActions appointment={appointment} />
           <AppointmentFormDetailsSidebar appointment={appointment} />
         </div>
       </div>
