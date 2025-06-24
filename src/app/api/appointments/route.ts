@@ -137,22 +137,39 @@ export async function POST(req: Request) {
         { status: 404 },
       );
     }
+    const result = await prisma.$transaction(async (tx) => {
+      const appointment = await tx.appointment.create({
+        data: {
+          organizationId: validatedInput.organizationId,
+          deliveryTypeId: validatedInput.deliveryTypeId,
+          date: new Date(validatedInput.dateTime),
+          duration: deliveryType.duration,
+          ordemDeCompra: validatedInput.ordemDeCompra,
+          observations: validatedInput.observations,
+          userId: user.id,
+          status: "PENDING_CONFIRMATION",
+          internalId: generateInternalId(),
+        },
+      });
 
-    const appointment = await prisma.appointment.create({
-      data: {
-        organizationId: validatedInput.organizationId,
-        deliveryTypeId: validatedInput.deliveryTypeId,
-        date: new Date(validatedInput.dateTime),
-        duration: deliveryType.duration,
-        ordemDeCompra: validatedInput.ordemDeCompra,
-        observations: validatedInput.observations,
-        userId: user.id,
-        status: "PENDING_CONFIRMATION",
-        internalId: generateInternalId(),
-      },
+      await tx.appointmentActivity.create({
+        data: {
+          appointmentId: appointment.id,
+          userId: user.id,
+          type: "CREATED",
+          title: "Agendamento Criado",
+          content: "Agendamento criado com sucesso.",
+          previousStatus: null,
+          newStatus: "PENDING_CONFIRMATION",
+          priority: 1000,
+
+        },
+      });
+
+      return appointment;
     });
 
-    return new Response(JSON.stringify(appointment), { status: 201 });
+    return new Response(JSON.stringify(result), { status: 201 });
   } catch (error) {
     console.error("Failed to create appointment:", error);
     if (error instanceof z.ZodError) {
