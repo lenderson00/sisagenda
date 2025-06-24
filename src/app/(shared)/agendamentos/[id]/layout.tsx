@@ -31,6 +31,9 @@ const AgendamentosLayout = async ({
         include: {
           user: true,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       },
     },
   });
