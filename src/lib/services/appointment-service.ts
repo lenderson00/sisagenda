@@ -74,7 +74,7 @@ export class AppointmentService {
         data: {
           appointmentId,
           userId: this.user.id,
-          type: "APPOINTMENT_CONFIRMED",
+          type: "CONFIRMED",
           title: "Agendamento confirmado",
           content: "O sistema confirmout o agendamento",
         },
@@ -532,9 +532,8 @@ export class AppointmentService {
           userId: this.user.id,
           type: "STATUS_CHANGE",
           title: "Agendamento Reagendado",
-          content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${
-            reason ? `Motivo: ${reason}` : ""
-          }`,
+          content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${reason ? `Motivo: ${reason}` : ""
+            }`,
           previousStatus,
           newStatus: "RESCHEDULED",
         },
