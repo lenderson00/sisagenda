@@ -142,7 +142,7 @@ export function AppointmentActivityList({
                   <AppointmentActivityItem
                     key={activity.id}
                     activity={activity}
-                    isLast={index === activities.length - 1}
+                    isLast={activity.id === lastTimelineActivity?.id}
                     isFirst={index === 0}
                   />
                 ))}
@@ -151,7 +151,7 @@ export function AppointmentActivityList({
           <div className=" relative">
             {!isAppointmentCancelled && (
               <form onSubmit={handleSubmitComment(onCommentSubmit)}>
-                <div className="flex gap-3">
+                <div className="flex gap-3 mt-6">
                   <div className="flex-1  bg-background">
                     <Textarea
                       placeholder="Deixe um comentário..."

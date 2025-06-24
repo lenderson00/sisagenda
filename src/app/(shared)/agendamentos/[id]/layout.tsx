@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import dayjs from "@/lib/dayjs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
+import { ActionsProvider } from "./_context/actions-context";
 
 const AgendamentosLayout = async ({
   children,
@@ -23,6 +24,15 @@ const AgendamentosLayout = async ({
     where: {
       id,
     },
+    include: {
+      user: true,
+      deliveryType: true,
+      activities: {
+        include: {
+          user: true,
+        },
+      },
+    },
   });
 
   if (!appointment) {
@@ -30,24 +40,7 @@ const AgendamentosLayout = async ({
   }
 
   return (
-    <>
-      {session.user.role === "ADMIN" &&
-        [
-          "RESCHEDULE_REQUESTED",
-          "CANCELLATION_REQUESTED",
-          "PENDING_CONFIRMATION",
-        ].includes(appointment?.status) && (
-          <Alert
-            variant="destructive"
-            className="bg-destructive/10 rounded-none"
-          >
-            <AlertCircleIcon />
-            <AlertTitle className="font-bold">Atenção!</AlertTitle>
-            <AlertDescription>
-              <p>Ação necessária para continuar com o agendamento.</p>
-            </AlertDescription>
-          </Alert>
-        )}
+    <ActionsProvider appointment={appointment}>
       <div className="flex flex-col items-center justify-start pt-12 min-h-screen h-fit bg-muted relative">
         <div className="w-full container flex flex-col gap-4 items-center">
           <div className="flex flex-col gap-0 items-center">
@@ -61,7 +54,7 @@ const AgendamentosLayout = async ({
         </div>
         <div className=" my-12 text-sm text-muted-foreground">SisAgenda</div>
       </div>
-    </>
+    </ActionsProvider>
   );
 };
 

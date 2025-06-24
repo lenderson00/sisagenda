@@ -23,7 +23,7 @@ export function Comment({
       <div
         className={cn(
           "bg-neutral-400 dark:bg-neutral-600 w-0.5   absolute left-[16px]  -top-1 -bottom-1 ",
-          isLast && "bottom-2",
+          isLast && "h-1/2",
         )}
       />
       <div className="flex items-start gap-3 bg-background rounded-md border relative ">
