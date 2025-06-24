@@ -108,6 +108,21 @@ export class AppointmentService {
           newStatus: 'REJECTED',
         },
       })
+      await tx.appointmentActivity.create({
+        data: {
+          appointmentId,
+          userId: this.user.id,
+          type: 'CANCELLED',
+          title: 'Agendamento Cancelado',
+          content: 'O sistema cancelou o agendamento.',
+          previousStatus: 'REJECTED',
+          newStatus: 'CANCELLED',
+        },
+      })
+      await tx.appointment.update({
+        where: { id: appointmentId },
+        data: { status: 'CANCELLED' },
+      })
       return updatedAppointment
     })
   }
@@ -211,6 +226,21 @@ export class AppointmentService {
           newStatus: 'CANCELLED',
         },
       })
+      await tx.appointmentActivity.create({
+        data: {
+          appointmentId,
+          userId: this.user.id,
+          type: 'CANCELLED',
+          title: 'Cancelamento Aprovado',
+          content: 'O agendamento foi cancelado pelo sistema.',
+          previousStatus: 'CANCELLATION_REQUESTED',
+          newStatus: 'CANCELLED',
+        },
+      })
+      await tx.appointment.update({
+        where: { id: appointmentId },
+        data: { status: 'CANCELLED' },
+      })
       return updatedAppointment
     })
   }
@@ -256,21 +286,7 @@ export class AppointmentService {
           newStatus: previousStatus,
         },
       })
-      await tx.appointmentActivity.create({
-        data: {
-          appointmentId,
-          userId: this.user.id,
-          type: 'CANCELLED',
-          title: 'Cancelamento Rejeitado',
-          content: 'O agendamento foi cancelado automaticamente pelo sistema.',
-          previousStatus: previousStatus,
-          newStatus: 'CANCELLED',
-        },
-      })
-      await tx.appointment.update({
-        where: { id: appointmentId },
-        data: { status: 'CANCELLED' },
-      })
+
       return updatedAppointment
     })
   }
@@ -386,6 +402,7 @@ export class AppointmentService {
           newStatus: 'RESCHEDULE_REQUESTED',
         },
       })
+
       return updatedAppointment
     })
   }

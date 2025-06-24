@@ -26,6 +26,7 @@ export function TimelineItem({
   isFirst?: boolean;
 }) {
   const isSystem = activity.content?.includes("sistema");
+  const isUnique = isFirst && isLast;
   return (
     <div className="flex items-stretch gap-2 relative ml-4 py-2">
       <div
@@ -33,6 +34,7 @@ export function TimelineItem({
           "bg-neutral-400 dark:bg-neutral-600 w-0.5 h-full  absolute left-0  top-0 bottom-0 ",
           isFirst && "top-1/2",
           isLast && "bottom-1/2",
+          isUnique && "hidden",
         )}
       />
       <div className="flex -ml-[19px] items-center">
