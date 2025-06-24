@@ -32,7 +32,7 @@ export function TimelineItem({
         className={cn(
           "bg-neutral-400 dark:bg-neutral-600 w-0.5 h-full  absolute left-0  top-0 bottom-0 ",
           isFirst && "top-1/2",
-          isLast && "bottom-2",
+          isLast && "bottom-1/2",
         )}
       />
       <div className="flex -ml-[19px] items-center">

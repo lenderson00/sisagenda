@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { TimelineItem } from "./_activity-item/timeline-item";
 import { Comment } from "./_activity-item/comment";
+import { getStatusReadableName } from "@/lib/utils";
 
 const getActivityDescription = (activity: AppointmentActivity) => {
   switch (activity.type) {
@@ -28,7 +29,18 @@ const getActivityDescription = (activity: AppointmentActivity) => {
     case "COMMENT":
       return "comentou:";
     case "STATUS_CHANGE":
-      return `alterou o status ${activity.previousStatus ? `de ${activity.previousStatus}` : ""} para ${(activity.metadata as any)?.newStatus || "novo status"}`;
+      return (
+        <div className="text-sm text-muted-foreground inline-flex items-center gap-1">
+          alterou o status{" "}
+          <span className="font-bold text-foreground">
+            {getStatusReadableName(activity.previousStatus || "")}
+          </span>{" "}
+          para{" "}
+          <span className="font-bold text-foreground">
+            {getStatusReadableName(activity.newStatus || "")}
+          </span>
+        </div>
+      );
     case "RESCHEDULE_REQUESTED":
       return "solicitou reagendamento";
     case "RESCHEDULE_CONFIRMED":
