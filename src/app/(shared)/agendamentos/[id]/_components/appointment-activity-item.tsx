@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { TimelineItem } from "./_activity-item/timeline-item";
+import { Comment } from "./_activity-item/comment";
 
 const getActivityDescription = (activity: AppointmentActivity) => {
   switch (activity.type) {
@@ -50,33 +51,27 @@ const getActivityDescription = (activity: AppointmentActivity) => {
 export function AppointmentActivityItem({
   activity,
   isLast,
+  isFirst,
 }: {
   activity: AppointmentActivity & {
     user: User;
   };
   isLast?: boolean;
+  isFirst?: boolean;
 }) {
   const activityDescription = getActivityDescription(activity);
 
+  console.log(activity.type, isLast, isFirst);
+
   switch (activity.type) {
     case "COMMENT":
-      return (
-        <TimelineItem
-          activity={activity}
-          isLast={isLast}
-          icon={<MessageSquare className="size-4" />}
-        >
-          {activityDescription}{" "}
-          <span className="font-semibold text-gray-800 dark:text-gray-100">
-            "{activity.content || activity.title}"
-          </span>
-        </TimelineItem>
-      );
+      return <Comment activity={activity} isLast={isLast} />;
     case "CREATED":
       return (
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<Plus className="size-4" />}
         >
           {activityDescription}
@@ -87,6 +82,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<Pencil className="size-4" />}
         >
           {activityDescription}
@@ -97,6 +93,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<X className="size-4" />}
         >
           {activityDescription}
@@ -107,6 +104,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<CheckCheck className="size-4" />}
         >
           {activityDescription}
@@ -117,6 +115,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<Clock className="size-4" />}
         >
           {activityDescription}
@@ -127,6 +126,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<Check className="size-4" />}
         >
           {activityDescription}
@@ -137,6 +137,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<X className="size-4" />}
         >
           {activityDescription}
@@ -147,6 +148,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<SignalHigh className="size-4" />}
         >
           {activityDescription}
@@ -157,6 +159,7 @@ export function AppointmentActivityItem({
         <TimelineItem
           activity={activity}
           isLast={isLast}
+          isFirst={isFirst}
           icon={<Activity className="size-4" />}
         >
           {activityDescription}

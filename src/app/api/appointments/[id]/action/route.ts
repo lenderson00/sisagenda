@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import { AppointmentService } from '@/lib/services/appointment-service'
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -42,6 +43,18 @@ export async function PATCH(
     const { id: appointmentId } = await params
 
     const appointmentService = new AppointmentService(session)
+
+    const appointment = await prisma.appointment.findUnique({
+      where: {
+        id: appointmentId,
+      },
+    })
+
+    const lockEvent = ["COMPLETED", "CANCELLED", "CANCELLATION_REQUESTED", "RESCHEDULE_REQUESTED", "RESCHEDULE_REJECTED", "RESCHEDULE_APPROVED"]
+
+    if (!appointment || lockEvent.includes(appointment.status)) {
+      return new NextResponse('Agendamento não encontrado ou não pode ser alterado', { status: 404 })
+    }
 
     switch (action) {
       case 'approve':

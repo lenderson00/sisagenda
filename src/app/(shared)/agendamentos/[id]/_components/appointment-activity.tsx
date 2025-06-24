@@ -113,14 +113,24 @@ export function AppointmentActivityList({
     }
   }, [commentErrors]);
 
+  const timelineActivities = activities.filter(
+    (activity) => activity.type !== "COMMENT",
+  );
+  const lastTimelineActivity =
+    timelineActivities[timelineActivities.length - 1];
+
+  const isAppointmentCancelled = activities.some((activity) => {
+    return activity.type === "CANCELLED";
+  });
+
   return (
     <div className="space-y-4">
       <div>
         <div>
           <div className="text-xl flex items-center gap-2">Atividades</div>
         </div>
-        <div className="flex flex-col gap-4 mt-4">
-          <div className="space-y-3 my-2">
+        <div className="flex flex-col mt-4">
+          <div className="flex flex-col ">
             {activities.length !== 0 &&
               activities
                 .sort(
@@ -128,49 +138,52 @@ export function AppointmentActivityList({
                     new Date(a.createdAt).getTime() -
                     new Date(b.createdAt).getTime(),
                 )
-                .map((activity) => (
+                .map((activity, index) => (
                   <AppointmentActivityItem
                     key={activity.id}
                     activity={activity}
+                    isLast={index === activities.length - 1}
+                    isFirst={index === 0}
                   />
                 ))}
           </div>
 
-          {/* Comment Form */}
           <div className=" relative">
-            <form onSubmit={handleSubmitComment(onCommentSubmit)}>
-              <div className="flex gap-3">
-                <div className="flex-1  bg-background">
-                  <Textarea
-                    placeholder="Deixe um comentário..."
-                    className="min-h-[80px] p-4 resize-none border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    {...registerComment("content", {
-                      required: "O comentário não pode estar vazio",
-                    })}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        onCommentSubmit({ content: e.currentTarget.value });
-                      }
-                    }}
-                  />
+            {!isAppointmentCancelled && (
+              <form onSubmit={handleSubmitComment(onCommentSubmit)}>
+                <div className="flex gap-3">
+                  <div className="flex-1  bg-background">
+                    <Textarea
+                      placeholder="Deixe um comentário..."
+                      className="min-h-[80px] p-4 resize-none border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      {...registerComment("content", {
+                        required: "O comentário não pode estar vazio",
+                      })}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          onCommentSubmit({ content: e.currentTarget.value });
+                        }
+                      }}
+                    />
 
-                  <div className="flex justify-end absolute bottom-2 right-2">
-                    <Button
-                      type="submit"
-                      disabled={isSubmittingComment}
-                      className="border rounded-full bg-background size-8 hover:bg-accent"
-                    >
-                      {isSubmittingComment ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <IconArrowUp className="size-4 text-foreground" />
-                      )}
-                    </Button>
+                    <div className="flex justify-end absolute bottom-2 right-2">
+                      <Button
+                        type="submit"
+                        disabled={isSubmittingComment}
+                        className="border rounded-full bg-background size-8 hover:bg-accent"
+                      >
+                        {isSubmittingComment ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <IconArrowUp className="size-4 text-foreground" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            )}
           </div>
         </div>
       </div>
