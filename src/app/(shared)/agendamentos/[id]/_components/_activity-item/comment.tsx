@@ -1,5 +1,10 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { AppointmentActivity, User } from "@prisma/client";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export function Comment({
@@ -17,10 +22,19 @@ export function Comment({
             {activity.user.name}
           </span>{" "}
           <span className="text-gray-500 ml-2">
-            {formatDistanceToNow(new Date(activity.createdAt), {
-              addSuffix: true,
-              locale: ptBR,
-            })}
+            <Tooltip>
+              <TooltipTrigger>
+                {formatDistanceToNow(new Date(activity.createdAt), {
+                  addSuffix: true,
+                  locale: ptBR,
+                })}
+              </TooltipTrigger>
+              <TooltipContent>
+                {format(new Date(activity.createdAt), "PPP", {
+                  locale: ptBR,
+                })}
+              </TooltipContent>
+            </Tooltip>
           </span>
         </p>
         <p className="text-sm text-gray-700 leading-relaxed">
