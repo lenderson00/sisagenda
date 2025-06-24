@@ -126,28 +126,40 @@ export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
     reason?: string;
   }) => {
     setIsRescheduleDialogOpen(false); // Close the RescheduleDialog form
+
+    const isDirectReschedule = allowedActions.canReschedule;
+    const action = isDirectReschedule ? "reschedule" : "request_reschedule";
+    const title = isDirectReschedule
+      ? "Confirmar Reagendamento"
+      : "Confirmar Solicitação de Reagendamento";
+    const confirmText = isDirectReschedule
+      ? "Confirmar Reagendamento"
+      : "Confirmar Solicitação";
+    const description = (
+      <p>
+        Você tem certeza que deseja{" "}
+        {isDirectReschedule ? "reagendar" : "solicitar o reagendamento"} desta
+        consulta para
+        <strong className="mx-1">
+          {new Date(payload.newDate).toLocaleString()}
+        </strong>
+        ?
+        {payload.reason && (
+          <>
+            <br />
+            Motivo: {payload.reason}
+          </>
+        )}
+      </p>
+    );
+
     openConfirmationModal({
-      action: "request_reschedule",
+      action,
       payload,
-      title: "Confirmar Solicitação de Reagendamento",
-      description: (
-        <p>
-          Você tem certeza que deseja solicitar o reagendamento desta consulta
-          para
-          <strong className="mx-1">
-            {new Date(payload.newDate).toLocaleString()}
-          </strong>
-          ?
-          {payload.reason && (
-            <>
-              <br />
-              Motivo: {payload.reason}
-            </>
-          )}
-        </p>
-      ),
-      confirmText: "Confirmar Solicitação",
-      icon: CalendarPlus,
+      title,
+      description,
+      confirmText,
+      icon: isDirectReschedule ? CalendarClock : CalendarPlus,
     });
   };
 
@@ -307,15 +319,7 @@ export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
           )}
           {allowedActions.canReschedule && (
             <Button
-              onClick={() =>
-                openConfirmationModal({
-                  action: "reschedule",
-                  title: "Reagendar Consulta",
-                  description:
-                    "Tem certeza que deseja reagendar esta consulta diretamente?",
-                  icon: CalendarClock,
-                })
-              }
+              onClick={() => setIsRescheduleDialogOpen(true)}
               disabled={isLoading}
               className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
               variant="outline"
@@ -345,24 +349,15 @@ export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
             </Button>
           )}
           {allowedActions.canRequestReschedule && (
-            <>
-              <Button
-                onClick={() => setIsRescheduleDialogOpen(true)}
-                disabled={isLoading}
-                variant="outline"
-                className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
-              >
-                <CalendarPlus className={iconClass} />
-                Solicitar Reagendamento
-              </Button>
-              <RescheduleDialog
-                appointmentId={appointmentId}
-                currentDate={currentDate}
-                open={isRescheduleDialogOpen}
-                onOpenChange={setIsRescheduleDialogOpen}
-                onFormSubmit={handleRescheduleFormSubmit}
-              />
-            </>
+            <Button
+              onClick={() => setIsRescheduleDialogOpen(true)}
+              disabled={isLoading}
+              variant="outline"
+              className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
+            >
+              <CalendarPlus className={iconClass} />
+              Solicitar Reagendamento
+            </Button>
           )}
 
           {allowedActions.canEdit && (
@@ -437,6 +432,17 @@ export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
           confirmButtonVariant={currentActionDetails.confirmButtonVariant}
           isLoading={isLoading}
           icon={currentActionDetails.icon || AlertTriangle}
+        />
+      )}
+
+      {(allowedActions.canReschedule ||
+        allowedActions.canRequestReschedule) && (
+        <RescheduleDialog
+          appointmentId={appointmentId}
+          currentDate={currentDate}
+          open={isRescheduleDialogOpen}
+          onOpenChange={setIsRescheduleDialogOpen}
+          onFormSubmit={handleRescheduleFormSubmit}
         />
       )}
     </>

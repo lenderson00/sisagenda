@@ -33,7 +33,7 @@ export class AppointmentService {
     if (userRole === 'SUPER_ADMIN' || userRole === 'COMIMSUP') {
       return true
     }
-    if (userRole === 'SUPPLIER') {
+    if (userRole === 'FORNECEDOR') {
       return appointment.userId === this.user.id
     }
     if (userRole === 'ADMIN' || userRole === 'USER') {
@@ -150,7 +150,7 @@ export class AppointmentService {
       throw new Error('Not authorized')
     }
 
-    if (this.user.role !== 'SUPPLIER') {
+    if (this.user.role !== 'FORNECEDOR') {
       throw new Error('Forbidden')
     }
 
@@ -256,6 +256,21 @@ export class AppointmentService {
           newStatus: previousStatus,
         },
       })
+      await tx.appointmentActivity.create({
+        data: {
+          appointmentId,
+          userId: this.user.id,
+          type: 'CANCELLED',
+          title: 'Cancelamento Rejeitado',
+          content: 'O agendamento foi cancelado automaticamente pelo sistema.',
+          previousStatus: previousStatus,
+          newStatus: 'CANCELLED',
+        },
+      })
+      await tx.appointment.update({
+        where: { id: appointmentId },
+        data: { status: 'CANCELLED' },
+      })
       return updatedAppointment
     })
   }
@@ -340,7 +355,7 @@ export class AppointmentService {
       throw new Error('Not authorized')
     }
 
-    if (this.user.role !== 'SUPPLIER') {
+    if (this.user.role !== 'FORNECEDOR') {
       throw new Error('Forbidden')
     }
 
@@ -452,6 +467,68 @@ export class AppointmentService {
           previousStatus: 'RESCHEDULE_REQUESTED',
           newStatus: previousStatus,
         },
+      })
+      return updatedAppointment
+    })
+  }
+
+  async reschedule(
+    appointmentId: string,
+    newDate: Date,
+    reason?: string,
+  ) {
+    const appointment = await this.getAppointment(appointmentId)
+    if (!appointment || !this.isUserAuthorized(appointment)) {
+      throw new Error('Not authorized')
+    }
+
+    if (this.user.role !== 'ADMIN') {
+      throw new Error('Forbidden: Only admins can reschedule directly.')
+    }
+
+    const previousStatus = appointment.status
+    if (
+      previousStatus !== 'PENDING_CONFIRMATION' &&
+      previousStatus !== 'CONFIRMED'
+    ) {
+      throw new Error('Invalid action for current appointment status')
+    }
+
+    return prisma.$transaction(async (tx) => {
+      const updatedAppointment = await tx.appointment.update({
+        where: { id: appointmentId },
+        data: {
+          status: 'RESCHEDULED',
+          date: newDate,
+        },
+      })
+
+      await tx.appointmentActivity.create({
+        data: {
+          appointmentId,
+          userId: this.user.id,
+          type: 'STATUS_CHANGE',
+          title: 'Agendamento Reagendado',
+          content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${reason ? `Motivo: ${reason}` : ''
+            }`,
+          previousStatus,
+          newStatus: 'RESCHEDULED',
+        },
+      })
+      await tx.appointmentActivity.create({
+        data: {
+          appointmentId,
+          userId: this.user.id,
+          type: 'STATUS_CHANGE',
+          title: 'Agendamento Confirmado',
+          content: `O agendamento foi confirmado pelo sistema para ${newDate.toLocaleString()}.`,
+          previousStatus,
+          newStatus: 'CONFIRMED',
+        },
+      })
+      await tx.appointment.update({
+        where: { id: appointmentId },
+        data: { status: 'CONFIRMED' },
       })
       return updatedAppointment
     })

@@ -16,6 +16,7 @@ const actionSchema = z.object({
     'request_reschedule',
     'approve_reschedule',
     'reject_reschedule',
+    'reschedule',
   ]),
   payload: z.any().optional(),
 })
@@ -64,6 +65,15 @@ export async function PATCH(
       case 'request_reschedule': {
         const { newDate, reason } = payload
         await appointmentService.requestReschedule(
+          appointmentId,
+          new Date(newDate),
+          reason,
+        )
+        break
+      }
+      case 'reschedule': {
+        const { newDate, reason } = payload
+        await appointmentService.reschedule(
           appointmentId,
           new Date(newDate),
           reason,
