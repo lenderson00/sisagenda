@@ -60,7 +60,6 @@ export function AppointmentActivityList({
       return response.json();
     },
     initialData: initialActivities,
-    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   const {
@@ -120,7 +119,7 @@ export function AppointmentActivityList({
         <div>
           <div className="text-xl flex items-center gap-2">Atividades</div>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 mt-4">
           <div className="space-y-3 my-2">
             {activities.length !== 0 &&
               activities
