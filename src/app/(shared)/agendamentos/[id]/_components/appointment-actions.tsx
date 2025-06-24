@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import type { AppointmentWithRelations } from "@/types/app";
+import type { AppointmentWithRelations } from "../types/app";
 import { AppointmentActionButtons } from "./appointment-action-buttons";
 
 interface AppointmentActionsProps {

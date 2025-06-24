@@ -17,12 +17,10 @@ import {
 import { useState } from "react";
 import { CancellationDialog } from "./cancellation-dialog";
 import { RescheduleDialog } from "./reschedule-dialog";
+import type { AppointmentWithRelations } from "../types/app";
 
 interface AppointmentFormDetailsSidebarProps {
-  appointment: Appointment & {
-    deliveryType: DeliveryType;
-    user: User;
-  };
+  appointment: AppointmentWithRelations;
 }
 
 export function AppointmentFormDetailsSidebar({
@@ -33,48 +31,6 @@ export function AppointmentFormDetailsSidebar({
 
   return (
     <div className="space-y-6 sticky top-20">
-      {/* Action Cards */}
-      <Card className="">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            Ações Disponíveis
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="space-y-2">
-            <Button
-              onClick={() => setShowRescheduleDialog(true)}
-              variant="outline"
-              className="w-full justify-start gap-3 h-auto p-3 border-orange-200 hover:bg-orange-50"
-            >
-              <RotateCcw className="h-4 w-4 text-orange-600" />
-              <div className="text-left">
-                <p className="text-sm font-medium text-orange-900">
-                  Solicitar Reagendamento
-                </p>
-                <p className="text-xs text-orange-700">Propor nova data.</p>
-              </div>
-            </Button>
-
-            <Button
-              onClick={() => setShowCancellationDialog(true)}
-              variant="outline"
-              className="w-full justify-start gap-3 h-auto p-3 border-red-200 hover:bg-red-50"
-            >
-              <X className="h-4 w-4 text-red-600" />
-              <div className="text-left">
-                <p className="text-sm font-medium text-red-900">
-                  Solicitar Cancelamento
-                </p>
-                <p className="text-xs text-red-700">
-                  Cancelar este agendamento
-                </p>
-              </div>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Client Information */}
       {/* <Card>
         <CardHeader>

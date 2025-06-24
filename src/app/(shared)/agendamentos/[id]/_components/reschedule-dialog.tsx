@@ -28,6 +28,7 @@ interface RescheduleDialogProps {
   currentDate: Date;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onFormSubmit?: (payload: { newDate: string; reason?: string }) => void;
 }
 
 interface FormData {
@@ -51,6 +52,7 @@ export function RescheduleDialog({
   currentDate,
   open,
   onOpenChange,
+  onFormSubmit,
 }: RescheduleDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -171,6 +173,14 @@ export function RescheduleDialog({
       .hour(hour)
       .minute(minute)
       .toDate();
+
+    if (onFormSubmit) {
+      onFormSubmit({
+        newDate: finalDateTime.toISOString(),
+        reason: data.reason,
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {

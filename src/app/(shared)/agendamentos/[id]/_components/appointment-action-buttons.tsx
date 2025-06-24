@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AppointmentWithRelations } from "../types/app";
@@ -8,18 +10,51 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { AllowedActions } from "./appointment-actions";
 import { RescheduleDialog } from "./reschedule-dialog";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import {
+  Check,
+  X,
+  Ban,
+  CalendarClock,
+  CalendarPlus,
+  FileText,
+  Edit3,
+  UserX,
+  CheckCircle2,
+  AlertTriangle,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface AppointmentActionButtonsProps {
   appointment: AppointmentWithRelations;
   allowedActions: AllowedActions;
 }
 
-export function AppointmentActionButtons({
-  appointment,
-  allowedActions,
-}: AppointmentActionButtonsProps) {
+interface ActionDetails {
+  action: string;
+  payload?: any;
+  title: string;
+  description: React.ReactNode;
+  confirmText?: string;
+  confirmButtonVariant?: "default" | "destructive";
+  icon?: LucideIcon;
+}
+
+export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
   const [isRescheduleDialogOpen, setIsRescheduleDialogOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
+    useState(false);
+  const [currentActionDetails, setCurrentActionDetails] =
+    useState<ActionDetails | null>(null);
+
+  // Guard against undefined appointment prop
+  if (!props?.appointment) {
+    return null;
+  }
+
+  const { appointment, allowedActions } = props;
   const { id: appointmentId, date: currentDate } = appointment;
+
   const queryClient = useQueryClient();
 
   const { mutate: handleAction, isPending: isLoading } = useMutation({
@@ -37,13 +72,18 @@ export function AppointmentActionButtons({
       });
 
       if (!res.ok) {
-        throw new Error(await res.text());
+        const errorData = await res
+          .json()
+          .catch(() => ({ message: res.statusText }));
+        throw new Error(
+          errorData.message || "Ocorreu um erro ao processar a ação.",
+        );
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       toast.success("Sucesso!", {
-        description: "A ação foi executada com sucesso.",
+        description: `A ação "${variables.action}" foi executada com sucesso.`,
       });
       if (isRescheduleDialogOpen) {
         setIsRescheduleDialogOpen(false);
@@ -60,7 +100,56 @@ export function AppointmentActionButtons({
         description: error.message,
       });
     },
+    onSettled: () => {
+      setIsConfirmationDialogOpen(false);
+      setCurrentActionDetails(null);
+    },
   });
+
+  const openConfirmationModal = (details: ActionDetails) => {
+    setCurrentActionDetails(details);
+    setIsConfirmationDialogOpen(true);
+  };
+
+  const onConfirmAction = () => {
+    if (currentActionDetails) {
+      handleAction({
+        action: currentActionDetails.action,
+        payload: currentActionDetails.payload,
+      });
+    }
+  };
+
+  // This function would be called by RescheduleDialog's onFormSubmit prop
+  const handleRescheduleFormSubmit = (payload: {
+    newDate: string;
+    reason?: string;
+  }) => {
+    setIsRescheduleDialogOpen(false); // Close the RescheduleDialog form
+    openConfirmationModal({
+      action: "request_reschedule",
+      payload,
+      title: "Confirmar Solicitação de Reagendamento",
+      description: (
+        <p>
+          Você tem certeza que deseja solicitar o reagendamento desta consulta
+          para
+          <strong className="mx-1">
+            {new Date(payload.newDate).toLocaleString()}
+          </strong>
+          ?
+          {payload.reason && (
+            <>
+              <br />
+              Motivo: {payload.reason}
+            </>
+          )}
+        </p>
+      ),
+      confirmText: "Confirmar Solicitação",
+      icon: CalendarPlus,
+    });
+  };
 
   const hasActions = Object.values(allowedActions).some((v) => v === true);
 
@@ -68,143 +157,288 @@ export function AppointmentActionButtons({
     return null;
   }
 
+  const actionButtonClass = "w-full justify-start px-3";
+  const iconClass = "w-4 h-4 mr-2";
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Ações Rápidas</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        {allowedActions.canApprove && (
-          <Button
-            onClick={() => handleAction({ action: "approve" })}
-            disabled={isLoading}
-            className="w-full"
-          >
-            Aprovar
-          </Button>
-        )}
-        {allowedActions.canReject && (
-          <Button
-            onClick={() => handleAction({ action: "reject" })}
-            disabled={isLoading}
-            variant="destructive"
-            className="w-full"
-          >
-            Rejeitar
-          </Button>
-        )}
-
-        {allowedActions.canApproveOrRejectCancellation && (
-          <>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Ações Rápidas</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          {allowedActions.canApprove && (
             <Button
-              onClick={() => handleAction({ action: "approve_cancellation" })}
+              onClick={() =>
+                openConfirmationModal({
+                  action: "approve",
+                  title: "Aprovar Agendamento",
+                  description:
+                    "Tem certeza que deseja aprovar este agendamento?",
+                  icon: Check,
+                })
+              }
               disabled={isLoading}
-              className="w-full"
+              className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
+              variant="outline"
             >
-              Aprovar Cancelamento
+              <Check className={iconClass} />
+              Aprovar Agendamento
             </Button>
+          )}
+          {allowedActions.canReject && (
             <Button
-              onClick={() => handleAction({ action: "reject_cancellation" })}
-              disabled={isLoading}
-              variant="destructive"
-              className="w-full"
-            >
-              Rejeitar Cancelamento
-            </Button>
-          </>
-        )}
-
-        {allowedActions.canApproveOrRejectReschedule && (
-          <>
-            <Button
-              onClick={() => handleAction({ action: "approve_reschedule" })}
-              disabled={isLoading}
-              className="w-full"
-            >
-              Aprovar Reagendamento
-            </Button>
-            <Button
-              onClick={() => handleAction({ action: "reject_reschedule" })}
+              onClick={() =>
+                openConfirmationModal({
+                  action: "reject",
+                  title: "Rejeitar Agendamento",
+                  description:
+                    "Tem certeza que deseja rejeitar este agendamento?",
+                  confirmButtonVariant: "destructive",
+                  icon: X,
+                })
+              }
               disabled={isLoading}
               variant="destructive"
-              className="w-full"
+              className={actionButtonClass}
             >
-              Rejeitar Reagendamento
+              <X className={iconClass} />
+              Rejeitar Agendamento
             </Button>
-          </>
-        )}
+          )}
 
-        {allowedActions.canCancel && (
-          <Button
-            onClick={() => handleAction({ action: "cancel" })}
-            disabled={isLoading}
-            variant="destructive"
-            className="w-full"
-          >
-            Cancelar
-          </Button>
-        )}
-        {allowedActions.canReschedule && (
-          <Button disabled={isLoading} className="w-full">
-            Reagendar
-          </Button>
-        )}
+          {allowedActions.canApproveOrRejectCancellation && (
+            <>
+              <Button
+                onClick={() =>
+                  openConfirmationModal({
+                    action: "approve_cancellation",
+                    title: "Aprovar Cancelamento",
+                    description:
+                      "Tem certeza que deseja aprovar a solicitação de cancelamento?",
+                    icon: Check,
+                  })
+                }
+                disabled={isLoading}
+                className={actionButtonClass}
+              >
+                <Check className={iconClass} />
+                Aprovar Cancelamento
+              </Button>
+              <Button
+                onClick={() =>
+                  openConfirmationModal({
+                    action: "reject_cancellation",
+                    title: "Rejeitar Cancelamento",
+                    description:
+                      "Tem certeza que deseja rejeitar a solicitação de cancelamento?",
+                    confirmButtonVariant: "destructive",
+                    icon: X,
+                  })
+                }
+                disabled={isLoading}
+                variant="destructive"
+                className={actionButtonClass}
+              >
+                <X className={iconClass} />
+                Rejeitar Cancelamento
+              </Button>
+            </>
+          )}
 
-        {allowedActions.canRequestCancellation && (
-          <Button
-            onClick={() => handleAction({ action: "request_cancellation" })}
-            disabled={isLoading}
-            variant="outline"
-            className="w-full"
-          >
-            Solicitar Cancelamento
-          </Button>
-        )}
-        {allowedActions.canRequestReschedule && (
-          <>
+          {allowedActions.canApproveOrRejectReschedule && (
+            <>
+              <Button
+                onClick={() =>
+                  openConfirmationModal({
+                    action: "approve_reschedule",
+                    title: "Aprovar Reagendamento",
+                    description:
+                      "Tem certeza que deseja aprovar a solicitação de reagendamento?",
+                    icon: Check,
+                  })
+                }
+                disabled={isLoading}
+                className={actionButtonClass}
+              >
+                <Check className={iconClass} />
+                Aprovar Reagendamento
+              </Button>
+              <Button
+                onClick={() =>
+                  openConfirmationModal({
+                    action: "reject_reschedule",
+                    title: "Rejeitar Reagendamento",
+                    description:
+                      "Tem certeza que deseja rejeitar a solicitação de reagendamento?",
+                    confirmButtonVariant: "destructive",
+                    icon: X,
+                  })
+                }
+                disabled={isLoading}
+                variant="destructive"
+                className={actionButtonClass}
+              >
+                <X className={iconClass} />
+                Rejeitar Reagendamento
+              </Button>
+            </>
+          )}
+
+          {allowedActions.canCancel && (
             <Button
-              onClick={() => setIsRescheduleDialogOpen(true)}
+              onClick={() =>
+                openConfirmationModal({
+                  action: "cancel",
+                  title: "Cancelar Agendamento",
+                  description:
+                    "Tem certeza que deseja cancelar este agendamento? Esta ação pode ser irreversível.",
+                  confirmButtonVariant: "destructive",
+                  icon: Ban,
+                })
+              }
+              disabled={isLoading}
+              variant="destructive"
+              className={actionButtonClass}
+            >
+              <Ban className={iconClass} />
+              Cancelar Agendamento
+            </Button>
+          )}
+          {allowedActions.canReschedule && (
+            <Button
+              onClick={() =>
+                openConfirmationModal({
+                  action: "reschedule",
+                  title: "Reagendar Consulta",
+                  description:
+                    "Tem certeza que deseja reagendar esta consulta diretamente?",
+                  icon: CalendarClock,
+                })
+              }
+              disabled={isLoading}
+              className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
+              variant="outline"
+            >
+              <CalendarClock className={iconClass} />
+              Reagendar
+            </Button>
+          )}
+
+          {allowedActions.canRequestCancellation && (
+            <Button
+              onClick={() =>
+                openConfirmationModal({
+                  action: "request_cancellation",
+                  title: "Solicitar Cancelamento",
+                  description:
+                    "Tem certeza que deseja solicitar o cancelamento deste agendamento?",
+                  icon: FileText,
+                })
+              }
               disabled={isLoading}
               variant="outline"
-              className="w-full"
+              className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
             >
-              Solicitar Reagendamento
+              <FileText className={iconClass} />
+              Solicitar Cancelamento
             </Button>
-            <RescheduleDialog
-              appointmentId={appointmentId}
-              currentDate={currentDate}
-              open={isRescheduleDialogOpen}
-              onOpenChange={setIsRescheduleDialogOpen}
-            />
-          </>
-        )}
+          )}
+          {allowedActions.canRequestReschedule && (
+            <>
+              <Button
+                onClick={() => setIsRescheduleDialogOpen(true)}
+                disabled={isLoading}
+                variant="outline"
+                className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
+              >
+                <CalendarPlus className={iconClass} />
+                Solicitar Reagendamento
+              </Button>
+              <RescheduleDialog
+                appointmentId={appointmentId}
+                currentDate={currentDate}
+                open={isRescheduleDialogOpen}
+                onOpenChange={setIsRescheduleDialogOpen}
+                onFormSubmit={handleRescheduleFormSubmit}
+              />
+            </>
+          )}
 
-        {allowedActions.canEdit && (
-          <Button disabled={isLoading} className="w-full">
-            Editar
-          </Button>
-        )}
+          {allowedActions.canEdit && (
+            <Button
+              onClick={() =>
+                openConfirmationModal({
+                  action: "edit",
+                  title: "Editar Agendamento",
+                  description:
+                    "Tem certeza que deseja editar os detalhes deste agendamento?",
+                  icon: Edit3,
+                })
+              }
+              disabled={isLoading}
+              className={`${actionButtonClass} bg-background text-foreground hover:bg-accent hover:text-accent-foreground`}
+              variant="outline"
+            >
+              <Edit3 className={iconClass} />
+              Editar Agendamento
+            </Button>
+          )}
 
-        {allowedActions.canMarkAsNoShow && (
-          <Button
-            onClick={() => handleAction({ action: "mark_as_no_show" })}
-            disabled={isLoading}
-            variant="outline"
-            className="w-full"
-          >
-            Marcar como Não Compareceu
-          </Button>
-        )}
-        {allowedActions.canMarkAsCompleted && (
-          <Button
-            onClick={() => handleAction({ action: "mark_as_completed" })}
-            disabled={isLoading}
-            className="w-full"
-          >
-            Marcar como Concluído
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+          {allowedActions.canMarkAsNoShow && (
+            <Button
+              onClick={() =>
+                openConfirmationModal({
+                  action: "mark_as_no_show",
+                  title: "Marcar como Não Compareceu",
+                  description:
+                    "Tem certeza que deseja marcar este agendamento como não comparecido?",
+                  confirmButtonVariant: "destructive",
+                  icon: UserX,
+                })
+              }
+              disabled={isLoading}
+              variant="outline"
+              className={`${actionButtonClass} bg-background text-destructive border-destructive hover:bg-destructive/10`}
+            >
+              <UserX className={iconClass} />
+              Marcar como Não Compareceu
+            </Button>
+          )}
+          {allowedActions.canMarkAsCompleted && (
+            <Button
+              onClick={() =>
+                openConfirmationModal({
+                  action: "mark_as_completed",
+                  title: "Marcar como Concluído",
+                  description:
+                    "Tem certeza que deseja marcar este agendamento como concluído?",
+                  icon: CheckCircle2,
+                })
+              }
+              disabled={isLoading}
+              className={`${actionButtonClass} bg-green-600 text-white hover:bg-green-700`}
+            >
+              <CheckCircle2 className={iconClass} />
+              Marcar como Concluído
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+
+      {currentActionDetails && (
+        <ConfirmationDialog
+          open={isConfirmationDialogOpen}
+          onOpenChange={setIsConfirmationDialogOpen}
+          title={currentActionDetails.title}
+          description={currentActionDetails.description}
+          onConfirm={onConfirmAction}
+          confirmText={currentActionDetails.confirmText}
+          confirmButtonVariant={currentActionDetails.confirmButtonVariant}
+          isLoading={isLoading}
+          icon={currentActionDetails.icon || AlertTriangle}
+        />
+      )}
+    </>
   );
 }
