@@ -13,6 +13,7 @@ import type {
   Organization,
   User,
 } from "@prisma/client";
+import { DataTableTest } from "./test-data-table/data-table";
 
 const AvailableTabs = [
   {
@@ -42,7 +43,7 @@ const AvailableTabs = [
   },
 ];
 
-type AppointmentWithRelations = Appointment & {
+export type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;
   organization: Organization;
   user: User;
@@ -51,7 +52,7 @@ type AppointmentWithRelations = Appointment & {
 const getAppointments = async (
   tab: string,
 ): Promise<AppointmentWithRelations[]> => {
-  const response = await fetch(`/api/appointments?tab=${tab}`);
+  const response = await fetch("/api/appointments");
   if (!response.ok) {
     throw new Error("Failed to fetch appointments");
   }
@@ -117,6 +118,7 @@ export function PageClient({ slug }: { slug?: string[] }) {
       {!isLoading && !isError && data && data.length > 0 && (
         <DataTable data={data} />
       )}
+      <DataTableTest data={data ?? []} />
       {!isLoading && !isError && data && data.length === 0 && (
         <EmptyScreen
           Icon={IconFilter}

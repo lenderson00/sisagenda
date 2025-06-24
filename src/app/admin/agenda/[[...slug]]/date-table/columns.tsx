@@ -23,30 +23,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { getStatusReadableName } from "@/lib/utils";
 
 export type AppointmentRow = Appointment & {
   deliveryType: DeliveryType;
   organization: Organization;
   user: User;
-};
-
-const translateStatus = (status: string): string => {
-  const statusTranslations: Record<string, string> = {
-    PENDING_CONFIRMATION: "Pendente de Confirmação",
-    CONFIRMED: "Confirmado",
-    REJECTED: "Rejeitado",
-    CANCELLATION_REQUESTED: "Pedido de Cancelamento",
-    CANCELLATION_REJECTED: "Pedido de Cancelamento Rejeitado",
-    CANCELLED: "Cancelado",
-    RESCHEDULE_REQUESTED: "Reagendamento Solicitado",
-    RESCHEDULE_CONFIRMED: "Reagendamento Confirmado",
-    RESCHEDULE_REJECTED: "Reagendamento Rejeitado",
-    RESCHEDULED: "Reagendado",
-    COMPLETED: "Concluído",
-    SUPPLIER_NO_SHOW: "Fornecedor Não Compareceu",
-  };
-
-  return statusTranslations[status] || status;
 };
 
 export const columns: ColumnDef<AppointmentRow>[] = [
@@ -58,7 +40,7 @@ export const columns: ColumnDef<AppointmentRow>[] = [
         href={`/agendamentos/${row.original.id}`}
         className="hover:underline"
       >
-        {translateStatus(row.original.status)}
+        {getStatusReadableName(row.original.status)}
       </Link>
     ),
   },

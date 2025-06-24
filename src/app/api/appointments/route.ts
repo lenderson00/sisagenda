@@ -52,6 +52,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const hasTab = req.nextUrl.searchParams.has("tab");
+
   const tab = req.nextUrl.searchParams.get("tab") || "pendentes";
 
   const where = buildWhere(tab);
@@ -73,9 +75,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
+
+
   try {
     const appointments = await prisma.appointment.findMany({
-      where,
+      where: hasTab ? where : {},
       orderBy: {
         date: "asc",
       },
