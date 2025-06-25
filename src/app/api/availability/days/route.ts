@@ -8,6 +8,33 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AppointmentStatus } from "@prisma/client";
 
+/**
+ * Calculates the minimum date considering antecedence days and available weekdays
+ * @param minAntecedenceDays - Minimum number of days in advance required
+ * @param availableWeekDays - Array of available weekdays (0-6, where 0 is Sunday)
+ * @returns The earliest available date considering antecedence
+ */
+function calculateMinimumAvailableDate(
+  minAntecedenceDays: number,
+  availableWeekDays: number[],
+): dayjs.Dayjs {
+  const today = dayjs().startOf("day");
+  let currentDate = today;
+  let availableDaysCount = 0;
+
+  // Count available days until we reach the minimum antecedence
+  while (availableDaysCount < minAntecedenceDays) {
+    currentDate = currentDate.add(1, "day");
+    const weekDay = currentDate.day();
+
+    if (availableWeekDays.includes(weekDay)) {
+      availableDaysCount++;
+    }
+  }
+
+  return currentDate;
+}
+
 export async function GET(request: Request) {
   const session = await auth();
 
@@ -40,17 +67,9 @@ export async function GET(request: Request) {
       },
       include: {
         availability: true,
-        deliveryTypes: {
-          select: {
-            futureBookingLimitDays: true,
-            limitFutureBookings: true,
-            limitPerDay: true,
-            maxBookingsPerDay: true,
-          },
-        },
+        deliveryTypes: true,
       },
     });
-
 
     if (!schedule) {
       return NextResponse.json(
@@ -62,23 +81,35 @@ export async function GET(request: Request) {
     const availability = schedule.availability;
     const deliveryType = schedule.deliveryTypes[0];
 
-
     const availableWeekDaysInMonth = availability.map((day) => day.weekDay);
 
     const yearMonth = dayjs(`${year}-${month}`);
     const daysInMonth = yearMonth.daysInMonth();
     const disabledDays: number[] = [];
 
-    const today = dayjs().startOf('day');
-    const limitDate = deliveryType.limitFutureBookings && deliveryType.futureBookingLimitDays > 0
-      ? today.add(deliveryType.futureBookingLimitDays, 'day')
-      : null;
+    const minAntecedence = deliveryType.minAntecedence;
+
+    const today = dayjs().startOf("day");
+
+    console.log(minAntecedence);
+
+    // Calculate minimum available date considering antecedence and available weekdays
+    const minimumAvailableDate = calculateMinimumAvailableDate(
+      minAntecedence,
+      availableWeekDaysInMonth,
+    );
+
+    const limitDate =
+      deliveryType.limitFutureBookings &&
+      deliveryType.futureBookingLimitDays > 0
+        ? today.add(deliveryType.futureBookingLimitDays, "day")
+        : null;
 
     let dailyAppointmentCounts: Map<number, number> = new Map();
 
     if (deliveryType.limitPerDay) {
-      const startOfMonth = yearMonth.startOf('month');
-      const endOfMonth = yearMonth.endOf('month');
+      const startOfMonth = yearMonth.startOf("month");
+      const endOfMonth = yearMonth.endOf("month");
 
       const appointments = await prisma.appointment.findMany({
         where: {
@@ -116,12 +147,13 @@ export async function GET(request: Request) {
       const currentDate = yearMonth.date(day);
       const weekDay = currentDate.day();
 
-      if (currentDate.isBefore(today, 'day')) {
+      // Check if date is before minimum available date (considering antecedence)
+      if (currentDate.isBefore(minimumAvailableDate, "day")) {
         disabledDays.push(day);
         continue;
       }
 
-      if (limitDate && currentDate.isAfter(limitDate, 'day')) {
+      if (limitDate && currentDate.isAfter(limitDate, "day")) {
         disabledDays.push(day);
         continue;
       }
@@ -131,7 +163,10 @@ export async function GET(request: Request) {
         continue;
       }
 
-      if (deliveryType.limitPerDay && (dailyAppointmentCounts.get(day) || 0) >= deliveryType.maxBookingsPerDay) {
+      if (
+        deliveryType.limitPerDay &&
+        (dailyAppointmentCounts.get(day) || 0) >= deliveryType.maxBookingsPerDay
+      ) {
         disabledDays.push(day);
       }
     }
@@ -139,10 +174,12 @@ export async function GET(request: Request) {
     const dto = {
       disabledDays: [...new Set(disabledDays)].sort((a, b) => a - b),
       availableWeekDays: availableWeekDaysInMonth,
+      minimumAntecedence: minAntecedence,
+      minimumAvailableDate: minimumAvailableDate.format("YYYY-MM-DD"),
+      today: today.format("YYYY-MM-DD"),
     };
 
     return NextResponse.json(dto);
-
   } catch (err) {
     console.error(err);
     return NextResponse.json(

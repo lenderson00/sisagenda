@@ -7,6 +7,7 @@ import {
 import FutureBookingLimitForm from "./_components/future-booking-limit-form";
 import MaxBookingsPerDayForm from "./_components/max-bookings-per-day-form";
 import SkeletonForm from "./_components/skelleton";
+import MinAntecedenceForm from "./_components/min-antecedence-form";
 
 export default function Page({
   params,
@@ -27,6 +28,18 @@ export default function Page({
 
   return (
     <div className="space-y-4">
+      <MinAntecedenceForm
+        title="Dias mínimos de antecedência"
+        description="Defina o número mínimo de dias de antecedência para agendamentos."
+        helpText="O agendamento só será permitido com pelo menos este número de dias de antecedência, considerando apenas dias disponíveis."
+        initialValues={{
+          minAntecedence: deliveryType?.minAntecedence,
+        }}
+        onSubmit={updateFutureBookingLimit as any}
+        isSubmitting={isUpdatingFutureBookingLimit}
+        isLoading={isLoading}
+        deliveryTypeId={deliveryTypeId}
+      />
       <FutureBookingLimitForm
         title="Limitar reservas futuras"
         description="Ative para limitar o quão no futuro os agendamentos podem ser feitos."

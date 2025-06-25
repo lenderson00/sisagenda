@@ -140,6 +140,8 @@ model DeliveryType {
   limitPerDay       Boolean @default(false)
   maxBookingsPerDay Int     @default(10)
 
+  minAntecedence Int @default(2)
+
   duration       Int @default(60) @db.SmallInt
   lunchTimeStart Int @default(720) @db.SmallInt
   lunchTimeEnd   Int @default(780) @db.SmallInt
