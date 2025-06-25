@@ -3,6 +3,7 @@ import { AppointmentsTimelineChart } from "@/components/dashboard/appointments-t
 import { RecentAppointmentsTable } from "@/components/dashboard/recent-appointments-table";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { SupplierPerformanceChart } from "@/components/dashboard/supplier-performance-chart";
+import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import {
   getDashboardData,
@@ -29,73 +30,70 @@ export default async function DashboardPage() {
   const organization = await getOrganizationInfo(session.user.organizationId);
 
   return (
-    <div className="flex flex-col gap-4 p-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Dashboard {organization?.sigla ? ` - ${organization.sigla}` : ""}
-          </h1>
-          <p className="text-muted-foreground">
-            Welcome back to your organization dashboard
-          </p>
+    <>
+      <PageHeader
+        title={` Dashboard ${organization?.sigla ? ` - ${organization.sigla}` : ""}`}
+        subtitle="Veja"
+        main
+      />
+      <div className="flex flex-col gap-4 px-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatsCard
+            title="Today's Appointments"
+            value={stats.todayAppointments}
+            icon={Clock}
+            description="Appointments scheduled for today"
+          />
+          <StatsCard
+            title="Pending Appointments"
+            value={stats.pendingAppointments}
+            icon={Calendar}
+            description="Appointments needing confirmation"
+          />
+          <StatsCard
+            title="Completion Rate"
+            value={
+              stats.totalAppointments > 0
+                ? Math.round(
+                    (stats.completedAppointments / stats.totalAppointments) *
+                      100,
+                  )
+                : 0
+            }
+            unit="%"
+            icon={Package}
+            description="Based on all-time appointments"
+          />
+          <StatsCard
+            title="Active Suppliers"
+            value={supplierPerformance.length}
+            icon={Users}
+            description="Suppliers with appointments"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <AppointmentsTimelineChart
+            data={timeSeriesData}
+            className="lg:col-span-2"
+          />
+          <AppointmentStatusChart
+            data={statusDistribution}
+            className="lg:col-span-1"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <SupplierPerformanceChart
+            data={supplierPerformance}
+            className="lg:col-span-1"
+          />
+          <RecentAppointmentsTable
+            appointments={recentAppointments}
+            className="lg:col-span-2"
+          />
         </div>
       </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Today's Appointments"
-          value={stats.todayAppointments}
-          icon={Clock}
-          description="Appointments scheduled for today"
-        />
-        <StatsCard
-          title="Pending Appointments"
-          value={stats.pendingAppointments}
-          icon={Calendar}
-          description="Appointments needing confirmation"
-        />
-        <StatsCard
-          title="Completion Rate"
-          value={
-            stats.totalAppointments > 0
-              ? Math.round(
-                  (stats.completedAppointments / stats.totalAppointments) * 100,
-                )
-              : 0
-          }
-          unit="%"
-          icon={Package}
-          description="Based on all-time appointments"
-        />
-        <StatsCard
-          title="Active Suppliers"
-          value={supplierPerformance.length}
-          icon={Users}
-          description="Suppliers with appointments"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <AppointmentsTimelineChart
-          data={timeSeriesData}
-          className="lg:col-span-2"
-        />
-        <AppointmentStatusChart
-          data={statusDistribution}
-          className="lg:col-span-1"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <SupplierPerformanceChart
-          data={supplierPerformance}
-          className="lg:col-span-1"
-        />
-        <RecentAppointmentsTable
-          appointments={recentAppointments}
-          className="lg:col-span-2"
-        />
-      </div>
-    </div>
+    </>
   );
 }

@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AppSidebarOpenTrigger from "./open-sidebar-open-trigger";
 
 type PageHeaderProps = {
   title: string;
@@ -16,6 +17,7 @@ type PageHeaderProps = {
   children?: React.ReactNode;
   backButton?: boolean;
   className?: string;
+  main?: boolean;
 };
 
 export const PageHeader = ({
@@ -24,6 +26,7 @@ export const PageHeader = ({
   children,
   backButton,
   className,
+  main = false,
 }: PageHeaderProps) => {
   const router = useRouter();
 
@@ -35,6 +38,8 @@ export const PageHeader = ({
         className,
       )}
     >
+      {main && <AppSidebarOpenTrigger />}
+
       <div
         className={cn("w-full truncate ltr:mr-4 rtl:ml-4 flex items-center")}
       >

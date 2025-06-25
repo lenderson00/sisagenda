@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { SidebarNav } from "./_components/sidebar";
-import { PageHeader } from "../../_components/page-header";
+import { PageHeader } from "@/components/page-header";
 
 const createSidebarNavItems = (scheduleId: string) => {
   return [
@@ -62,6 +62,7 @@ const DeliveryTypeLayout = async ({
         title={schedule.name}
         backButton
         subtitle="Edite o horário de disponibilidade existente."
+        main
       />
 
       <div className="flex gap-4 p-4">

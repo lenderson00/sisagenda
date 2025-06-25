@@ -1,5 +1,5 @@
 import { IconCalendar, IconDots, IconPencil } from "@tabler/icons-react";
-import { PageHeader } from "../../_components/page-header";
+import { PageHeader } from "@/components/page-header";
 import { EmptyScreen } from "../../agenda/[[...slug]]/_components/empty-screen";
 import { CreateAvailabilityDialog } from "./_components/create-availability-dialog";
 import { auth } from "@/lib/auth";
@@ -28,6 +28,7 @@ export default async function DisponibilidadePage() {
       <PageHeader
         title="Disponibilidade"
         subtitle="Veja a disponibilidade de horários para cada tipo de evento."
+        main
       >
         <CreateAvailabilityDialog orgId={orgId} />
       </PageHeader>

@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { SidebarNav } from "./_components/sidebar";
-import { PageHeader } from "../../_components/page-header";
+import { PageHeader } from "../@/components/page-header";
 import Footer from "@/components/footer";
 
 const createSidebarNavItems = (deliveryTypeId: string) => {

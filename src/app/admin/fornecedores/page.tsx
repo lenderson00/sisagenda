@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { CreateSupplierDialog } from "./_components/create-supplier-dialog";
 import { SuppliersPageClient } from "./page-client";
-import { PageHeader } from "../_components/page-header";
+import { PageHeader } from "@/components/page-header";
 
 export default async function SuppliersPage() {
   const session = await auth();

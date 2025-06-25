@@ -2,6 +2,7 @@
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
+import AppSidebarOpenTrigger from "@/components/open-sidebar-open-trigger";
 import { Logo } from "@/components/ui/logo";
 import {
   Sidebar,
@@ -70,7 +71,7 @@ export const AdminSidebar = ({
 }: React.ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar variant="sidebar" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="relative">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
