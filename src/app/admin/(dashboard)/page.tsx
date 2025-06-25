@@ -32,7 +32,9 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-4 p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Dashboard {organization?.sigla ? ` - ${organization.sigla}` : ""}
+          </h1>
           <p className="text-muted-foreground">
             Welcome back to your organization dashboard
           </p>
@@ -41,25 +43,19 @@ export default async function DashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
-          title="Total Appointments"
-          value={stats.totalAppointments}
-          icon={Calendar}
-          description="All time appointments"
-        />
-        <StatsCard
           title="Today's Appointments"
           value={stats.todayAppointments}
           icon={Clock}
           description="Appointments scheduled for today"
         />
         <StatsCard
-          title="Active Suppliers"
-          value={supplierPerformance.length}
-          icon={Users}
-          description="Suppliers with appointments"
+          title="Pending Appointments"
+          value={stats.pendingAppointments}
+          icon={Calendar}
+          description="Appointments needing confirmation"
         />
         <StatsCard
-          title="Delivery Types"
+          title="Completion Rate"
           value={
             stats.totalAppointments > 0
               ? Math.round(
@@ -67,12 +63,15 @@ export default async function DashboardPage() {
                 )
               : 0
           }
+          unit="%"
           icon={Package}
-          description="Completion rate"
-          trend={{
-            value: 12,
-            isPositive: true,
-          }}
+          description="Based on all-time appointments"
+        />
+        <StatsCard
+          title="Active Suppliers"
+          value={supplierPerformance.length}
+          icon={Users}
+          description="Suppliers with appointments"
         />
       </div>
 
