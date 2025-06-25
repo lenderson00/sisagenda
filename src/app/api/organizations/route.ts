@@ -96,11 +96,36 @@ export async function POST(req: Request) {
             createMany: {
               data: [
                 // Monday to Friday, 9 AM to 5 PM
-                { weekDay: 1, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
-                { weekDay: 2, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
-                { weekDay: 3, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
-                { weekDay: 4, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
-                { weekDay: 5, startTime: 9 * 60, endTime: 15 * 60, organizationId: organization.id },
+                {
+                  weekDay: 1,
+                  startTime: 9 * 60,
+                  endTime: 15 * 60,
+                  organizationId: organization.id,
+                },
+                {
+                  weekDay: 2,
+                  startTime: 9 * 60,
+                  endTime: 15 * 60,
+                  organizationId: organization.id,
+                },
+                {
+                  weekDay: 3,
+                  startTime: 9 * 60,
+                  endTime: 15 * 60,
+                  organizationId: organization.id,
+                },
+                {
+                  weekDay: 4,
+                  startTime: 9 * 60,
+                  endTime: 15 * 60,
+                  organizationId: organization.id,
+                },
+                {
+                  weekDay: 5,
+                  startTime: 9 * 60,
+                  endTime: 15 * 60,
+                  organizationId: organization.id,
+                },
               ],
             },
           },

@@ -1,6 +1,6 @@
 import { createColumnConfigHelper } from "@/components/data-table/core/filters";
-import { Key, Mail, UserCheck, Users, Calendar } from "lucide-react";
 import type { User } from "@prisma/client";
+import { Calendar, Key, Mail, UserCheck, Users } from "lucide-react";
 
 const dtf = createColumnConfigHelper<User>();
 

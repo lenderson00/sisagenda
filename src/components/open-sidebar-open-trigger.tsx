@@ -1,10 +1,10 @@
 "use client";
 
 import { useSidebar } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import { PanelLeftOpenIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { cn } from "@/lib/utils";
 
 export default function AppSidebarOpenTrigger() {
   const { toggleSidebar, open } = useSidebar();

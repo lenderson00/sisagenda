@@ -3,11 +3,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import dayjs from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
 import type { AppointmentActivity, User } from "@prisma/client";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import dayjs from "@/lib/dayjs";
 import type { ReactNode } from "react";
 
 export function TimelineItem({

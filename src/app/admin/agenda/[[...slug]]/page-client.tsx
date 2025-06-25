@@ -3,8 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-import { EmptyScreen } from "./_components/empty-screen";
-import { IconFilter } from "@tabler/icons-react";
+import type { FiltersState } from "@/components/data-table/core/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import type {
   Appointment,
@@ -12,9 +11,10 @@ import type {
   Organization,
   User,
 } from "@prisma/client";
-import { DataTableTest } from "./test-data-table/data-table";
-import type { FiltersState } from "@/components/data-table/core/types";
+import { IconFilter } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
+import { EmptyScreen } from "./_components/empty-screen";
+import { DataTableTest } from "./test-data-table/data-table";
 
 const AvailableTabs = [
   {

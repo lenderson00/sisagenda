@@ -1,8 +1,8 @@
+import { EmptyScreen } from "@/app/admin/agenda/[[...slug]]/_components/empty-screen";
 import { prisma } from "@/lib/prisma";
+import { IconBuildingCommunity } from "@tabler/icons-react";
 import OmSelection from "../../_component/om-selection";
 import { Stepper } from "../../_component/stepper";
-import { EmptyScreen } from "@/app/admin/agenda/[[...slug]]/_components/empty-screen";
-import { IconBuildingCommunity } from "@tabler/icons-react";
 
 const AgendarOM = async () => {
   const oms = await prisma.organization.findMany({

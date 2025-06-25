@@ -1,11 +1,11 @@
 "use client";
 
-import type { AppointmentWithRelations } from "../types/app";
-import { AppointmentActionButtons } from "./appointment-action-buttons";
-import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 import { useAllowedActions } from "../_context/actions-context";
+import type { AppointmentWithRelations } from "../types/app";
+import { AppointmentActionButtons } from "./appointment-action-buttons";
 
 interface AppointmentActionsProps {
   appointment: AppointmentWithRelations;

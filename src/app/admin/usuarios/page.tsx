@@ -1,8 +1,8 @@
+import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { CreateUserDialog } from "./_components/create-user-dialog";
 import { UsersPageClient } from "./page-client";
-import { PageHeader } from "@/components/page-header";
 
 export default async function UsersPage() {
   const session = await auth();

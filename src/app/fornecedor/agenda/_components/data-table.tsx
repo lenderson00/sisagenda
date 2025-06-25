@@ -1,9 +1,15 @@
 "use client";
 import { DataTableFilter, useDataTableFilters } from "@/components/data-table";
+import { DataTable } from "@/components/data-table";
 import {
   createTSTColumns,
   createTSTFilters,
 } from "@/components/data-table/integrations/tanstack-table";
+import type {
+  Appointment,
+  AppointmentActivity,
+  DeliveryType,
+} from "@prisma/client";
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -11,13 +17,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import type {
-  Appointment,
-  AppointmentActivity,
-  DeliveryType,
-} from "@prisma/client";
 import { columnsConfig } from "./columns";
-import { DataTable } from "@/components/data-table";
 import { tstColumnsDefs } from "./tst-columns";
 
 type AppointmentWithRelations = Appointment & {

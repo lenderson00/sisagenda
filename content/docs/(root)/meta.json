@@ -1,7 +1,4 @@
 {
   "title": "Aprenda o SisAgenda",
-  "pages": [
-    "index",
-    "super-admin"
-  ]
+  "pages": ["index", "super-admin"]
 }

@@ -1,9 +1,9 @@
 "use client";
 
+import type { Availability } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { availabilityKeys } from "./availability-keys";
-import type { Availability } from "@prisma/client";
 
 type AvailabilityData = {
   name: string;
@@ -67,7 +67,7 @@ export function useDeleteDeliveryType(orgId: string) {
   });
 }
 
-type UpdateAvailabilityData = Availability
+type UpdateAvailabilityData = Availability;
 
 export function useUpdateAvailability(orgId: string) {
   const queryClient = useQueryClient();

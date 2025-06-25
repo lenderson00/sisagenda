@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import type { Organization } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 
 export const organizationKeys = {
   all: ["organizations"],

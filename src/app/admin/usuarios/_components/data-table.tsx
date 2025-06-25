@@ -1,20 +1,20 @@
 "use client";
 import { DataTableFilter, useDataTableFilters } from "@/components/data-table";
+import { DataTable } from "@/components/data-table";
 import {
   createTSTColumns,
   createTSTFilters,
 } from "@/components/data-table/integrations/tanstack-table";
+import type { User } from "@prisma/client";
 import {
+  type RowData,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-  type RowData,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import type { User } from "@prisma/client";
 import { columnsConfig } from "./columns";
-import { DataTable } from "@/components/data-table";
 import { tstColumnsDefs } from "./tst-columns";
 
 declare module "@tanstack/react-table" {

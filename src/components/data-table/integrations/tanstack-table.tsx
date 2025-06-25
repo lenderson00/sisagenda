@@ -5,12 +5,12 @@ import type {
 } from "@tanstack/react-table";
 import type { Column, FilterModel, FiltersState } from "../core/types";
 import { multiOptionFilterFn, optionFilterFn } from "../lib/filter-fns";
+import { dateFilterFn, numberFilterFn, textFilterFn } from "../lib/filter-fns";
 import {
   isColumnOption,
   isColumnOptionArray,
   isStringArray,
 } from "../lib/helpers";
-import { dateFilterFn, numberFilterFn, textFilterFn } from "../lib/filter-fns";
 
 interface CreateTSTColumns<TData> {
   columns: ColumnDef<TData, any>[];

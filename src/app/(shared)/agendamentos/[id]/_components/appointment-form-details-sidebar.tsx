@@ -1,25 +1,20 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import type { Appointment, DeliveryType, User } from "@prisma/client";
 import {
   Briefcase,
   Calendar,
   FileText,
   Mail,
   MapPin,
-  MessageCircle,
   Paperclip,
   Phone,
-  RotateCcw,
   User as UserIcon,
-  X,
 } from "lucide-react";
 import { useState } from "react";
+import type { AppointmentWithRelations } from "../types/app";
 import { CancellationDialog } from "./cancellation-dialog";
 import { RescheduleDialog } from "./reschedule-dialog";
-import type { AppointmentWithRelations } from "../types/app";
 
 interface AppointmentFormDetailsSidebarProps {
   appointment: AppointmentWithRelations;

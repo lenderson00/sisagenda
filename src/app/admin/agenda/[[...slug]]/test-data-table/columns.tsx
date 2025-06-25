@@ -1,14 +1,14 @@
 import { createColumnConfigHelper } from "@/components/data-table/core/filters";
-import type { AppointmentWithRelations } from "../page-client";
-import {
-  IconCircleCheckFilled,
-  IconCalendar,
-  IconUser,
-  IconTruck,
-  IconSettings,
-} from "@tabler/icons-react";
-import { getStatusReadableName } from "@/lib/utils";
 import dayjs from "@/lib/dayjs";
+import { getStatusReadableName } from "@/lib/utils";
+import {
+  IconCalendar,
+  IconCircleCheckFilled,
+  IconSettings,
+  IconTruck,
+  IconUser,
+} from "@tabler/icons-react";
+import type { AppointmentWithRelations } from "../page-client";
 
 const dtf = createColumnConfigHelper<AppointmentWithRelations>();
 

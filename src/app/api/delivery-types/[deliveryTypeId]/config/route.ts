@@ -49,7 +49,7 @@ export async function GET(
       });
     }
 
-    let settings = {
+    const settings = {
       duration: deliveryType.duration,
       lunchTimeStart: deliveryType.lunchTimeStart,
       lunchTimeEnd: deliveryType.lunchTimeEnd,

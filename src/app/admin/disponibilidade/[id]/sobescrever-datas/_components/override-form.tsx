@@ -14,16 +14,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "@/lib/dayjs";
-import { useEffect, useState, useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Availability, Schedule } from "@prisma/client";
+import { IconCalendar } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import type { DateOverride } from "../page-client";
-import { useQuery } from "@tanstack/react-query";
-import type { Schedule, Availability } from "@prisma/client";
-import { cn } from "@/lib/utils";
-import { IconCalendar } from "@tabler/icons-react";
 
 const timeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);

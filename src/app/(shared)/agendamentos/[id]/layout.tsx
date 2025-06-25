@@ -1,9 +1,9 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
-import dayjs from "@/lib/dayjs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { auth } from "@/lib/auth";
+import dayjs from "@/lib/dayjs";
+import { prisma } from "@/lib/prisma";
 import { AlertCircleIcon } from "lucide-react";
+import { notFound, redirect } from "next/navigation";
 import { ActionsProvider } from "./_context/actions-context";
 
 const AgendamentosLayout = async ({

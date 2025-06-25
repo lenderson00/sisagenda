@@ -1,9 +1,9 @@
-import { prisma } from "@/lib/prisma";
-import { SchedulePageClient } from "./page-client";
-import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
-import { IconPlus } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/prisma";
+import { IconPlus } from "@tabler/icons-react";
+import { notFound } from "next/navigation";
+import { SchedulePageClient } from "./page-client";
 
 export default async function SchedulePage({
   params,

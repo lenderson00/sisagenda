@@ -4,26 +4,26 @@ import type React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AppointmentWithRelations } from "../types/app";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { toast } from "sonner";
-import type { AllowedActions } from "./appointment-actions";
-import { RescheduleDialog } from "./reschedule-dialog";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Check,
-  X,
+  AlertTriangle,
   Ban,
   CalendarClock,
   CalendarPlus,
-  FileText,
-  Edit3,
-  UserX,
+  Check,
   CheckCircle2,
-  AlertTriangle,
+  Edit3,
+  FileText,
+  UserX,
+  X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import type { AppointmentWithRelations } from "../types/app";
+import type { AllowedActions } from "./appointment-actions";
+import { RescheduleDialog } from "./reschedule-dialog";
 
 interface AppointmentActionButtonsProps {
   appointment: AppointmentWithRelations;

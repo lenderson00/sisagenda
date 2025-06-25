@@ -1,11 +1,11 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useOrganization } from "@/hooks/use-organization";
-import { Skeleton } from "@/components/ui/skeleton";
-import { GeneralTab } from "./_components/general-tab";
 import { AdvancedTab } from "./_components/advanced-tab";
+import { GeneralTab } from "./_components/general-tab";
 
 interface ConfiguracoesPageClientProps {
   organizationId: string;

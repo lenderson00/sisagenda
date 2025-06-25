@@ -1,16 +1,16 @@
 "use client";
 
-import { useAppointments } from "./_hooks/agenda-queries";
-import { AgendaDataTable } from "./_components/data-table";
-import { AppointmentsHeader } from "./_components/appointments-header";
-import { AppointmentsCalendarView } from "./_components/appointments-calendar";
-import { AgendaPageSkeleton } from "./_components/agenda-page-skeleton";
-import { useSupplierView } from "../_context/view-context";
 import type {
   Appointment,
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
+import { useSupplierView } from "../_context/view-context";
+import { AgendaPageSkeleton } from "./_components/agenda-page-skeleton";
+import { AppointmentsCalendarView } from "./_components/appointments-calendar";
+import { AppointmentsHeader } from "./_components/appointments-header";
+import { AgendaDataTable } from "./_components/data-table";
+import { useAppointments } from "./_hooks/agenda-queries";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;

@@ -1,8 +1,8 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useDeliveryTypeConfig } from "../(main)/_hooks/use-delivery-type-config";
-import { useDeliveryTypeMutations } from "./_hooks/use-delivery-type-mutations";
 import DeleteForm from "./_components/delete-form";
+import { useDeliveryTypeMutations } from "./_hooks/use-delivery-type-mutations";
 
 export default function AvancadoPageClient() {
   const params = useParams();

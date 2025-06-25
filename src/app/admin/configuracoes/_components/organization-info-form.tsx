@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import LoadingDots from "@/components/icons/loading-dots";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -10,17 +11,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import type { Organization } from "@prisma/client";
-import { useUpdateOrganization } from "../_hooks/use-update-organization";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import LoadingDots from "@/components/icons/loading-dots";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Organization } from "@prisma/client";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useUpdateOrganization } from "../_hooks/use-update-organization";
 
 const organizationFormSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),

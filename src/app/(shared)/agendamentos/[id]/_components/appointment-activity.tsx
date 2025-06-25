@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Textarea } from "@/components/ui/textarea";
 import type { AppointmentActivity, User } from "@prisma/client";
+import { IconArrowUp } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -18,12 +19,11 @@ import {
   Send,
   X,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { AppointmentActivityItem } from "./appointment-activity-item";
-import { useSession } from "next-auth/react";
-import { IconArrowUp } from "@tabler/icons-react";
 
 interface AppointmentActivityListProps {
   appointmentId: string;

@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { agendaKeys } from "./agenda-keys";
 import type {
   Appointment,
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { agendaKeys } from "./agenda-keys";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;

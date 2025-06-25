@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -8,14 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type {
   Appointment,
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
-import { ChevronLeft, ChevronRight, Calendar, Clock, User } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type AppointmentWithRelations = Appointment & {

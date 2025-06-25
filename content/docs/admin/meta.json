@@ -1,7 +1,4 @@
 {
   "title": "Admin da OM",
-  "pages": [
-    "index",
-    "super-admin"
-  ]
+  "pages": ["index", "super-admin"]
 }

@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Organization } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useUpdateOrganization } from "../_hooks/use-update-organization";
-import { Organization } from "@prisma/client";
 
 const minutesToTime = (minutes: number | undefined | null) => {
   if (minutes === null || minutes === undefined) {

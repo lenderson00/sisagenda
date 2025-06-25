@@ -6,8 +6,8 @@ import {
 } from "../(main)/_hooks/use-delivery-type";
 import FutureBookingLimitForm from "./_components/future-booking-limit-form";
 import MaxBookingsPerDayForm from "./_components/max-bookings-per-day-form";
-import SkeletonForm from "./_components/skelleton";
 import MinAntecedenceForm from "./_components/min-antecedence-form";
+import SkeletonForm from "./_components/skelleton";
 
 export default function Page({
   params,

@@ -17,17 +17,17 @@ import {
   Calendar,
   Clock,
   FileText,
-  Package,
   User as LucideUser,
   MapPin,
+  Package,
   Receipt,
   TestTube,
   Truck,
 } from "lucide-react";
 import { useState } from "react";
-import { CancellationDialog } from "./cancellation-dialog";
-import { AppointmentItemsDialog } from "./appointment-items-dialog";
 import type { AppointmentWithRelations } from "../types/app";
+import { AppointmentItemsDialog } from "./appointment-items-dialog";
+import { CancellationDialog } from "./cancellation-dialog";
 
 interface AppointmentDetailsCardProps {
   appointment: AppointmentWithRelations;

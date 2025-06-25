@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +11,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,12 +20,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { Organization } from "@prisma/client";
-import { useUpdateOrganization } from "../_hooks/use-update-organization";
-import { toast } from "sonner";
 import { AlertTriangle, PowerOff } from "lucide-react";
+import { toast } from "sonner";
+import { useUpdateOrganization } from "../_hooks/use-update-organization";
 
 interface AdvancedTabProps {
   organization: Organization;

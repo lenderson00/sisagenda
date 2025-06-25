@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,19 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "@/lib/dayjs";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import "dayjs/locale/pt-br";
+import { EmptyCard } from "@/components/empty-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { AvailabilityRule } from "@prisma/client";
+import { IconCalendarOff } from "@tabler/icons-react";
 import { Edit, PlusCircle, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import type { AvailabilityRule } from "@prisma/client";
-import Link from "next/link";
-import { EmptyCard } from "@/components/empty-card";
-import { IconCalendarOff } from "@tabler/icons-react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 dayjs.locale("pt-br");
 

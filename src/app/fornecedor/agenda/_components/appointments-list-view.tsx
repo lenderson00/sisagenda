@@ -17,12 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import dayjs from "@/lib/dayjs";
 import type {
   Appointment,
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
-import dayjs from "@/lib/dayjs";
 import {
   AlertTriangle,
   Calendar,

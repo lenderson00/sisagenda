@@ -1,12 +1,12 @@
-import { IconCalendar, IconDots, IconPencil } from "@tabler/icons-react";
 import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { IconCalendar, IconDots, IconPencil } from "@tabler/icons-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { EmptyScreen } from "../../agenda/[[...slug]]/_components/empty-screen";
 import { CreateAvailabilityDialog } from "./_components/create-availability-dialog";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export default async function DisponibilidadePage() {
   const session = await auth();

@@ -1,7 +1,4 @@
 {
   "title": "Empresas",
-  "pages": [
-    "index",
-    "super-admin"
-  ]
+  "pages": ["index", "super-admin"]
 }

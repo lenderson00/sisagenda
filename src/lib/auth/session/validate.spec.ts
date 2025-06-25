@@ -1,7 +1,7 @@
-import { expect, describe, it, vi } from "vitest";
-import { validateSession } from "./validate";
 import { auth } from "@/lib/auth";
+import { describe, expect, it, vi } from "vitest";
 import { UnauthorizedError } from "../erros/unauthorized";
+import { validateSession } from "./validate";
 
 vi.mock("@/lib/auth", () => ({
   auth: vi.fn(),

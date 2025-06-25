@@ -10,9 +10,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, PlusCircle, Trash2 } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
 import { useState } from "react";
-import { ItemFormDialog, type Item } from "./item-form-dialog";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { type Item, ItemFormDialog } from "./item-form-dialog";
 
 const unitOptions = [
   { value: "UN", label: "Unidade" },

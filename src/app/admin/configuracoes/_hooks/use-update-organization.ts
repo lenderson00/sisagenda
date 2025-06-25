@@ -1,6 +1,6 @@
+import { organizationKeys } from "@/hooks/use-organization";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { organizationKeys } from "@/hooks/use-organization";
 
 type UpdateOrganizationParams = {
   id: string;

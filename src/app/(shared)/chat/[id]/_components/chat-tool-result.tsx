@@ -1,15 +1,15 @@
-import type { Config } from "@/lib/natural-sql/query";
-import { DynamicChart } from "./dynamic-chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  TableHeader,
-  TableRow,
-  TableHead,
+  Table,
   TableBody,
   TableCell,
-  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Config } from "@/lib/natural-sql/query";
+import { DynamicChart } from "./dynamic-chart";
 
 export const ToolResults = ({
   results,

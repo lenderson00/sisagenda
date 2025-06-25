@@ -1,6 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import type { ColumnDef, CellContext } from "@tanstack/react-table";
+import type { CellContext, ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import type { Supplier } from "../page-client";
 import { SupplierActions } from "./supplier-actions";

@@ -1,10 +1,10 @@
 import { createColumnConfigHelper } from "@/components/data-table/core/filters";
-import { Calendar, Building, Package, FileText, Clock } from "lucide-react";
 import type {
   Appointment,
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
+import { Building, Calendar, Clock, FileText, Package } from "lucide-react";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;

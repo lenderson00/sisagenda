@@ -1,29 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Bar,
-  BarChart,
-  Line,
-  LineChart,
-  Area,
-  AreaChart,
-  Pie,
-  PieChart,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-} from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import type { Config } from "@/lib/natural-sql/query";
-import { Label } from "recharts";
 import { transformDataForMultiLineChart } from "@/lib/rechart-format";
+import { useState } from "react";
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Label } from "recharts";
 
 function toTitleCase(str: string): string {
   return str

@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import { SidebarNav } from "./_components/sidebar";
-import { PageHeader } from "@/components/page-header";
 
 const createSidebarNavItems = () => {
   return [

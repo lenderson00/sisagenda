@@ -1,5 +1,6 @@
 "use client";
 
+import { getStatusReadableName } from "@/lib/utils";
 import type { AppointmentActivity, User } from "@prisma/client";
 import {
   Activity,
@@ -12,9 +13,8 @@ import {
   SignalHigh,
   X,
 } from "lucide-react";
-import { TimelineItem } from "./_activity-item/timeline-item";
 import { Comment } from "./_activity-item/comment";
-import { getStatusReadableName } from "@/lib/utils";
+import { TimelineItem } from "./_activity-item/timeline-item";
 
 const getActivityDescription = (activity: AppointmentActivity) => {
   switch (activity.type) {

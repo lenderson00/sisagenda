@@ -1,8 +1,8 @@
+import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { CreateDeliveryTypeDialog } from "./_components/create-delivery-type-dialog";
 import { DeliveryTypesPageClient } from "./page-client";
-import { PageHeader } from "@/components/page-header";
 
 export default async function TransportPage() {
   const session = await auth();

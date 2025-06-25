@@ -44,7 +44,11 @@ const buildWhere = (tab: string): Prisma.AppointmentWhereInput => {
           gte: new Date(),
         },
         status: {
-          in: ["PENDING_CONFIRMATION", "RESCHEDULE_REQUESTED", "CANCELLATION_REQUESTED"],
+          in: [
+            "PENDING_CONFIRMATION",
+            "RESCHEDULE_REQUESTED",
+            "CANCELLATION_REQUESTED",
+          ],
         },
       };
     case "proximos":

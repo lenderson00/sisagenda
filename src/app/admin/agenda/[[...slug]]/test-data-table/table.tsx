@@ -1,3 +1,4 @@
+import type { DataTableFilterActions } from "@/components/data-table/core/types";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import type { DataTableFilterActions } from "@/components/data-table/core/types";
 import { type Table as TanStackTable, flexRender } from "@tanstack/react-table";
 import { XIcon } from "lucide-react";
 import type { SVGProps } from "react";

@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,7 +25,6 @@ import {
 import Link from "next/link";
 import type { AppointmentWithRelations } from "../page";
 import { AppointmentsExport } from "./appointments-export";
-import { PageHeader } from "@/components/page-header";
 import { ViewToggle } from "./view-toggle";
 
 export function AppointmentsHeader() {

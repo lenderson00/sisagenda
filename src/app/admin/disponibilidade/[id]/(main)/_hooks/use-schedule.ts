@@ -3,8 +3,7 @@ import { toast } from "sonner";
 
 export const scheduleKeys = {
   all: ["schedule"] as const,
-  list: (scheduleId: string) =>
-    [...scheduleKeys.all, scheduleId] as const,
+  list: (scheduleId: string) => [...scheduleKeys.all, scheduleId] as const,
 };
 
 interface TimeInterval {
@@ -17,9 +16,7 @@ export function useSchedule(scheduleId: string) {
   return useQuery({
     queryKey: scheduleKeys.list(scheduleId),
     queryFn: async () => {
-      const response = await fetch(
-        `/api/schedules/${scheduleId}`,
-      );
+      const response = await fetch(`/api/schedules/${scheduleId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch schedule");
       }
@@ -33,16 +30,13 @@ export function useUpdateSchedule(scheduleId: string) {
 
   return useMutation({
     mutationFn: async (intervals: TimeInterval[]) => {
-      const response = await fetch(
-        `/api/schedules/${scheduleId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ intervals }),
+      const response = await fetch(`/api/schedules/${scheduleId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({ intervals }),
+      });
 
       console.log(response);
       if (!response.ok) {

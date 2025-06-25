@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingDots from "@/components/icons/loading-dots";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,18 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import type { Schedule } from "@prisma/client";
+import { IconExternalLink } from "@tabler/icons-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useDeliveryType } from "./_hooks/use-delivery-type";
 import { useSchedules } from "./_hooks/use-schedules";
 import { useUpdateDeliveryType } from "./_hooks/use-update-delivery-type";
-import type { Schedule } from "@prisma/client";
-import { cn } from "@/lib/utils";
-import LoadingDots from "@/components/icons/loading-dots";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { IconExternalLink } from "@tabler/icons-react";
-import Link from "next/link";
 
 interface Availability {
   weekDay: number;

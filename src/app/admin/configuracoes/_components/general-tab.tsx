@@ -1,9 +1,9 @@
 "use client";
 
 import type { Organization } from "@prisma/client";
-import OrganizationInfoForm from "./organization-info-form";
 import ComimsupForm from "./comimsup-form";
 import LunchForm from "./lunch-form";
+import OrganizationInfoForm from "./organization-info-form";
 
 interface GeneralTabProps {
   organization: Organization;

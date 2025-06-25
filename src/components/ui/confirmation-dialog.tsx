@@ -1,4 +1,3 @@
-import type * as React from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import type { LucideIcon } from "lucide-react";
+import type * as React from "react";
 
 interface ConfirmationDialogProps {
   open: boolean;

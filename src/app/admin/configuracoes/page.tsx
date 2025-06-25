@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { GeneralTab } from "./_components/general-tab";
-import { prisma } from "@/lib/prisma";
 
 export default async function ConfiguracoesPage() {
   const session = await auth();

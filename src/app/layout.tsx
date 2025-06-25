@@ -1,9 +1,9 @@
 import "./globals.css";
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import { Fira_Mono, Urbanist, Carlito } from "next/font/google";
 import { auth } from "@/lib/auth/auth";
+import type { Metadata } from "next";
 import type { Session } from "next-auth";
+import { Carlito, Fira_Mono, Urbanist } from "next/font/google";
+import localFont from "next/font/local";
 import { Providers } from "./providers";
 
 const urbanist = Urbanist({

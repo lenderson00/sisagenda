@@ -8,16 +8,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn, getStatusColor, getStatusReadableName } from "@/lib/utils";
 import dayjs from "@/lib/dayjs";
-import { IconDots } from "@tabler/icons-react";
-import type { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
+import { cn, getStatusColor, getStatusReadableName } from "@/lib/utils";
 import type {
   Appointment,
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
+import { IconDots } from "@tabler/icons-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;

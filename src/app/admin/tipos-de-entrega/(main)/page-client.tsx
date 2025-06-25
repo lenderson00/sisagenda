@@ -24,7 +24,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useOrganization } from "@/hooks/use-organization";
+import type { DeliveryType } from "@prisma/client";
+import { IconPackage } from "@tabler/icons-react";
 import {
   Clock,
   Copy,
@@ -42,13 +49,6 @@ import {
   useUpdateDeliveryType,
 } from "./_hooks/delivery-type-mutations";
 import { useDeliveryTypes } from "./_hooks/delivery-type-queries";
-import type { DeliveryType } from "@prisma/client";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { IconPackage } from "@tabler/icons-react";
 
 export function DeliveryTypesPageClient({
   organizationId,

@@ -11,8 +11,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { User } from "@prisma/client";
 import { UserCheck, UserMinus, UserX, Users } from "lucide-react";
 import { useState } from "react";
+import { UsersDataTable } from "./_components/data-table";
+import { StatCard } from "./_components/stat-card";
+import { UsersPageSkeleton } from "./_components/users-page-skeleton";
 import {
   useActivateUser,
   useDeactivateUser,
@@ -20,10 +24,6 @@ import {
   usePasswordReset,
 } from "./_hooks/user-mutations";
 import { useUserStats, useUsers } from "./_hooks/user-queries";
-import { UsersDataTable } from "./_components/data-table";
-import type { User } from "@prisma/client";
-import { StatCard } from "./_components/stat-card";
-import { UsersPageSkeleton } from "./_components/users-page-skeleton";
 
 interface UsersPageClientProps {
   organizationId: string;

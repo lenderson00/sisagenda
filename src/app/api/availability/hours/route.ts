@@ -3,6 +3,7 @@
 import dayjs from "@/lib/dayjs";
 import { NextResponse } from "next/server";
 
+import { validateSession } from "@/lib/auth/session/validate";
 import type { AvailabilityExceptionRule } from "@/lib/engine/availability";
 import { applyRulesToPossibleTimes } from "@/lib/engine/services/rules";
 import {
@@ -12,7 +13,6 @@ import {
   transformFitsToHH,
 } from "@/lib/engine/time";
 import { prisma } from "@/lib/prisma";
-import { validateSession } from "@/lib/auth/session/validate";
 import { z } from "zod";
 
 const schema = z.object({

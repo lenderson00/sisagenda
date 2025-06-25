@@ -1,9 +1,15 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState, ReactNode } from "react";
-import type { AppointmentWithRelations } from "../types/app";
-import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import type { AppointmentWithRelations } from "../types/app";
 
 export type AllowedActions = {
   canApprove: boolean;

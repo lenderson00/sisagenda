@@ -1,10 +1,10 @@
-import { createColumnHelper } from "@tanstack/react-table";
-import type { AppointmentWithRelations } from "../page-client";
-import { getStatusReadableName, getStatusColor } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import dayjs from "@/lib/dayjs";
+import { getStatusColor, getStatusReadableName } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { createColumnHelper } from "@tanstack/react-table";
+import Link from "next/link";
+import type { AppointmentWithRelations } from "../page-client";
 import { AppointmentActionsDropdown } from "./_components/appointment-actions-dropdown";
 
 const columnHelper = createColumnHelper<AppointmentWithRelations>();

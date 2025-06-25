@@ -5,7 +5,9 @@ export async function getSchedules() {
   const session = await auth();
 
   if (!session?.user?.organizationId) {
-    throw new Error("User is not authenticated or does not belong to an organization.");
+    throw new Error(
+      "User is not authenticated or does not belong to an organization.",
+    );
   }
 
   const schedules = await prisma.schedule.findMany({

@@ -5,8 +5,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { FornecedorSidebar } from "./_components/fornecedor-sidebar";
 import { Provider } from "jotai";
+import { FornecedorSidebar } from "./_components/fornecedor-sidebar";
 
 const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (

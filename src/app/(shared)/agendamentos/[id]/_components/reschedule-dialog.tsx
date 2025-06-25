@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import dayjs from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import dayjs from "@/lib/dayjs";
 import "dayjs/locale/pt-br";
 
 dayjs.locale("pt-br");

@@ -16,21 +16,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getStatusLabel } from "@/lib/dashboard-utils";
+import type { AppointmentStatus } from "@prisma/client";
 import { format } from "date-fns";
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
+  BarChart,
   Cell,
   Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
-import { AppointmentStatus } from "@prisma/client";
-import { getStatusLabel } from "@/lib/dashboard-utils";
 import ActivityCalendarWrapper from "./activity-calendar-wrapper";
 
 interface Appointment {

@@ -1,13 +1,13 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { notFound } from "next/navigation";
 import { DurationForm } from "./_components/duration-form";
 import { NameDescriptionForm } from "./_components/name-description-form";
 import {
   useDeliveryType,
   useUpdateDeliveryType,
 } from "./_hooks/use-delivery-type";
-import { notFound } from "next/navigation";
 
 type DeliveryTypePageClientProps = {
   deliveryTypeId: string;

@@ -4,15 +4,15 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { useForm, Controller } from "react-hook-form";
+import { AnimatePresence, motion } from "framer-motion";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useLimiteFutureBookings } from "../_hooks/use-limite-future-bookins";
-import { AnimatePresence, motion } from "framer-motion";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type FormValues = {
   limitFutureBookings: boolean;

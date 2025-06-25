@@ -1,24 +1,24 @@
 import { DataTableFilter, useDataTableFilters } from "@/components/data-table";
-import { columnsConfig } from "./columns";
-import type { AppointmentWithRelations } from "../page-client";
-import { useMemo, useEffect, type Dispatch, type SetStateAction } from "react";
+import type {
+  FilterModel,
+  FiltersState,
+} from "@/components/data-table/core/types";
 import {
   createTSTColumns,
   createTSTFilters,
 } from "@/components/data-table/integrations/tanstack-table";
-import { DataTable } from "./table";
 import {
   getCoreRowModel,
-  getPaginationRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { tstColumnsDefs } from "./tst-columns";
-import type {
-  FiltersState,
-  FilterModel,
-} from "@/components/data-table/core/types";
 import { useRouter } from "next/navigation";
+import { type Dispatch, type SetStateAction, useEffect, useMemo } from "react";
+import type { AppointmentWithRelations } from "../page-client";
+import { columnsConfig } from "./columns";
+import { DataTable } from "./table";
+import { tstColumnsDefs } from "./tst-columns";
 
 interface DataTableTestProps {
   data: AppointmentWithRelations[];

@@ -1,8 +1,8 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import type { ColumnDef, CellContext } from "@tanstack/react-table";
-import { format } from "date-fns";
 import type { User } from "@prisma/client";
+import type { CellContext, ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { UserActions } from "./user-actions";
 
 export const tstColumnsDefs: ColumnDef<User>[] = [

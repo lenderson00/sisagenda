@@ -2,19 +2,19 @@
 
 import { useParams } from "next/navigation";
 
-import { IconPlus } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { useSchedule, useUpdateSchedule } from "./_hooks/use-schedule";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import type { Availability } from "@prisma/client";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Availability } from "@prisma/client";
+import { IconPlus } from "@tabler/icons-react";
+import { useEffect } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import { useSchedule, useUpdateSchedule } from "./_hooks/use-schedule";
 
 const weekDays = getWeekDays();
 

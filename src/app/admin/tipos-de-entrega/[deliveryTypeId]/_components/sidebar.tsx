@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname, useSelectedLayoutSegments } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
 import { TooltipTrigger } from "@/components/ui/tooltip";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
 import { IconInfoCircle } from "@tabler/icons-react";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {

@@ -6,9 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Trash, UserCheck, UserMinus } from "lucide-react";
 import type { User } from "@prisma/client";
 import { IconLock } from "@tabler/icons-react";
+import { MoreHorizontal, Trash, UserCheck, UserMinus } from "lucide-react";
 
 interface UserActionsProps {
   user: User;

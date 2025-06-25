@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-import { columns, type AppointmentRow } from "./columns";
 import {
   Table,
   TableBody,
@@ -12,6 +10,8 @@ import {
 } from "@/components/ui/table";
 import {
   type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -19,10 +19,10 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type SortingState,
   useReactTable,
-  type VisibilityState,
 } from "@tanstack/react-table";
+import React from "react";
+import { type AppointmentRow, columns } from "./columns";
 
 export const DataTable: React.FC<{ data: AppointmentRow[] }> = ({
   data: initialData,

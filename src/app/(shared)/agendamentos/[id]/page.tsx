@@ -1,10 +1,10 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { AppointmentActions } from "./_components/appointment-actions";
 import { AppointmentActivityList } from "./_components/appointment-activity";
 import { AppointmentDetailsCard } from "./_components/appointment-details-card";
 import { AppointmentFormDetailsSidebar } from "./_components/appointment-form-details-sidebar";
-import { AppointmentActions } from "./_components/appointment-actions";
 
 interface AppointmentPageProps {
   params: Promise<{ id: string }>;

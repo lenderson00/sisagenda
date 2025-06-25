@@ -1,5 +1,5 @@
 import { createColumnConfigHelper } from "@/components/data-table/core/filters";
-import { Building, CheckCircle, Mail, Phone, Calendar } from "lucide-react";
+import { Building, Calendar, CheckCircle, Mail, Phone } from "lucide-react";
 import type { Supplier } from "../page-client";
 
 const dtf = createColumnConfigHelper<Supplier>();

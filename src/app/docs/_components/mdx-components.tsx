@@ -1,8 +1,7 @@
-import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import type * as React from "react";
 
-import { cn } from "@/lib/utils";
 import {
   Accordion,
   AccordionContent,
@@ -13,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 export const mdxComponents = {
   h1: ({ className, ...props }: React.ComponentProps<"h1">) => (

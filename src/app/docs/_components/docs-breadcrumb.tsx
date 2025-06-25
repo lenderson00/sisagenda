@@ -1,10 +1,10 @@
 "use client";
 
-import { Fragment } from "react";
+import { useBreadcrumb } from "fumadocs-core/breadcrumb";
+import type { PageTree } from "fumadocs-core/source";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { PageTree } from "fumadocs-core/source";
-import { useBreadcrumb } from "fumadocs-core/breadcrumb";
+import { Fragment } from "react";
 
 import {
   Breadcrumb,

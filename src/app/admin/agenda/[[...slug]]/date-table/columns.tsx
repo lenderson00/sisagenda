@@ -15,6 +15,7 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +23,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { getStatusReadableName } from "@/lib/utils";
 
 export type AppointmentRow = Appointment & {

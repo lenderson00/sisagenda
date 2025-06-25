@@ -13,12 +13,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  type RowData,
+  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-  type RowData,
-  flexRender,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Supplier } from "../page-client";

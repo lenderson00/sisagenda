@@ -1,9 +1,11 @@
 "use client";
 
 import {
-  FileUploader,
   type FileMetadata,
+  FileUploader,
 } from "@/app/(shared)/agendar/_component/file-uploader";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -12,12 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { XIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { useScheduleStore } from "../../_store";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { XIcon } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 
 export function Step3Documents() {
   const form = useFormContext();

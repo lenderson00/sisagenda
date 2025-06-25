@@ -1,9 +1,9 @@
-import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { calculateStats, getStatusLabel } from "@/lib/dashboard-utils";
+import { prisma } from "@/lib/prisma";
+import type { AppointmentStatus } from "@prisma/client";
 import { format } from "date-fns";
 import { redirect } from "next/navigation";
-import { AppointmentStatus } from "@prisma/client";
 import DashboardClient from "./_components/dashboard-client";
 
 function getYearsRange(startYear: number): number[] {
@@ -114,7 +114,7 @@ export default async function Page({
     : new Date().getFullYear();
   const years = getYearsRange(startYear);
   const selectedYear = searchParams?.year
-    ? parseInt(searchParams.year)
+    ? Number.parseInt(searchParams.year)
     : years[years.length - 1];
   const {
     user: supplier,

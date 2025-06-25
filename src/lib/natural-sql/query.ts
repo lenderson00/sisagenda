@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { generateObject } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { generateObject } from "ai";
 import { Client } from "pg";
+import { z } from "zod";
 
 const systemPrompt = `
 Você é um especialista em SQL (Postgres) e visualização de dados. Seu trabalho é ajudar o usuário a escrever uma query SQL para recuperar os dados que ele precisa. O esquema da tabela é o seguinte:

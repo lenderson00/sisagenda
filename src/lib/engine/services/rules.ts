@@ -1,6 +1,6 @@
+import dayjs from "@/lib/dayjs";
 import type { AvailabilityExceptionRule } from "../availability";
 import { getBlockedIntervalsForDate } from "../rule";
-import dayjs from "@/lib/dayjs";
 
 /**
  * Applies a list of availability rules to a list of possible time slots.

@@ -1,3 +1,4 @@
+import type { DataTableFilterActions } from "@/components/data-table/core/types";
 import {
   Table,
   TableBody,
@@ -6,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { DataTableFilterActions } from "@/components/data-table/core/types";
 import { type Table as TanStackTable, flexRender } from "@tanstack/react-table";
 
 export function DataTable({

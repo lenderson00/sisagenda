@@ -1,14 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  ActionsProvider,
+  useAllowedActions,
+} from "@/app/(shared)/agendamentos/[id]/_context/actions-context";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,24 +14,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  IconBrandWhatsapp,
+  IconCalendarOff,
+  IconCheck,
   IconDotsVertical,
   IconEye,
-  IconCheck,
-  IconX,
-  IconCalendarOff,
   IconMessage,
-  IconBrandWhatsapp,
+  IconX,
 } from "@tabler/icons-react";
-import type { AppointmentWithRelations } from "../../page-client";
-import {
-  ActionsProvider,
-  useAllowedActions,
-} from "@/app/(shared)/agendamentos/[id]/_context/actions-context";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import type { AppointmentWithRelations } from "../../page-client";
 
 interface AppointmentActionsDropdownProps {
   appointment: AppointmentWithRelations;

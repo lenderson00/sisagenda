@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import type React from "react";
 
 import { Button } from "@/components/ui/button";
-import type { Icon } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import type { Icon } from "@tabler/icons-react";
 
 export function EmptyScreen({
   Icon: icon,

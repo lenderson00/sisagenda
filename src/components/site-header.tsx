@@ -1,8 +1,8 @@
 import { CommandMenu } from "@/components/command-menu";
 import { MainNav } from "@/components/main-nav";
 import { MobileNav } from "@/components/mobile-nav";
-import { AccountAvatar } from "./account-avatar";
 import { source } from "@/lib/source";
+import { AccountAvatar } from "./account-avatar";
 
 export function SiteHeader() {
   const pageTree = source.pageTree;
