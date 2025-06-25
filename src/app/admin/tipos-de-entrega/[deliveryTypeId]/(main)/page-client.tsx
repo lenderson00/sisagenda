@@ -7,9 +7,7 @@ import {
   useDeliveryType,
   useUpdateDeliveryType,
 } from "./_hooks/use-delivery-type";
-import LunchForm from "./_components/lunch-form";
 import { notFound } from "next/navigation";
-import { useUpdateLunchTime } from "./_hooks/use-update-lunch-time";
 
 type DeliveryTypePageClientProps = {
   deliveryTypeId: string;
@@ -25,8 +23,6 @@ const DeliveryTypePageClient = ({
   } = useUpdateDeliveryType(deliveryTypeId);
   const { mutate: updateDuration, isPending: isUpdatingDuration } =
     useUpdateDeliveryType(deliveryTypeId);
-  const { mutate: updateLunchTime, isPending: isUpdatingLunchTime } =
-    useUpdateLunchTime();
 
   if (isLoading) {
     return (
@@ -52,21 +48,6 @@ const DeliveryTypePageClient = ({
         }}
         onSubmit={updateNameDescription}
         isSubmitting={isUpdatingNameDescription}
-      />
-      <LunchForm
-        initialStartTime={deliveryType.lunchTimeStart}
-        initialEndTime={deliveryType.lunchTimeEnd}
-        title="Almoço"
-        description="Defina o horário de almoço para o tipo de entrega."
-        helpText="Esse horário será usado para calcular o tempo de entrega."
-        onSubmit={(data) =>
-          updateLunchTime({
-            deliveryTypeId,
-            startTime: data.startTime,
-            endTime: data.endTime,
-          })
-        }
-        isSubmitting={isUpdatingLunchTime}
       />
       <DurationForm
         initialValues={{ duration: deliveryType.duration }}

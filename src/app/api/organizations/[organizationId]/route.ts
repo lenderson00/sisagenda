@@ -9,6 +9,9 @@ const updateOrganizationSchema = z.object({
   description: z.string().optional(),
   role: z.enum(["COMIMSUP", "DEPOSITO"]).optional(),
   isActive: z.boolean().optional(),
+  comimsupId: z.string().nullable().optional(),
+  lunchTimeStart: z.number().optional(),
+  lunchTimeEnd: z.number().optional(),
 });
 
 export async function GET(
@@ -55,19 +58,30 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Check if user is super admin
-    if (session.user.role !== "SUPER_ADMIN") {
+    const body = await req.json();
+    const validatedData = updateOrganizationSchema.parse(body);
+
+    // Check if user is trying to update their own organization
+    const isOwnOrganization = session.user.organizationId === organizationId;
+    const isSuperAdmin = session.user.role === "SUPER_ADMIN";
+
+    // Regular admins can only update their own organization and cannot change role or isActive
+    if (!isSuperAdmin && !isOwnOrganization) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    const body = await req.json();
-    const validatedData = updateOrganizationSchema.parse(body);
+    // Remove restricted fields for non-super admins
+    const updateData = { ...validatedData };
+    if (!isSuperAdmin) {
+      delete (updateData as Partial<typeof updateData>).role;
+      delete (updateData as Partial<typeof updateData>).isActive;
+    }
 
     const organization = await prisma.organization.update({
       where: {
         id: organizationId,
       },
-      data: validatedData,
+      data: updateData,
     });
 
     return NextResponse.json(organization);

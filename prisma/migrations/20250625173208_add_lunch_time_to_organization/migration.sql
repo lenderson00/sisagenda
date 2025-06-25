@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Organization" ADD COLUMN     "lunchTimeEnd" SMALLINT NOT NULL DEFAULT 780,
+ADD COLUMN     "lunchTimeStart" SMALLINT NOT NULL DEFAULT 720;

@@ -10,6 +10,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useUpdateOrganization } from "../_hooks/use-update-organization";
+import { Organization } from "@prisma/client";
 
 const minutesToTime = (minutes: number | undefined | null) => {
   if (minutes === null || minutes === undefined) {
@@ -69,15 +71,14 @@ const formSchema = z
     },
   );
 
-type TeamNameFormProps = {
+type LunchFormProps = {
   title: string;
   description: string;
   helpText: string;
   onSubmit?: (data: { startTime: number; endTime: number }) => void;
   className?: string;
-  initialStartTime?: number;
-  initialEndTime?: number;
   isSubmitting?: boolean;
+  organization: Organization;
 };
 
 export default function LunchForm({
@@ -86,26 +87,34 @@ export default function LunchForm({
   helpText,
   onSubmit,
   className,
-  initialStartTime,
-  initialEndTime,
-}: TeamNameFormProps) {
+  organization,
+}: LunchFormProps) {
   const queryClient = useQueryClient();
+  const updateOrganization = useUpdateOrganization();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      startTime: minutesToTime(initialStartTime) || "12:00",
-      endTime: minutesToTime(initialEndTime) || "13:00",
+      startTime: minutesToTime(organization.lunchTimeStart) || "12:00",
+      endTime: minutesToTime(organization.lunchTimeEnd) || "13:00",
     },
   });
 
   const handleSubmit = async (data: FormValues) => {
-    if (onSubmit) {
-      onSubmit({
-        startTime: timeToMinutes(data.startTime),
-        endTime: timeToMinutes(data.endTime),
-      });
-    }
-    await queryClient.invalidateQueries({ queryKey: ["deliveryTypeConfig"] });
+    updateOrganization.mutate(
+      {
+        id: organization.id,
+        lunchTimeStart: timeToMinutes(data.startTime),
+        lunchTimeEnd: timeToMinutes(data.endTime),
+      },
+      {
+        onSuccess: () => {
+          toast.success("Horário de almoço atualizado com sucesso");
+        },
+        onError: () => {
+          toast.error("Erro ao atualizar horário de almoço");
+        },
+      },
+    );
   };
 
   return (
@@ -176,7 +185,11 @@ export default function LunchForm({
         <CardContent className="flex justify-between items-center bg-neutral-100 h-14 mt-2 border-t">
           <p className="text-xs text-muted-foreground">{helpText}</p>
           <div className="flex justify-end">
-            <FormButton isSubmitting={form.formState.isSubmitting} />
+            <FormButton
+              isSubmitting={
+                form.formState.isSubmitting || updateOrganization.isPending
+              }
+            />
           </div>
         </CardContent>
       </Card>

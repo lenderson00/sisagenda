@@ -64,6 +64,7 @@ export async function GET(request: Request) {
           include: {
             deliveryTypes: true,
             availabilityRules: true,
+            organization: true,
           },
         },
       },
@@ -87,9 +88,9 @@ export async function GET(request: Request) {
     }));
 
     const lunchStart =
-      availabilityForDay.schedule?.deliveryTypes[0]?.lunchTimeStart ?? 0;
+      availabilityForDay.schedule?.organization.lunchTimeStart ?? 0;
     const lunchEnd =
-      availabilityForDay.schedule?.deliveryTypes[0]?.lunchTimeEnd ?? 0;
+      availabilityForDay.schedule?.organization.lunchTimeEnd ?? 0;
     const activityDuration =
       availabilityForDay.schedule?.deliveryTypes[0]?.duration ?? 0;
 
