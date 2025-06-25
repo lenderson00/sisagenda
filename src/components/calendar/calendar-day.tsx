@@ -71,25 +71,23 @@ export function CalendarDay({
             variant="ghost"
             className={cn(
               "w-10 h-10 p-0 text-center rounded-md text-sm font-medium transition-all duration-200",
-              "hover:bg-neutral-200 focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-sky-500",
+              "hover:bg-muted focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-sky-500",
               // Current month days
-              isCurrentMonth &&
-                !disabled &&
-                "text-neutral-900 hover:bg-neutral-200",
+              isCurrentMonth && !disabled && "text-foreground hover:bg-muted",
               // Previous/next month days (faded)
-              !isCurrentMonth && "text-neutral-400 hover:bg-neutral-50",
+              !isCurrentMonth && "text-muted-foreground hover:bg-muted",
               // Disabled days
               disabled &&
-                "text-neutral-500 cursor-default hover:bg-transparent",
+                "text-muted-foreground cursor-default hover:bg-transparent",
               // Selected day
               isSelected &&
                 !disabled &&
-                "bg-neutral-800 text-white hover:bg-neutral-900 hover:text-white hover:opacity/80",
+                "bg-muted text-white hover:bg-muted/80 hover:text-white hover:opacity/80",
               // Today highlight
               isToday &&
                 !disabled &&
                 !isSelected &&
-                "bg-neutral-200 hover:bg-neutral-300 font-semibold",
+                "bg-muted hover:bg-muted/80 font-semibold",
             )}
             onClick={() => !disabled && onClick(date)}
             disabled={disabled}

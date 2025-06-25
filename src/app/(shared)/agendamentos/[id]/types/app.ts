@@ -4,6 +4,8 @@ const appointmentWithRelations = Prisma.validator<Prisma.AppointmentDefaultArgs>
   include: {
     deliveryType: true,
     user: true,
+    items: true,
+    attachments: true,
     activities: {
       include: {
         user: true,

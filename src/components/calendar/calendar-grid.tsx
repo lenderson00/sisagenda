@@ -64,7 +64,7 @@ export function CalendarGrid({
                   {shortWeekDays.map((weekDay) => (
                     <th
                       key={weekDay}
-                      className="w-10 h-8 text-xs font-medium text-slate-500 text-center"
+                      className="w-10 h-8 text-xs font-medium text-muted-foreground text-center"
                     >
                       {weekDay}
                     </th>

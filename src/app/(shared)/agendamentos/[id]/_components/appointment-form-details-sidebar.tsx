@@ -6,9 +6,11 @@ import type { Appointment, DeliveryType, User } from "@prisma/client";
 import {
   Briefcase,
   Calendar,
+  FileText,
   Mail,
   MapPin,
   MessageCircle,
+  Paperclip,
   Phone,
   RotateCcw,
   User as UserIcon,
@@ -18,7 +20,6 @@ import { useState } from "react";
 import { CancellationDialog } from "./cancellation-dialog";
 import { RescheduleDialog } from "./reschedule-dialog";
 import type { AppointmentWithRelations } from "../types/app";
-import { AppointmentAttachments } from "./appointment-attachments";
 
 interface AppointmentFormDetailsSidebarProps {
   appointment: AppointmentWithRelations;
@@ -29,34 +30,34 @@ export function AppointmentFormDetailsSidebar({
 }: AppointmentFormDetailsSidebarProps) {
   const [showCancellationDialog, setShowCancellationDialog] = useState(false);
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
-  const { observations } = appointment;
-  const attachments = (observations as any)?.attachments;
 
   return (
     <div className="space-y-6 sticky top-20">
       {/* Client Information */}
-      {/* <Card>
+      <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <UserIcon className="h-5 w-5 text-gray-600" />
-            Informações do Cliente
+            <UserIcon className="h-5 w-5 text-muted-foreground" />
+            Informações do Fornecedor
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start gap-3">
-            <UserIcon className="h-4 w-4 text-gray-500 mt-1" />
+            <UserIcon className="h-4 w-4 text-muted-foreground mt-1" />
             <div>
-              <p className="text-sm font-medium text-gray-900">Nome</p>
-              <p className="text-sm text-gray-600">{appointment.user.name}</p>
+              <p className="text-sm font-medium text-foreground">Nome</p>
+              <p className="text-sm text-muted-foreground">
+                {appointment.user.name}
+              </p>
             </div>
           </div>
 
           {appointment.user.email && (
             <div className="flex items-start gap-3">
-              <Mail className="h-4 w-4 text-gray-500 mt-1" />
+              <Mail className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
-                <p className="text-sm font-medium text-gray-900">Email</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm font-medium text-foreground">Email</p>
+                <p className="text-sm text-muted-foreground">
                   {appointment.user.email}
                 </p>
               </div>
@@ -65,10 +66,10 @@ export function AppointmentFormDetailsSidebar({
 
           {appointment.user.whatsapp && (
             <div className="flex items-start gap-3">
-              <Phone className="h-4 w-4 text-gray-500 mt-1" />
+              <Phone className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
-                <p className="text-sm font-medium text-gray-900">Telefone</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm font-medium text-foreground">Telefone</p>
+                <p className="text-sm text-muted-foreground">
                   {appointment.user.whatsapp}
                 </p>
               </div>
@@ -77,34 +78,34 @@ export function AppointmentFormDetailsSidebar({
 
           {appointment.user.address && (
             <div className="flex items-start gap-3">
-              <MapPin className="h-4 w-4 text-gray-500 mt-1" />
+              <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
-                <p className="text-sm font-medium text-gray-900">Endereço</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm font-medium text-foreground">Endereço</p>
+                <p className="text-sm text-muted-foreground">
                   {appointment.user.address}
                 </p>
               </div>
             </div>
           )}
         </CardContent>
-      </Card> */}
+      </Card>
 
       {/* Service Information */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-gray-600" />
+            <Briefcase className="h-5 w-5 text-muted-foreground" />
             Detalhes do Serviço
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start gap-3">
-            <Briefcase className="h-4 w-4 text-gray-500 mt-1" />
+            <Briefcase className="h-4 w-4 text-muted-foreground mt-1" />
             <div>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-foreground">
                 Tipo de Serviço
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {appointment.deliveryType.name}
               </p>
             </div>
@@ -112,10 +113,10 @@ export function AppointmentFormDetailsSidebar({
 
           {appointment.deliveryType.description && (
             <div className="flex items-start gap-3">
-              <Calendar className="h-4 w-4 text-gray-500 mt-1" />
+              <Calendar className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
-                <p className="text-sm font-medium text-gray-900">Descrição</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm font-medium text-foreground">Descrição</p>
+                <p className="text-sm text-muted-foreground">
                   {appointment.deliveryType.description}
                 </p>
               </div>
@@ -123,12 +124,12 @@ export function AppointmentFormDetailsSidebar({
           )}
 
           <div className="flex items-start gap-3">
-            <Calendar className="h-4 w-4 text-gray-500 mt-1" />
+            <Calendar className="h-4 w-4 text-muted-foreground mt-1" />
             <div>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-foreground">
                 Ordem de Compra
               </p>
-              <p className="text-sm text-gray-600 font-mono">
+              <p className="text-sm text-muted-foreground font-mono">
                 {appointment.ordemDeCompra}
               </p>
             </div>
@@ -136,7 +137,45 @@ export function AppointmentFormDetailsSidebar({
         </CardContent>
       </Card>
 
-      <AppointmentAttachments attachments={attachments} />
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Paperclip className="h-5 w-5 text-muted-foreground" />
+            Anexos
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {appointment.attachments.length > 0 ? (
+            <div className="space-y-2">
+              {appointment.attachments.map((attachment) => (
+                <div
+                  key={attachment.id}
+                  className="flex items-center gap-3 p-3 bg-muted rounded-lg"
+                >
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex-1 min-w-0">
+                    <a
+                      href={attachment.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary hover:underline font-medium truncate block"
+                    >
+                      {attachment.fileName}
+                    </a>
+                    <p className="text-xs text-muted-foreground">
+                      {(attachment.fileSize / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Nenhum anexo enviado.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Dialogs */}
       <CancellationDialog

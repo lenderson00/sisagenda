@@ -26,9 +26,11 @@ export function CalendarHeader({
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <p className="font-semibold text-lg capitalize text-slate-800">
+        <p className="font-semibold text-lg capitalize text-foreground">
           {currentMonth}{" "}
-          <span className="text-slate-500 font-medium">{currentYear}</span>
+          <span className="text-muted-foreground font-medium">
+            {currentYear}
+          </span>
         </p>
       </motion.div>
 
@@ -39,7 +41,7 @@ export function CalendarHeader({
           disabled={isLoading}
           title="Mês anterior"
           aria-label="Mês anterior"
-          className="p-1.5 rounded text-slate-600 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-1.5 rounded text-muted-foreground hover:bg-muted cursor-pointer hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronLeft className="h-5 w-5" />
         </motion.button>
@@ -50,7 +52,7 @@ export function CalendarHeader({
           disabled={isLoading}
           title="Próximo mês"
           aria-label="Próximo mês"
-          className="p-1.5 rounded text-slate-600 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-1.5 rounded text-muted-foreground hover:bg-muted cursor-pointer hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronRight className="h-5 w-5" />
         </motion.button>

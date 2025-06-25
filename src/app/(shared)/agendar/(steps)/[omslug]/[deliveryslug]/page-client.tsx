@@ -47,7 +47,7 @@ export function DataPageClient({
       </div>
 
       {/* Time Picker - Right Column */}
-      <div className="relative border-l border-slate-200 bg-slate-50/30">
+      <div className="relative border-l ">
         <div
           className={cn(
             "absolute inset-0 transition-all duration-300 ease-in-out",
@@ -77,9 +77,9 @@ export function DataPageClient({
           )}
         >
           <div className="text-center p-6">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full  flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-slate-400"
+                className="w-8 h-8 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

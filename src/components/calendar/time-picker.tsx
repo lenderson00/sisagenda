@@ -68,9 +68,9 @@ export function TimePicker({
   };
 
   return (
-    <div className="h-full bg-background flex flex-col">
+    <div className="h-full bg-background flex flex-col no-scrollbar ">
       {/* Fixed Header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b bg-background">
+      <div className="flex-shrink-0 px-6 py-4 border-b bg-background ">
         <motion.div
           key={dateKey} // Re-animate when date changes
           initial={{ opacity: 0, y: -10 }}
@@ -78,14 +78,14 @@ export function TimePicker({
           transition={{ duration: 0.3 }}
           className="flex items-center gap-2 justify-between"
         >
-          <p className="font-medium text-slate-900 capitalize">{weekDay}</p>
-          <p className="text-sm text-slate-500">{describedDate}</p>
+          <p className="font-medium text-foreground capitalize">{weekDay}</p>
+          <p className="text-sm text-muted-foreground">{describedDate}</p>
         </motion.div>
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-6">
+      <div className="flex-1 overflow-y-auto ">
+        <div className="p-6 mb-6 ">
           {/* Loading State */}
           {isLoading && <TimePickerSkeleton />}
 
@@ -98,10 +98,12 @@ export function TimePicker({
               transition={{ duration: 0.3 }}
               className="text-center py-12"
             >
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-slate-400" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-muted flex items-center justify-center">
+                <Clock className="w-6 h-6 text-muted-foreground" />
               </div>
-              <p className="text-slate-500 text-sm font-medium">Sem horários</p>
+              <p className="text-muted-foreground text-sm font-medium">
+                Sem horários
+              </p>
               <p className="text-slate-400 text-xs mt-1">
                 Nenhum horário disponível
               </p>
@@ -150,13 +152,13 @@ export function TimePicker({
                         // Available states
                         isAvailable &&
                           !isSelected &&
-                          "bg-white hover:bg-slate-50 text-slate-900 cursor-pointer border-slate-200 hover:border-slate-300  focus:ring-sky-500",
+                          "bg-muted hover:bg-muted/80 text-foreground cursor-pointer border-muted hover:border-muted  focus:ring-primary",
                         // Selected state
                         isSelected &&
-                          "bg-sky-500 text-white border-sky-500 shadow-md focus:ring-sky-400",
+                          "bg-accent text-foreground border-emerald-500 shadow-md focus:ring-emerald-500",
                         // Disabled state
                         !isAvailable &&
-                          "bg-slate-50 text-slate-400 cursor-not-allowed border-slate-100",
+                          "bg-muted text-muted-foreground cursor-not-allowed border-muted",
                       )}
                     >
                       <div className="flex items-center justify-between relative z-10">
@@ -178,7 +180,7 @@ export function TimePicker({
                                   isAvailable
                                     ? isSelected
                                       ? "text-white"
-                                      : "text-green-500"
+                                      : "text-emerald-500"
                                     : null,
                                 )}
                               >
@@ -198,11 +200,11 @@ export function TimePicker({
               </div>
 
               {availability?.availableTimes?.length === 0 && (
-                <div className="text-center py-6 border-t border-slate-100 mt-6">
-                  <p className="text-sm text-slate-500">
+                <div className="text-center py-6 border-t border-muted mt-6">
+                  <p className="text-sm text-muted-foreground">
                     Todos os horários estão ocupados
                   </p>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Tente outra data
                   </p>
                 </div>
@@ -219,7 +221,7 @@ export function TimePicker({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
-          className="flex-shrink-0 border-t border-slate-100 p-2 mx-4"
+          className="flex-shrink-0 border-t border-muted p-2 mx-4"
         >
           <motion.div
             animate={{
@@ -235,8 +237,8 @@ export function TimePicker({
                 "w-full h-8 text-sm font-medium transition-all duration-200",
                 "flex items-center justify-center gap-2",
                 selectedTime
-                  ? "bg-sky-500 hover:bg-sky-600 text-white"
-                  : "bg-slate-100 text-slate-400 cursor-not-allowed",
+                  ? "bg-emerald-500 hover:bg-emerald-600 text-white"
+                  : "bg-muted text-muted-foreground cursor-not-allowed",
               )}
             >
               {selectedTime ? (
