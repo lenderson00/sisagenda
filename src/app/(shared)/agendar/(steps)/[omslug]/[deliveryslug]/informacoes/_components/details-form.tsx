@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { useScheduleStore } from "../../_store";
 import { Step1DeliveryDetails } from "./step-1-delivery-details";
 import { Step2Items } from "./step-2-items";
+import { Step3Documents } from "./step-3-documents";
 
 const itemSchema = z.object({
   pi: z.string().min(1, "PI do item é obrigatório."),
@@ -52,7 +53,6 @@ const steps = [
     id: "delivery-details",
     name: "Detalhes da Entrega",
     fields: [
-      "notaFiscal",
       "ordemDeCompra",
       "isFirstDelivery",
       "processNumber",
@@ -60,6 +60,11 @@ const steps = [
     ],
   },
   { id: "items", name: "Itens da Entrega", fields: ["items"] },
+  {
+    id: "documents",
+    name: "Documentos",
+    fields: ["notaFiscal"],
+  },
 ];
 
 export function DetailsForm() {
@@ -143,12 +148,18 @@ export function DetailsForm() {
       return;
     }
 
+    const observationsPayload = {
+      ...values,
+      attachments: schedule.attachments,
+      observation: schedule.observation,
+    };
+
     createAppointment({
       organizationId: schedule.organizationId,
       deliveryTypeId: schedule.deliveryTypeId,
       dateTime: new Date(schedule.dateTime),
       ordemDeCompra: values.ordemDeCompra,
-      observations: values,
+      observations: observationsPayload,
     });
   }
 
@@ -224,6 +235,7 @@ export function DetailsForm() {
           <CardContent>
             {currentStep === 0 && <Step1DeliveryDetails />}
             {currentStep === 1 && <Step2Items />}
+            {currentStep === 2 && <Step3Documents />}
           </CardContent>
 
           <CardFooter className="flex justify-between">

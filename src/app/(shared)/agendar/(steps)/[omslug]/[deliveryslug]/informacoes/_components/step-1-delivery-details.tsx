@@ -18,21 +18,6 @@ export function Step1DeliveryDetails() {
     <div className="space-y-4">
       <FormField
         control={form.control}
-        name="notaFiscal"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Qual o número da Nota Fiscal que será entregue?
-            </FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
         name="ordemDeCompra"
         render={({ field }) => (
           <FormItem>
@@ -122,12 +107,6 @@ export function Step1DeliveryDetails() {
           </FormItem>
         )}
       />
-      <div>
-        <FormLabel>Anexar Documentação Extra</FormLabel>
-        <p className="text-sm text-muted-foreground">
-          (Campo para anexar documento - A ser implementado)
-        </p>
-      </div>
     </div>
   );
 }

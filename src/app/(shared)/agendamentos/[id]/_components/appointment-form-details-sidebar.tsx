@@ -18,6 +18,7 @@ import { useState } from "react";
 import { CancellationDialog } from "./cancellation-dialog";
 import { RescheduleDialog } from "./reschedule-dialog";
 import type { AppointmentWithRelations } from "../types/app";
+import { AppointmentAttachments } from "./appointment-attachments";
 
 interface AppointmentFormDetailsSidebarProps {
   appointment: AppointmentWithRelations;
@@ -28,6 +29,8 @@ export function AppointmentFormDetailsSidebar({
 }: AppointmentFormDetailsSidebarProps) {
   const [showCancellationDialog, setShowCancellationDialog] = useState(false);
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+  const { observations } = appointment;
+  const attachments = (observations as any)?.attachments;
 
   return (
     <div className="space-y-6 sticky top-20">
@@ -132,6 +135,8 @@ export function AppointmentFormDetailsSidebar({
           </div>
         </CardContent>
       </Card>
+
+      <AppointmentAttachments attachments={attachments} />
 
       {/* Dialogs */}
       <CancellationDialog
