@@ -438,7 +438,7 @@ export function RescheduleDialog({
                           "p-3 text-sm border rounded-md transition-all duration-200 font-medium",
                           selectedTime === time
                             ? "bg-blue-500 text-white border-blue-500 shadow-md"
-                            : "hover:bg-blue-50 border-gray-300 hover:border-blue-300 hover:shadow-sm",
+                            : "hover:bg-blue-50 border-muted hover:border-blue-300 hover:shadow-sm",
                         )}
                       >
                         {time}

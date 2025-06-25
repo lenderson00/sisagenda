@@ -122,7 +122,7 @@ export function Modal({
         }}
         className={cn(
           "fixed  z-[9999999] m-auto h-fit w-full max-w-md",
-          "border border-neutral-200 bg-white p-0 shadow-xl sm:rounded-2xl",
+          "border border-muted bg-background p-0 shadow-xl sm:rounded-2xl",
           "scrollbar-hide animate-scale-in overflow-y-auto",
           className,
         )}

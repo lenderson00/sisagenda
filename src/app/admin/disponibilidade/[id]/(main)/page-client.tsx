@@ -162,7 +162,7 @@ export function SchedulePageClient() {
       })}
       className="space-y-4"
     >
-      <div className="mb-6 border border-neutral-200 rounded-md overflow-hidden divide-y">
+      <div className="mb-6 border border-muted rounded-md overflow-hidden divide-y">
         {fields.map((field, index) => {
           const currentInterval = watchedIntervals?.[index];
           const isEnabled = currentInterval?.enabled ?? false;
@@ -266,7 +266,7 @@ export function SchedulePageClient() {
 function SchedulePageClientSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="mb-6 overflow-hidden rounded-md border border-neutral-200 divide-y">
+      <div className="mb-6 overflow-hidden rounded-md border divide-y">
         {getWeekDays().map((_, index) => (
           <div key={index} className="bg-white p-4">
             <div className="flex items-center justify-between">

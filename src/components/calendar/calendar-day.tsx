@@ -111,7 +111,7 @@ export function CalendarDay({
       <TooltipContent
         side="top"
         align="center"
-        className="bg-white border border-neutral-200 shadow-md"
+        className="bg-white border shadow-md"
         sideOffset={5}
       >
         <div className="flex flex-col items-center">

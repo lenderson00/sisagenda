@@ -95,7 +95,7 @@ export function DeliveryTypesPageClient({
             <Skeleton className="h-10 w-full" />
           </div>
         </div>
-        <div className="divide-y divide-neutral-200 border border-neutral-200 rounded-lg overflow-hidden">
+        <div className="divide-y divide-muted border border-muted rounded-lg overflow-hidden">
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="flex items-center justify-between p-4">
               <div className="flex items-center gap-4 w-full">

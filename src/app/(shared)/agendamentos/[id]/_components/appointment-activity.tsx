@@ -155,7 +155,7 @@ export function AppointmentActivityList({
                   <div className="flex-1  bg-background">
                     <Textarea
                       placeholder="Deixe um comentário..."
-                      className="min-h-[80px] p-4 resize-none border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      className="min-h-[80px] p-4 resize-none border-muted focus:border-blue-500 focus:ring-blue-500"
                       {...registerComment("content", {
                         required: "O comentário não pode estar vazio",
                       })}
