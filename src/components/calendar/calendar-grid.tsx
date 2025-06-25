@@ -1,8 +1,9 @@
 "use client";
 
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { CalendarDay } from "./calendar-day";
+import { CalendarSkeleton } from "./calendar-skeleton";
 
 interface CalendarGridProps {
   weeks: any[];
@@ -38,89 +39,89 @@ export function CalendarGrid({
 
   return (
     <div className="relative">
-      <table className="w-full table-fixed border-separate border-spacing-1">
-        <thead>
-          <tr>
-            {shortWeekDays.map((weekDay) => (
-              <th
-                key={weekDay}
-                className="w-10 h-8 text-xs font-medium text-slate-500 text-center"
-              >
-                {weekDay}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <AnimatePresence mode="wait">
-            {isLoading ? (
-              <motion.tr
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <td colSpan={7} className="text-center py-20 text-slate-500">
-                  <motion.div
-                    animate={{ rotate: 360 }}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <CalendarSkeleton currentDate={currentDate} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="calendar"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <table className="w-full table-fixed border-separate border-spacing-1">
+              <thead>
+                <tr>
+                  {shortWeekDays.map((weekDay) => (
+                    <th
+                      key={weekDay}
+                      className="w-10 h-8 text-xs font-medium text-slate-500 text-center"
+                    >
+                      {weekDay}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {normalizedWeeks.slice(0, 5).map(({ week, days }, index) => (
+                  <motion.tr
+                    key={`${currentDate.format("YYYY-MM")}-week-${week}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{
-                      duration: 1,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: "linear",
+                      duration: 0.3,
+                      delay: index * 0.05,
                     }}
-                    className="inline-block w-6 h-6 border-2 border-slate-300 border-t-slate-600 rounded-full"
-                  />
-                  <p className="mt-2">Carregando...</p>
-                </td>
-              </motion.tr>
-            ) : (
-              normalizedWeeks.slice(0, 5).map(({ week, days }, index) => (
-                <motion.tr
-                  key={`${currentDate.format("YYYY-MM")}-week-${week}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: index * 0.05,
-                  }}
-                  className=""
-                >
-                  {days.map(
-                    ({
-                      date,
-                      disabled,
-                    }: {
-                      date: dayjs.Dayjs;
-                      disabled: boolean;
-                    }) => {
-                      const isSelected = selectedDate
-                        ? dayjs(selectedDate).isSame(date, "day")
-                        : false;
-                      const isToday = date.isSame(dayjs(), "day");
-                      const isCurrentMonth = date.isSame(currentDate, "month");
+                    className=""
+                  >
+                    {days.map(
+                      ({
+                        date,
+                        disabled,
+                      }: {
+                        date: dayjs.Dayjs;
+                        disabled: boolean;
+                      }) => {
+                        const isSelected = selectedDate
+                          ? dayjs(selectedDate).isSame(date, "day")
+                          : false;
+                        const isToday = date.isSame(dayjs(), "day");
+                        const isCurrentMonth = date.isSame(
+                          currentDate,
+                          "month",
+                        );
 
-                      return (
-                        <td key={date.toString()} className="p-0 relative">
-                          <CalendarDay
-                            date={date}
-                            disabled={disabled}
-                            isSelected={isSelected}
-                            isToday={isToday}
-                            isCurrentMonth={isCurrentMonth}
-                            onClick={onDateClick}
-                          />
-                        </td>
-                      );
-                    },
-                  )}
-                </motion.tr>
-              ))
-            )}
-          </AnimatePresence>
-        </tbody>
-      </table>
+                        return (
+                          <td key={date.toString()} className="p-0 relative">
+                            <CalendarDay
+                              date={date}
+                              disabled={disabled}
+                              isSelected={isSelected}
+                              isToday={isToday}
+                              isCurrentMonth={isCurrentMonth}
+                              onClick={onDateClick}
+                            />
+                          </td>
+                        );
+                      },
+                    )}
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

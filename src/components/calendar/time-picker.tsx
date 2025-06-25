@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { useScheduleStore } from "@/hooks/use-selected-date";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { motion } from "framer-motion";
 import { ArrowRight, CalendarIcon, Check, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { TimePickerSkeleton } from "./time-picker-skeleton";
 
 interface TimePickerProps {
   selectedDate: Date;
@@ -86,25 +87,7 @@ export function TimePicker({
       <div className="flex-1 overflow-y-auto">
         <div className="p-6">
           {/* Loading State */}
-          {isLoading && (
-            <motion.div
-              key={`loading-${dateKey}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-center py-12"
-            >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{
-                  duration: 1,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "linear",
-                }}
-                className="w-6 h-6 border-2 border-slate-300 border-t-slate-600 rounded-full"
-              />
-              <p className="ml-3 text-slate-500 text-sm">Carregando...</p>
-            </motion.div>
-          )}
+          {isLoading && <TimePickerSkeleton />}
 
           {/* No Availability */}
           {!isLoading && !availability && (

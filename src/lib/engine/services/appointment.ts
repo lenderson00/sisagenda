@@ -1,7 +1,7 @@
 // src/services/appointment.service.ts
 
 import { PrismaClient } from "@prisma/client";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import "dayjs/locale/pt-br";
 
 const prisma = new PrismaClient();

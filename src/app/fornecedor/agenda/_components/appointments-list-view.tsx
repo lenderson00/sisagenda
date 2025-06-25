@@ -22,7 +22,7 @@ import type {
   AppointmentActivity,
   DeliveryType,
 } from "@prisma/client";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import {
   AlertTriangle,
   Calendar,

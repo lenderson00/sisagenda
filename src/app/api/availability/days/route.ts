@@ -1,6 +1,6 @@
 // app/api/availability/simple/route.ts
 
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { NextResponse } from "next/server";
 import "dayjs/locale/pt-br";
 

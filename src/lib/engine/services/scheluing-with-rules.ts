@@ -8,7 +8,7 @@ import { subtractBlocksFromFree } from "../intervals";
 import { getBlockedIntervalsForDate } from "../rule";
 import { type TimeBlock as LunchTimeBlock, splitByLunch } from "../time";
 
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import "dayjs/locale/pt-br";
 import { prisma } from "@/lib/prisma";
 

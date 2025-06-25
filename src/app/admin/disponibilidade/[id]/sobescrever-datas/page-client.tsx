@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import "dayjs/locale/pt-br";
 import { Edit, PlusCircle, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";

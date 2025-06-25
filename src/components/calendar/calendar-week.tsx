@@ -1,6 +1,6 @@
 "use client";
 
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { CalendarDay } from "./calendar-day";
 
 interface CalendarWeekProps {
