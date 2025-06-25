@@ -94,6 +94,9 @@ model Organization {
   deliveryTypes DeliveryType[]
   appointments  Appointment[]
 
+  lunchTimeStart Int @default(720) @db.SmallInt
+  lunchTimeEnd   Int @default(780) @db.SmallInt
+
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   deletedAt    DateTime?

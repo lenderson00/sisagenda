@@ -13,6 +13,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   IconBuilding,
@@ -69,10 +71,11 @@ const main = [
 export const AdminSidebar = ({
   ...props
 }: React.ComponentProps<typeof Sidebar>) => {
+  const { open } = useSidebar();
   return (
     <Sidebar variant="sidebar" {...props}>
-      <SidebarHeader className="relative">
-        <SidebarMenu>
+      <SidebarHeader className="relative flex-row justify-between items-center">
+        <SidebarMenu className="w-fit">
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
@@ -87,6 +90,7 @@ export const AdminSidebar = ({
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        {open && <SidebarTrigger />}
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={main} className="my-0" />
