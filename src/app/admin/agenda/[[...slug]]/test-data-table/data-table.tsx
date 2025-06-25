@@ -1,7 +1,7 @@
 import { DataTableFilter, useDataTableFilters } from "@/components/data-table";
 import { columnsConfig } from "./columns";
 import type { AppointmentWithRelations } from "../page-client";
-import { useMemo, useState } from "react";
+import { useMemo, useEffect, type Dispatch, type SetStateAction } from "react";
 import {
   createTSTColumns,
   createTSTFilters,
@@ -14,17 +14,64 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { tstColumnsDefs } from "./tst-columns";
-import type { FiltersState } from "@/components/data-table/core/types";
+import type {
+  FiltersState,
+  FilterModel,
+} from "@/components/data-table/core/types";
+import { useRouter } from "next/navigation";
 
-export function DataTableTest({ data }: { data: AppointmentWithRelations[] }) {
-  const [newFilters, setNewFilters] = useState<FiltersState>([]);
+interface DataTableTestProps {
+  data: AppointmentWithRelations[];
+  defaultStatusFilter?: string;
+  filterState: {
+    filter: FiltersState;
+    setFilter: Dispatch<SetStateAction<FiltersState>>;
+  };
+}
+
+export function DataTableTest({
+  filterState,
+  data,
+  defaultStatusFilter,
+}: DataTableTestProps) {
+  const router = useRouter();
+
+  // Set default status filter when component mounts or defaultStatusFilter changes
+  useEffect(() => {
+    if (defaultStatusFilter) {
+      const statusFilter: FilterModel<"option"> = {
+        columnId: "status",
+        type: "option",
+        operator: "is",
+        values: [defaultStatusFilter],
+      };
+      filterState.setFilter([statusFilter]);
+    }
+  }, [defaultStatusFilter, filterState.setFilter]);
 
   const { columns, filters, actions, strategy } = useDataTableFilters({
     strategy: "client",
     data,
     columnsConfig,
-    filters: newFilters,
-    onFiltersChange: setNewFilters,
+    filters: filterState.filter,
+    onFiltersChange: (updatedFilters) => {
+      // Handle both function and direct value cases
+      const newFiltersValue =
+        typeof updatedFilters === "function"
+          ? updatedFilters(filterState.filter)
+          : updatedFilters;
+
+      filterState.setFilter(newFiltersValue);
+
+      // Check if status filter was removed
+      const hasStatusFilter = newFiltersValue.some(
+        (filter: FilterModel<any>) => filter.columnId === "status",
+      );
+      if (!hasStatusFilter && defaultStatusFilter) {
+        // Navigate to the base agenda page (no specific tab)
+        router.push("/admin/agenda");
+      }
+    },
   });
 
   console.log(filters);

@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
 import { EmptyScreen } from "./_components/empty-screen";
-import { DataTable } from "./date-table/data-table";
 import { IconFilter } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type {
@@ -14,32 +13,39 @@ import type {
   User,
 } from "@prisma/client";
 import { DataTableTest } from "./test-data-table/data-table";
+import type { FiltersState } from "@/components/data-table/core/types";
+import { useState } from "react";
 
 const AvailableTabs = [
   {
     label: "Pendentes de ação",
     href: "/admin/agenda",
     slug: "pendentes",
+    statusFilter: "PENDING_CONFIRMATION",
   },
   {
     label: "Próximos",
     href: "/admin/agenda/proximos",
     slug: "proximos",
+    statusFilter: "CONFIRMED",
   },
   {
     label: "Cancelados",
     href: "/admin/agenda/cancelados",
     slug: "cancelados",
+    statusFilter: "CANCELLED",
   },
   {
     label: "Anteriores",
     href: "/admin/agenda/anteriores",
     slug: "anteriores",
+    statusFilter: "COMPLETED",
   },
   {
     label: "Concluídos",
     href: "/admin/agenda/concluidos",
     slug: "concluidos",
+    statusFilter: "COMPLETED",
   },
 ];
 
@@ -49,9 +55,7 @@ export type AppointmentWithRelations = Appointment & {
   user: User;
 };
 
-const getAppointments = async (
-  tab: string,
-): Promise<AppointmentWithRelations[]> => {
+const getAppointments = async (): Promise<AppointmentWithRelations[]> => {
   const response = await fetch("/api/appointments");
   if (!response.ok) {
     throw new Error("Failed to fetch appointments");
@@ -84,12 +88,15 @@ const DataTableSkeleton = () => {
 
 export function PageClient({ slug }: { slug?: string[] }) {
   const tab = slug?.[0] || "pendentes";
+  const currentTab =
+    AvailableTabs.find((t) => t.slug === tab) || AvailableTabs[0];
+  const [newFilters, setNewFilters] = useState<FiltersState>([]);
 
   const { data, isLoading, isError, error } = useQuery<
     AppointmentWithRelations[]
   >({
-    queryKey: ["appointments", tab],
-    queryFn: () => getAppointments(tab),
+    queryKey: ["appointments"],
+    queryFn: getAppointments,
   });
 
   return (
@@ -103,7 +110,9 @@ export function PageClient({ slug }: { slug?: string[] }) {
                 href={mapTab.href}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   tab === mapTab.slug
-                    ? "bg-accent text-accent-foreground"
+                    ? tab === "pendentes" && newFilters.length === 0
+                      ? "hover:bg-muted"
+                      : "bg-muted text-muted-foreground"
                     : "hover:bg-muted"
                 }`}
               >
@@ -115,10 +124,16 @@ export function PageClient({ slug }: { slug?: string[] }) {
       </div>
 
       {isLoading && <DataTableSkeleton />}
-      {!isLoading && !isError && data && data.length > 0 && (
-        <DataTable data={data} />
+      {!isLoading && !isError && data && (
+        <DataTableTest
+          data={data}
+          filterState={{
+            filter: newFilters,
+            setFilter: setNewFilters,
+          }}
+          defaultStatusFilter={currentTab.statusFilter}
+        />
       )}
-      <DataTableTest data={data ?? []} />
       {!isLoading && !isError && data && data.length === 0 && (
         <EmptyScreen
           Icon={IconFilter}
