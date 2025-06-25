@@ -18,7 +18,7 @@ export const UserPageClient = ({ user }: UserPageClientProps) => {
     <div className="container mx-auto px-6 py-8">
       {/* User Overview */}
       <div className="grid gap-6 md:grid-cols-3 mb-8">
-        <Card className="border-gray-200">
+        <Card className="border-muted">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-700">
               Contact Information
@@ -45,7 +45,7 @@ export const UserPageClient = ({ user }: UserPageClientProps) => {
           </CardContent>
         </Card>
 
-        <Card className="border-gray-200">
+        <Card className="border-muted">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-700">
               Account Details
@@ -63,7 +63,7 @@ export const UserPageClient = ({ user }: UserPageClientProps) => {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-gray-200">
+        <Card className="border-muted">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-700">
               Account Details

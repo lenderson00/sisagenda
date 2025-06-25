@@ -62,7 +62,7 @@ export function AppointmentsListView({
 
   const getStatusColor = (deliveryTypeId: string) => {
     // You might want to map deliveryTypeId to a status color
-    return "bg-gray-100 text-gray-700 border-gray-300";
+    return "bg-gray-100 text-gray-700 border-muted";
   };
 
   const formatDate = (date: Date) => {
@@ -211,7 +211,7 @@ export function AppointmentsListView({
               {totalAppointments}
             </span>
             <select
-              className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs"
+              className="h-8 rounded-md border border-muted bg-white px-2 text-xs"
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
             >

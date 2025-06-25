@@ -86,7 +86,7 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
       ${
         isDragActive
           ? "border-primary bg-primary-foreground"
-          : "border-gray-300 hover:border-primary"
+          : "border-muted hover:border-primary"
       }`}
     >
       <input {...getInputProps()} />

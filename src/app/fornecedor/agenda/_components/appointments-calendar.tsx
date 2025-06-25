@@ -78,7 +78,7 @@ function CalendarDay({
 }: CalendarDayProps) {
   if (!date) {
     return (
-      <div className="min-h-[80px] md:min-h-[100px] bg-gray-50 border-b border-r border-gray-200" />
+      <div className="min-h-[80px] md:min-h-[100px] bg-gray-50 border-b border-r border-muted" />
     );
   }
 
@@ -89,7 +89,7 @@ function CalendarDay({
   return (
     <div
       className={cn(
-        "min-h-[80px] md:min-h-[100px] p-1 md:p-2 bg-white border-b border-r border-gray-200 relative transition-colors",
+        "min-h-[80px] md:min-h-[100px] p-1 md:p-2 bg-white border-b border-r border-muted relative transition-colors",
         "hover:bg-gray-50 cursor-pointer group",
         isToday && "bg-blue-50 border-blue-200",
       )}
@@ -306,11 +306,11 @@ export function AppointmentsCalendarView({
 
       <CardContent className="p-0">
         {/* Calendar header */}
-        <div className="grid grid-cols-7 gap-px border-t border-l border-gray-200 bg-gray-200">
+        <div className="grid grid-cols-7 gap-px border-t border-l border-muted bg-gray-200">
           {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((day) => (
             <div
               key={day}
-              className="py-2 text-center text-xs font-medium text-gray-600 bg-gray-50 border-b border-r border-gray-200"
+              className="py-2 text-center text-xs font-medium text-gray-600 bg-gray-50 border-b border-r border-muted"
             >
               {day}
             </div>
@@ -318,7 +318,7 @@ export function AppointmentsCalendarView({
         </div>
 
         {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-px border-l border-gray-200 bg-gray-200">
+        <div className="grid grid-cols-7 gap-px border-l border-muted bg-gray-200">
           {calendarGrid.map((date, index) => (
             <CalendarDay
               key={index}

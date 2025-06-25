@@ -94,7 +94,7 @@ export function AppointmentsList({
 
   const getStatusColor = (deliveryTypeId: string) => {
     // You might want to map deliveryTypeId to a status color
-    return "bg-gray-100 text-gray-700 border-gray-300";
+    return "bg-gray-100 text-gray-700 border-muted";
   };
 
   const getAppointmentIcon = (appointment: AppointmentWithRelations) => {
@@ -135,7 +135,7 @@ export function AppointmentsList({
   const renderGridView = () => (
     <div className="grid gap-6 md:grid-cols-2">
       {paginatedAppointments.map((appointment) => (
-        <Card key={appointment.id} className="bg-white border-gray-200">
+        <Card key={appointment.id} className="bg-white border-muted">
           <div className="p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">
@@ -205,7 +205,7 @@ export function AppointmentsList({
             </div>
 
             {/* Last activity */}
-            <div className="border-t border-gray-200 pt-4">
+            <div className="border-t border-muted pt-4">
               <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
                 <Avatar className="h-5 w-5">
                   <AvatarImage
@@ -251,7 +251,7 @@ export function AppointmentsList({
                   setSearchTerm(e.target.value);
                   setCurrentPage(1); // Reset to first page when searching
                 }}
-                className="pl-10 bg-white border-gray-300"
+                className="pl-10 bg-white border-muted"
               />
               <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             </div>
@@ -262,7 +262,7 @@ export function AppointmentsList({
                 setCurrentPage(1); // Reset to first page when filtering
               }}
             >
-              <SelectTrigger className="w-full sm:w-[180px] bg-white border-gray-300">
+              <SelectTrigger className="w-full sm:w-[180px] bg-white border-muted">
                 <SelectValue placeholder="Filter by delivery type" />
               </SelectTrigger>
               <SelectContent>
@@ -288,7 +288,7 @@ export function AppointmentsList({
                 setCurrentPage(1); // Reset to first page when sorting
               }}
             >
-              <SelectTrigger className="w-full sm:w-[180px] bg-white border-gray-300">
+              <SelectTrigger className="w-full sm:w-[180px] bg-white border-muted">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -329,7 +329,7 @@ export function AppointmentsList({
                   of {filteredAppointments.length}
                 </span>
                 <select
-                  className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs"
+                  className="h-8 rounded-md border border-muted bg-white px-2 text-xs"
                   value={pageSize}
                   onChange={(e) => handlePageSizeChange(Number(e.target.value))}
                 >

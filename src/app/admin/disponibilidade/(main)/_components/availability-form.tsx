@@ -66,7 +66,7 @@ export function AvailabilityForm({
                 <Input
                   placeholder="Ex.: Horário padrão de atendimento"
                   {...field}
-                  className="border-gray-300"
+                  className="border-muted"
                 />
               </FormControl>
               <FormMessage />
@@ -80,7 +80,7 @@ export function AvailabilityForm({
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border-muted text-gray-700 hover:bg-gray-50"
             >
               Cancelar
             </Button>

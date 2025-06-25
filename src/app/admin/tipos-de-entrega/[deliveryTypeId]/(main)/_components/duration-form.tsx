@@ -57,7 +57,7 @@ export function DurationForm({
                 placeholder="Digite a duração do tipo de entrega em minutos"
                 {...form.register("duration")}
                 type="number"
-                className="border-gray-300 pr-[72px]"
+                className="border-muted pr-[72px]"
                 defaultValue={form.getValues("duration")}
               />
               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">

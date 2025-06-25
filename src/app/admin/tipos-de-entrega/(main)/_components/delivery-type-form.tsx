@@ -70,7 +70,7 @@ export function DeliveryTypeForm({
                 <Input
                   placeholder="Digite o nome do tipo de transporte"
                   {...field}
-                  className="border-gray-300"
+                  className="border-muted"
                 />
               </FormControl>
               <FormMessage />
@@ -88,7 +88,7 @@ export function DeliveryTypeForm({
                 <Textarea
                   placeholder="Digite a descrição do tipo de transporte"
                   {...field}
-                  className="border-gray-300"
+                  className="border-muted"
                 />
               </FormControl>
               <FormMessage />
@@ -108,7 +108,7 @@ export function DeliveryTypeForm({
                     placeholder="Digite a duração do tipo de entrega em minutos"
                     {...field}
                     type="number"
-                    className="border-gray-300 pr-[72px]"
+                    className="border-muted pr-[72px]"
                     defaultValue={field.value}
                   />
                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">
@@ -127,7 +127,7 @@ export function DeliveryTypeForm({
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border-muted text-gray-700 hover:bg-gray-50"
             >
               Cancelar
             </Button>

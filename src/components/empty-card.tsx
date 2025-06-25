@@ -13,7 +13,7 @@ type Props = {
 export const EmptyCard = ({ children, icon, title, description }: Props) => {
   const Icon = icon;
   return (
-    <Card className="text-center rounded-[6px] py-12 h-full  border-gray-200 flex-1">
+    <Card className="text-center rounded-[6px] py-12 h-full  border-muted flex-1">
       <CardContent>
         <div className="space-y-4">
           <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">

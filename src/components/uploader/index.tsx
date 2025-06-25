@@ -45,7 +45,7 @@ export default function Uploader({
       <label
         htmlFor={`${name}-upload`}
         className={cn(
-          "group relative mt-2 flex cursor-pointer flex-col items-center justify-center rounded-md border border-gray-300 bg-white shadow-sm transition-all hover:bg-gray-50 w-full",
+          "group relative mt-2 flex cursor-pointer flex-col items-center justify-center rounded-md border border-muted bg-white shadow-sm transition-all hover:bg-gray-50 w-full",
           aspectRatio,
         )}
       >

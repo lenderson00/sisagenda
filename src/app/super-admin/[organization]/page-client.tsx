@@ -57,7 +57,7 @@ export function OrganizationAdminClient({
             <AdminList admins={admins} organizationId={organization.id} />
           </div>
         ) : (
-          <Card className="text-center py-12 border-gray-200">
+          <Card className="text-center py-12 border-muted">
             <CardContent>
               <div className="space-y-4">
                 <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">

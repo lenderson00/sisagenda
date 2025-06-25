@@ -59,7 +59,7 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
                   <Input
                     placeholder="Digite o nome completo"
                     {...field}
-                    className="border-gray-300"
+                    className="border-muted"
                   />
                 </FormControl>
                 <FormMessage />
@@ -78,7 +78,7 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
                     type="email"
                     placeholder="Digite o email"
                     {...field}
-                    className="border-gray-300"
+                    className="border-muted"
                   />
                 </FormControl>
                 <FormMessage />
@@ -98,7 +98,7 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
                   <Input
                     placeholder="Digite o número de WhatsApp"
                     {...field}
-                    className="border-gray-300"
+                    className="border-muted"
                   />
                 </FormControl>
                 <FormMessage />
@@ -113,7 +113,7 @@ export function UserForm({ initialData, onSubmit, onCancel }: UserFormProps) {
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border-muted text-gray-700 hover:bg-gray-50"
             >
               Cancelar
             </Button>

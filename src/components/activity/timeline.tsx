@@ -82,7 +82,7 @@ export const AppointmentTimelineEventItem: React.FC<
         line: "bg-red-200",
       },
       appointment_cancelled: {
-        icon: "border-gray-200 bg-gray-100 text-gray-600",
+        icon: "border-muted bg-gray-100 text-gray-600",
         dot: "bg-gray-500",
         line: "bg-gray-200",
       },
@@ -92,7 +92,7 @@ export const AppointmentTimelineEventItem: React.FC<
         line: "bg-yellow-200",
       },
       default: {
-        icon: "border-gray-200 bg-gray-100 text-gray-600",
+        icon: "border-muted bg-gray-100 text-gray-600",
         dot: "bg-gray-500",
         line: "bg-gray-200",
       },
