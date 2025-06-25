@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import type { AppointmentWithRelations } from "../page";
 import { AppointmentsExport } from "./appointments-export";
+import { PageHeader } from "@/components/page-header";
 
 interface AppointmentsHeaderProps {
   viewMode: "list" | "calendar";
@@ -38,6 +39,7 @@ export function AppointmentsHeader({
 
   return (
     <div>
+      <PageHeader title={``} subtitle={``}></PageHeader>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold ">
           Agendamentos {user?.name && `- ${user.name}`}

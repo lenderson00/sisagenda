@@ -10,7 +10,6 @@ import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 import type { PropsWithChildren } from "react";
 import { Toaster } from "sonner";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 type Props = PropsWithChildren<{
   session: Session;
@@ -23,26 +22,24 @@ export function Providers({ children, session }: Props) {
     <SessionProvider session={session} refetchOnWindowFocus={false}>
       <JotaiProvider>
         <Toaster />
-        <NuqsAdapter>
-          <QueryClientProvider client={queryClient}>
-            <TooltipProvider delayDuration={200} skipDelayDuration={500}>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <ModalProvider>
-                  <div vaul-drawer-wrapper="">
-                    <div className="relative flex min-h-svh flex-col bg-background">
-                      {children}
-                    </div>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider delayDuration={200} skipDelayDuration={500}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ModalProvider>
+                <div vaul-drawer-wrapper="">
+                  <div className="relative flex min-h-svh flex-col bg-background">
+                    {children}
                   </div>
-                </ModalProvider>
-              </ThemeProvider>
-            </TooltipProvider>
-          </QueryClientProvider>
-        </NuqsAdapter>
+                </div>
+              </ModalProvider>
+            </ThemeProvider>
+          </TooltipProvider>
+        </QueryClientProvider>
       </JotaiProvider>
     </SessionProvider>
   );

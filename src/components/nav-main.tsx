@@ -30,15 +30,18 @@ export function NavMain({
   };
 
   return (
-    <SidebarGroup className={cn(className)}>
-      <SidebarMenu>
+    <SidebarGroup className={cn(className, "h-full")}>
+      <SidebarMenu className="h-full">
         {items.map((item) => (
           <SidebarMenuItem
             key={item.name}
-            className={cn({
-              "text-neutral-500": !isActive(item.url),
-              "text-primary": isActive(item.url),
-            })}
+            className={cn(
+              {
+                "text-neutral-500": !isActive(item.url),
+                "text-primary": isActive(item.url),
+              },
+              item.url === "/configuracoes" && "mt-auto",
+            )}
           >
             <SidebarMenuButton asChild tooltip={item.name}>
               <a href={item.url}>

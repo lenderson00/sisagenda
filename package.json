@@ -71,6 +71,7 @@
     "pg": "^8.16.1",
     "prisma": "^6.10.1",
     "react": "19.1.0",
+    "react-activity-calendar": "^2.7.12",
     "react-day-picker": "^9.7.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.58.1",

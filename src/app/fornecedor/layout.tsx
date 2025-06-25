@@ -1,0 +1,22 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { FornecedorSidebar } from "./_components/fornecedor-sidebar";
+const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <SidebarProvider>
+      <FornecedorSidebar />
+      <SidebarInset className="border-1">
+        <div className="flex flex-col ">
+          <div className="min-h-[60vh] bg-background">{children}</div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+};
+
+export default SuperAdminLayout;
