@@ -15,7 +15,10 @@ export function TimePickerSkeleton({ className }: TimePickerSkeletonProps) {
       <div className="flex-1 overflow-y-auto space-y-2">
         {/* Time slots skeleton */}
         {Array.from({ length: 8 }).map((_, index) => (
-          <Skeleton className="w-full h-6 rounded-md" />
+          <Skeleton
+            key={`key-skeleton-index-${index}`}
+            className="w-full h-6 rounded-md"
+          />
         ))}
       </div>
     </div>
