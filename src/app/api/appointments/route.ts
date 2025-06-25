@@ -7,12 +7,33 @@ import { auth } from "@/lib/auth";
 import { generateInternalId } from "@/lib/nanoid";
 import { prisma } from "@/lib/prisma";
 
+const itemSchema = z.object({
+  pi: z.string().optional(),
+  name: z.string(),
+  unit: z.string(),
+  quantity: z.number(),
+  price: z.number(),
+});
+
+const attachmentSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+  size: z.number(),
+  type: z.string(),
+});
+
 const createAppointmentInput = z.object({
   organizationId: z.string(),
   deliveryTypeId: z.string(),
   dateTime: z.string().datetime(),
   ordemDeCompra: z.string(),
-  observations: z.record(z.any()),
+  notaFiscal: z.string(),
+  isFirstDelivery: z.boolean(),
+  processNumber: z.string().optional(),
+  needsLabAnalysis: z.boolean(),
+  items: z.array(itemSchema),
+  observation: z.string().optional(),
+  attachments: z.array(attachmentSchema),
 });
 
 const buildWhere = (tab: string): Prisma.AppointmentWhereInput => {
@@ -75,8 +96,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-
-
   try {
     const appointments = await prisma.appointment.findMany({
       where: hasTab ? where : {},
@@ -111,11 +130,12 @@ export async function POST(req: Request) {
 
   try {
     const json = await req.json();
-    const validatedInput = createAppointmentInput.parse(json);
+    const appointmentData = createAppointmentInput.parse(json);
+    const { items, attachments, ...rest } = appointmentData;
 
     const deliveryType = await prisma.deliveryType.findUnique({
       where: {
-        id: validatedInput.deliveryTypeId,
+        id: rest.deliveryTypeId,
       },
     });
 
@@ -141,18 +161,29 @@ export async function POST(req: Request) {
         { status: 404 },
       );
     }
+
     const result = await prisma.$transaction(async (tx) => {
       const appointment = await tx.appointment.create({
         data: {
-          organizationId: validatedInput.organizationId,
-          deliveryTypeId: validatedInput.deliveryTypeId,
-          date: new Date(validatedInput.dateTime),
+          ...rest,
+          date: rest.dateTime,
           duration: deliveryType.duration,
-          ordemDeCompra: validatedInput.ordemDeCompra,
-          observations: validatedInput.observations,
           userId: user.id,
           status: "PENDING_CONFIRMATION",
-          internalId: generateInternalId(),
+          internalId: await generateInternalId(),
+          items: {
+            create: items.map((item) => ({
+              ...item,
+            })),
+          },
+          attachments: {
+            create: attachments.map((attachment) => ({
+              fileName: attachment.name,
+              fileUrl: attachment.url,
+              fileSize: attachment.size,
+              mimeType: attachment.type,
+            })),
+          },
         },
       });
 
@@ -166,7 +197,6 @@ export async function POST(req: Request) {
           previousStatus: null,
           newStatus: "PENDING_CONFIRMATION",
           priority: 1000,
-
         },
       });
 

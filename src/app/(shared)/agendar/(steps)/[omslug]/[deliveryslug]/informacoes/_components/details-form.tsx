@@ -26,24 +26,28 @@ import { Step2Items } from "./step-2-items";
 import { Step3Documents } from "./step-3-documents";
 
 const itemSchema = z.object({
-  pi: z.string().min(1, "PI do item é obrigatório."),
-  // Adicione outros campos do item aqui, se necessário
+  pi: z.string().optional(),
+  name: z.string().min(1, "O nome do item é obrigatório."),
+  unit: z.string().min(1, "A unidade é obrigatória."),
+  quantity: z.coerce.number().min(1, "A quantidade deve ser no mínimo 1."),
+  price: z.coerce.number().min(0.01, "O preço é obrigatório."),
 });
 
 export const detailsFormSchema = z.object({
   // Step 1
   notaFiscal: z.string().min(1, "Nota Fiscal é obrigatória."),
   ordemDeCompra: z.string().min(1, "Ordem de Compra é obrigatória."),
-  isFirstDelivery: z.enum(["yes", "no"]),
-  processNumber: z.string().min(1, "Número do processo é obrigatório."),
-  needsLabAnalysis: z.enum(["yes", "no"], {
-    required_error: "Selecione uma opção.",
-  }),
+  isFirstDelivery: z.boolean(),
+  processNumber: z.string().optional(),
+  needsLabAnalysis: z.boolean(),
 
   // Step 2
   items: z
     .array(itemSchema)
     .min(1, "É necessário adicionar pelo menos um item."),
+
+  // Step 3
+  observation: z.string().optional(),
 });
 
 export type DetailsFormValues = z.infer<typeof detailsFormSchema>;
@@ -92,7 +96,13 @@ export function DetailsForm() {
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsFormSchema),
     defaultValues: {
+      notaFiscal: "",
+      ordemDeCompra: "",
+      isFirstDelivery: false,
+      processNumber: "",
+      needsLabAnalysis: false,
       items: [],
+      observation: "",
     },
   });
 
@@ -100,11 +110,7 @@ export function DetailsForm() {
     mutate: createAppointment,
     isPending,
     isSuccess,
-  } = useCreateAppointment(
-    schedule?.organizationId ?? "",
-    schedule?.deliveryTypeId ?? "",
-    schedule?.dateTime ?? new Date(),
-  );
+  } = useCreateAppointment();
 
   // Load saved form data on mount
   useEffect(() => {
@@ -148,18 +154,12 @@ export function DetailsForm() {
       return;
     }
 
-    const observationsPayload = {
-      ...values,
-      attachments: schedule.attachments,
-      observation: schedule.observation,
-    };
-
     createAppointment({
+      ...values,
       organizationId: schedule.organizationId,
       deliveryTypeId: schedule.deliveryTypeId,
       dateTime: new Date(schedule.dateTime),
-      ordemDeCompra: values.ordemDeCompra,
-      observations: observationsPayload,
+      attachments: schedule.attachments ?? [],
     });
   }
 

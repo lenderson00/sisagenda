@@ -3,16 +3,41 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "@/lib/dayjs";
 import { toast } from "sonner";
+import { z } from "zod";
+import type { FileMetadata } from "@/app/(shared)/agendar/_component/file-uploader";
 
-type AppointmentInput = {
-  organizationId: string;
-  deliveryTypeId: string;
-  dateTime: Date;
-  ordemDeCompra: string;
-  observations: Record<string, any>;
-};
+const itemSchema = z.object({
+  pi: z.string().optional(),
+  name: z.string(),
+  unit: z.string(),
+  quantity: z.number(),
+  price: z.number(),
+});
 
-async function createAppointment(input: AppointmentInput) {
+const createAppointmentInput = z.object({
+  organizationId: z.string(),
+  deliveryTypeId: z.string(),
+  dateTime: z.date(),
+  ordemDeCompra: z.string(),
+  notaFiscal: z.string(),
+  isFirstDelivery: z.boolean(),
+  processNumber: z.string().optional(),
+  needsLabAnalysis: z.boolean(),
+  items: z.array(itemSchema),
+  observation: z.string().optional(),
+  attachments: z.array(
+    z.object({
+      name: z.string(),
+      url: z.string(),
+      size: z.number(),
+      type: z.string(),
+    }),
+  ),
+});
+
+type CreateAppointmentInput = z.infer<typeof createAppointmentInput>;
+
+async function createAppointment(input: CreateAppointmentInput) {
   const response = await fetch("/api/appointments", {
     method: "POST",
     headers: {
@@ -31,27 +56,11 @@ async function createAppointment(input: AppointmentInput) {
   return response.json();
 }
 
-export function useCreateAppointment(
-  organizationId: string,
-  deliveryTypeId: string,
-  dateKey: Date,
-) {
-  const queryClient = useQueryClient();
-
+export function useCreateAppointment() {
   return useMutation({
     mutationFn: createAppointment,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          "availability",
-          organizationId,
-          deliveryTypeId,
-          dayjs(dateKey).format("YYYY-MM-DD"),
-        ],
-      });
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["availability"] });
-      toast.success("Agendamento solicitado com sucesso!");
+      toast.success("Agendamento criado com sucesso!");
     },
     onError: (error) => {
       toast.error(error.message);

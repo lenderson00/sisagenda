@@ -8,7 +8,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useFormContext } from "react-hook-form";
 
 export function Step1DeliveryDetails() {
@@ -35,29 +42,13 @@ export function Step1DeliveryDetails() {
         control={form.control}
         name="isFirstDelivery"
         render={({ field }) => (
-          <FormItem className="space-y-3">
-            <FormLabel>Primeira entrega da Ordem de Compra (OC)?</FormLabel>
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <FormLabel className="text-base">É a primeira entrega?</FormLabel>
+            </div>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                className="flex flex-col space-y-1"
-              >
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="yes" />
-                  </FormControl>
-                  <FormLabel className="font-normal">Sim</FormLabel>
-                </FormItem>
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="no" />
-                  </FormControl>
-                  <FormLabel className="font-normal">Não</FormLabel>
-                </FormItem>
-              </RadioGroup>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -78,32 +69,15 @@ export function Step1DeliveryDetails() {
         control={form.control}
         name="needsLabAnalysis"
         render={({ field }) => (
-          <FormItem className="space-y-3">
-            <FormLabel>
-              O item que será entregue precisa ser acompanhado de laudo
-              laboratorial?
-            </FormLabel>
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <FormLabel className="text-base">
+                Material precisa de análise laboratorial?
+              </FormLabel>
+            </div>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                className="flex flex-col space-y-1"
-              >
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="yes" />
-                  </FormControl>
-                  <FormLabel className="font-normal">Sim</FormLabel>
-                </FormItem>
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="no" />
-                  </FormControl>
-                  <FormLabel className="font-normal">Não</FormLabel>
-                </FormItem>
-              </RadioGroup>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />

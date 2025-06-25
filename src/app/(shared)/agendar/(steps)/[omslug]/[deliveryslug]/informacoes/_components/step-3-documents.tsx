@@ -2,7 +2,7 @@
 
 import {
   FileUploader,
-  FileMetadata,
+  type FileMetadata,
 } from "@/app/(shared)/agendar/_component/file-uploader";
 import {
   FormControl,
@@ -35,12 +35,6 @@ export function Step3Documents() {
     const newAttachments = [...(schedule?.attachments ?? [])];
     newAttachments.splice(index, 1);
     setSchedule({ attachments: newAttachments });
-  };
-
-  const handleObservationChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    setSchedule({ observation: e.target.value });
   };
 
   return (
@@ -87,14 +81,22 @@ export function Step3Documents() {
           <FileUploader onUploadComplete={handleUploadComplete} />
         )}
       </div>
-      <div className="space-y-2">
-        <FormLabel>Observações</FormLabel>
-        <Textarea
-          value={schedule?.observation ?? ""}
-          onChange={handleObservationChange}
-          placeholder="Adicione qualquer informação relevante aqui..."
-        />
-      </div>
+      <FormField
+        control={form.control}
+        name="observation"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Observações</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Adicione qualquer informação relevante aqui..."
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }
