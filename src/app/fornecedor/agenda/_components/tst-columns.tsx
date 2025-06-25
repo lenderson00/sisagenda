@@ -3,32 +3,39 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import dayjs from "@/lib/dayjs";
 import { cn, getStatusColor, getStatusReadableName } from "@/lib/utils";
-import type { Organization } from "@prisma/client";
-import { IconDots, IconEye, IconPencil, IconTrash } from "@tabler/icons-react";
+import dayjs from "@/lib/dayjs";
+import { IconDots } from "@tabler/icons-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreVerticalIcon, Trash2 } from "lucide-react";
 import Link from "next/link";
-import type { AppointmentWithRelations } from "../page";
-import { DataTableColumnHeader } from "./data-table-header";
+import type {
+  Appointment,
+  AppointmentActivity,
+  DeliveryType,
+} from "@prisma/client";
 
-export const columns: ColumnDef<AppointmentWithRelations>[] = [
+type AppointmentWithRelations = Appointment & {
+  deliveryType: DeliveryType;
+  activities: AppointmentActivity[];
+  organization?: {
+    name: string;
+  };
+};
+
+export const tstColumnsDefs: ColumnDef<AppointmentWithRelations, any>[] = [
   {
-    accessorKey: "ordemDeCompra",
+    accessorFn: (row) => row.ordemDeCompra,
+    id: "ordemDeCompra",
     header: "Ordem de Compra",
     cell: ({ row }) => {
       return (
         <Link href={`/agendamentos/${row.original.id}`}>
-          <div className="text-sm min-w-[190px] truncate">
+          <div className="text-sm min-w-[190px] truncate hover:underline">
             {row.original.ordemDeCompra}
           </div>
         </Link>
@@ -36,7 +43,8 @@ export const columns: ColumnDef<AppointmentWithRelations>[] = [
     },
   },
   {
-    accessorKey: "organization",
+    accessorFn: (row) => row.organization?.name || "",
+    id: "organization",
     header: "Organização Militar",
     cell: ({ row }) => {
       return (
@@ -45,10 +53,10 @@ export const columns: ColumnDef<AppointmentWithRelations>[] = [
         </div>
       );
     },
-    enableSorting: true,
   },
   {
-    accessorKey: "deliveryType",
+    accessorFn: (row) => row.deliveryType.name,
+    id: "deliveryType",
     header: "Tipo de Entrega",
     cell: ({ row }) => {
       return (
@@ -59,21 +67,20 @@ export const columns: ColumnDef<AppointmentWithRelations>[] = [
     },
   },
   {
-    accessorKey: "date",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Data" />
-    ),
+    accessorFn: (row) => row.date,
+    id: "date",
+    header: "Data",
     cell: ({ row }) => {
       return (
-        <div className="text-sm w-[100px] font-bold ">
+        <div className="text-sm w-[100px] font-bold">
           {dayjs(row.original.date).format("DD/MM/YYYY HH:mm")}
         </div>
       );
     },
-    enableSorting: true,
   },
   {
-    accessorKey: "status",
+    accessorFn: (row) => row.status,
+    id: "status",
     header: "Status",
     cell: ({ row }) => {
       const statusColor = getStatusColor(row.original.status);
@@ -89,11 +96,10 @@ export const columns: ColumnDef<AppointmentWithRelations>[] = [
       );
     },
   },
-
   {
-    accessorKey: "actions",
+    id: "actions",
     header: "",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -6,16 +6,20 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { FornecedorSidebar } from "./_components/fornecedor-sidebar";
+import { Provider } from "jotai";
+
 const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SidebarProvider>
-      <FornecedorSidebar />
-      <SidebarInset className="border-1">
-        <div className="flex flex-col ">
-          <div className="min-h-[60vh] bg-background">{children}</div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <Provider>
+      <SidebarProvider>
+        <FornecedorSidebar />
+        <SidebarInset className="border-1">
+          <div className="flex flex-col ">
+            <div className="min-h-[60vh] bg-background">{children}</div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </Provider>
   );
 };
 

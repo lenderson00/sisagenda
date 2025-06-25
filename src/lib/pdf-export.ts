@@ -1,4 +1,4 @@
-import type { AppointmentWithRelations } from "@/app/fornecedor/(main)/page";
+import type { AppointmentWithRelations } from "@/app/fornecedor/agenda/page";
 import dayjs from "@/lib/dayjs";
 import type { User } from "@prisma/client";
 import jsPDF from "jspdf";
