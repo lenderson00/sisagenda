@@ -69,7 +69,7 @@ export function DataTableTest({
       );
       if (!hasStatusFilter && defaultStatusFilter) {
         // Navigate to the base agenda page (no specific tab)
-        router.push("/admin/agenda");
+        router.push("/agenda");
       }
     },
   });

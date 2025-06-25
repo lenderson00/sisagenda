@@ -27,27 +27,27 @@ type Params = {
 const AvailableTabs = [
   {
     label: "Pendentes de ação",
-    href: "/admin/agenda",
+    href: "/agenda",
     slug: "pendentes",
   },
   {
     label: "Próximos",
-    href: "/admin/agenda/proximos",
+    href: "/agenda/proximos",
     slug: "proximos",
   },
   {
     label: "Cancelados",
-    href: "/admin/agenda/cancelados",
+    href: "/agenda/cancelados",
     slug: "cancelados",
   },
   {
     label: "Anteriores",
-    href: "/admin/agenda/anteriores",
+    href: "/agenda/anteriores",
     slug: "anteriores",
   },
   {
     label: "Concluídos",
-    href: "/admin/agenda/concluidos",
+    href: "/agenda/concluidos",
     slug: "concluidos",
   },
 ];

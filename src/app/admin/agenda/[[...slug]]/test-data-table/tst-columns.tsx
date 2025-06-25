@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import dayjs from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
+import { AppointmentActionsDropdown } from "./_components/appointment-actions-dropdown";
 
 const columnHelper = createColumnHelper<AppointmentWithRelations>();
 
@@ -95,6 +96,17 @@ export const tstColumnsDefs = [
     cell: ({ row }) => (
       <div className="text-sm min-w-[190px] truncate">
         {row.original.ordemDeCompra}
+      </div>
+    ),
+  }),
+
+  // Actions Column
+  columnHelper.display({
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        <AppointmentActionsDropdown appointment={row.original} />
       </div>
     ),
   }),

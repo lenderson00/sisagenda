@@ -5,6 +5,7 @@ import {
   IconCalendar,
   IconUser,
   IconTruck,
+  IconSettings,
 } from "@tabler/icons-react";
 import { getStatusReadableName } from "@/lib/utils";
 import dayjs from "@/lib/dayjs";

@@ -14,36 +14,36 @@ import type {
 } from "@prisma/client";
 import { DataTableTest } from "./test-data-table/data-table";
 import type { FiltersState } from "@/components/data-table/core/types";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const AvailableTabs = [
   {
     label: "Pendentes de ação",
-    href: "/admin/agenda",
+    href: "/agenda",
     slug: "pendentes",
     statusFilter: "PENDING_CONFIRMATION",
   },
   {
     label: "Próximos",
-    href: "/admin/agenda/proximos",
+    href: "/agenda/proximos",
     slug: "proximos",
     statusFilter: "CONFIRMED",
   },
   {
     label: "Cancelados",
-    href: "/admin/agenda/cancelados",
+    href: "/agenda/cancelados",
     slug: "cancelados",
     statusFilter: "CANCELLED",
   },
   {
     label: "Anteriores",
-    href: "/admin/agenda/anteriores",
+    href: "/agenda/anteriores",
     slug: "anteriores",
     statusFilter: "COMPLETED",
   },
   {
     label: "Concluídos",
-    href: "/admin/agenda/concluidos",
+    href: "/agenda/concluidos",
     slug: "concluidos",
     statusFilter: "COMPLETED",
   },
@@ -91,6 +91,7 @@ export function PageClient({ slug }: { slug?: string[] }) {
   const currentTab =
     AvailableTabs.find((t) => t.slug === tab) || AvailableTabs[0];
   const [newFilters, setNewFilters] = useState<FiltersState>([]);
+  console.log(newFilters);
 
   const { data, isLoading, isError, error } = useQuery<
     AppointmentWithRelations[]
@@ -98,6 +99,12 @@ export function PageClient({ slug }: { slug?: string[] }) {
     queryKey: ["appointments"],
     queryFn: getAppointments,
   });
+
+  const hasPendentAction = useMemo(() => {
+    return newFilters?.some((filter) =>
+      filter.values?.includes("PENDING_CONFIRMATION"),
+    );
+  }, [newFilters]);
 
   return (
     <div className="space-y-4 p-4 pt-6">
@@ -110,7 +117,7 @@ export function PageClient({ slug }: { slug?: string[] }) {
                 href={mapTab.href}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   tab === mapTab.slug
-                    ? tab === "pendentes" && newFilters.length === 0
+                    ? tab === "pendentes" && !hasPendentAction
                       ? "hover:bg-muted"
                       : "bg-muted text-muted-foreground"
                     : "hover:bg-muted"
