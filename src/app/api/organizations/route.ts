@@ -79,6 +79,8 @@ export async function POST(req: Request) {
           description: validatedData.description,
           role: validatedData.role,
           isActive: validatedData.isActive,
+          lunchTimeStart: 12 * 60,
+          lunchTimeEnd: 13 * 60,
           comimsupId:
             validatedData.role === "DEPOSITO" && validatedData.comimsupId !== ""
               ? validatedData.comimsupId
@@ -95,36 +97,31 @@ export async function POST(req: Request) {
           availability: {
             createMany: {
               data: [
-                // Monday to Friday, 9 AM to 5 PM
+                // Monday to Friday, 9 AM to 3 PM
                 {
                   weekDay: 1,
                   startTime: 9 * 60,
                   endTime: 15 * 60,
-                  organizationId: organization.id,
                 },
                 {
                   weekDay: 2,
                   startTime: 9 * 60,
                   endTime: 15 * 60,
-                  organizationId: organization.id,
                 },
                 {
                   weekDay: 3,
                   startTime: 9 * 60,
                   endTime: 15 * 60,
-                  organizationId: organization.id,
                 },
                 {
                   weekDay: 4,
                   startTime: 9 * 60,
                   endTime: 15 * 60,
-                  organizationId: organization.id,
                 },
                 {
                   weekDay: 5,
                   startTime: 9 * 60,
                   endTime: 15 * 60,
-                  organizationId: organization.id,
                 },
               ],
             },
@@ -142,8 +139,6 @@ export async function POST(req: Request) {
             organizationId: organization.id,
             scheduleId: defaultSchedule.id,
             duration: 90,
-            lunchTimeStart: 12 * 60,
-            lunchTimeEnd: 13 * 60,
           },
           {
             name: "Entrega Secreta",
@@ -152,8 +147,6 @@ export async function POST(req: Request) {
             organizationId: organization.id,
             scheduleId: defaultSchedule.id,
             duration: 60,
-            lunchTimeStart: 12 * 60,
-            lunchTimeEnd: 13 * 60,
           },
         ],
       });
