@@ -76,9 +76,9 @@ async function getSupplierDashboard(userId: string, year: number) {
   }
   // Pie chart data by status
   const statusCounts: Record<string, number> = {};
-  appointments.forEach((apt) => {
+  for (const apt of appointments) {
     statusCounts[apt.status] = (statusCounts[apt.status] || 0) + 1;
-  });
+  }
   const pieData = Object.entries(statusCounts).map(([status, value]) => ({
     name: getStatusLabel(status as AppointmentStatus),
     value,
