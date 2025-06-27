@@ -74,8 +74,6 @@ export function DataTableTest({
     },
   });
 
-  console.log(filters);
-
   const tstColumns = useMemo(
     () =>
       createTSTColumns({

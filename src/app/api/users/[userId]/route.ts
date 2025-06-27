@@ -123,7 +123,6 @@ export async function DELETE(
     const validatedParams = userIdParamSchema.safeParse(awaitedParams);
 
     if (!validatedParams.success) {
-      console.log(validatedParams.error);
       return new NextResponse("Invalid user ID", { status: 400 });
     }
 

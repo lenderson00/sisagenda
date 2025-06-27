@@ -12,7 +12,6 @@ export const getContentFromDb = tool({
   execute: async ({ input }) => {
     try {
       const query = await generateQuery(input);
-      console.log("query", query);
       const data = await runGenerateSQLQuery(query);
       return {
         data,

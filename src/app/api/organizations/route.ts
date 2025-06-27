@@ -69,8 +69,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validatedData = createOrganizationSchema.parse(body);
 
-    console.log(validatedData);
-
     const organization = await prisma.$transaction(async (prisma) => {
       const organization = await prisma.organization.create({
         data: {

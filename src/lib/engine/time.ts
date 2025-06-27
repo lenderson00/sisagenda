@@ -61,7 +61,6 @@ export function fitOnceInBlock(
   block: TimeBlock,
   duration: number,
 ): TimeBlock | null {
-  console.log(block, duration, "block, duration");
   if (block.end - block.start >= duration) {
     return { start: block.start, end: block.start + duration };
   }

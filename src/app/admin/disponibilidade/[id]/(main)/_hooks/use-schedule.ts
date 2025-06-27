@@ -38,7 +38,6 @@ export function useUpdateSchedule(scheduleId: string) {
         body: JSON.stringify({ intervals }),
       });
 
-      console.log(response);
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to save availability");

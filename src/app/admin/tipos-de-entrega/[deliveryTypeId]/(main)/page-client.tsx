@@ -37,8 +37,6 @@ const DeliveryTypePageClient = ({
     notFound();
   }
 
-  console.log(deliveryType);
-
   return (
     <div className="space-y-6">
       <NameDescriptionForm

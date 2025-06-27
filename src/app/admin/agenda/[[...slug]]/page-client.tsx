@@ -91,7 +91,6 @@ export function PageClient({ slug }: { slug?: string[] }) {
   const currentTab =
     AvailableTabs.find((t) => t.slug === tab) || AvailableTabs[0];
   const [newFilters, setNewFilters] = useState<FiltersState>([]);
-  console.log(newFilters);
 
   const { data, isLoading, isError, error } = useQuery<
     AppointmentWithRelations[]

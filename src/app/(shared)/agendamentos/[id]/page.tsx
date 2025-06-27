@@ -75,7 +75,6 @@ export default async function AppointmentPage({
     notFound();
   }
 
-  console.log(appointment);
   return (
     <div className="container mx-auto py-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">

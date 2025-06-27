@@ -40,6 +40,7 @@ const AgendamentosLayout = async ({
     },
   });
 
+  console.log(appointment);
   if (!appointment) {
     notFound();
   }

@@ -38,8 +38,6 @@ export async function GET(
       },
     });
 
-    console.log(admins);
-
     return NextResponse.json(admins);
   } catch (error) {
     console.error("[ADMINS_GET]", error);

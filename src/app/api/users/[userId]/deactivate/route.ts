@@ -22,7 +22,6 @@ export async function POST(
     });
 
     if (!user) {
-      console.log("User not found");
       return new NextResponse("User not found", { status: 404 });
     }
 

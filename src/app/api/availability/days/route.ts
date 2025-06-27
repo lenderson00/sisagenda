@@ -91,8 +91,6 @@ export async function GET(request: Request) {
 
     const today = dayjs().startOf("day");
 
-    console.log(minAntecedence);
-
     // Calculate minimum available date considering antecedence and available weekdays
     const minimumAvailableDate = calculateMinimumAvailableDate(
       minAntecedence,

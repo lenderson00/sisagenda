@@ -133,8 +133,6 @@ export function DeliveryTypePageClient() {
     return <DeliveryTypeSkeleton />;
   }
 
-  console.log(schedules);
-
   return (
     <Card className=" pb-0 overflow-hidden">
       <CardHeader className="border-b">
