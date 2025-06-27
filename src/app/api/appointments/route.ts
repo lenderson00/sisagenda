@@ -110,10 +110,21 @@ export async function GET(req: NextRequest) {
         deliveryType: true,
         organization: true,
         user: true,
+        items: true,
+        attachments: true,
       },
     });
 
-    return NextResponse.json(appointments);
+    // Convert Decimal values to numbers for serialization
+    const serializedAppointments = appointments.map((appointment) => ({
+      ...appointment,
+      items: appointment.items.map((item) => ({
+        ...item,
+        price: Number(item.price),
+      })),
+    }));
+
+    return NextResponse.json(serializedAppointments);
   } catch (error) {
     console.error("Failed to fetch appointments:", error);
     return NextResponse.json(
@@ -135,7 +146,7 @@ export async function POST(req: Request) {
   try {
     const json = await req.json();
     const appointmentData = createAppointmentInput.parse(json);
-    const { items, attachments, ...rest } = appointmentData;
+    const { items, attachments, dateTime, ...rest } = appointmentData;
 
     const deliveryType = await prisma.deliveryType.findUnique({
       where: {
@@ -170,7 +181,7 @@ export async function POST(req: Request) {
       const appointment = await tx.appointment.create({
         data: {
           ...rest,
-          date: rest.dateTime,
+          date: new Date(dateTime),
           duration: deliveryType.duration,
           userId: user.id,
           status: "PENDING_CONFIRMATION",

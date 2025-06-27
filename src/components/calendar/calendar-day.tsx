@@ -82,7 +82,7 @@ export function CalendarDay({
               // Selected day
               isSelected &&
                 !disabled &&
-                "bg-muted text-white hover:bg-muted/80 hover:text-white hover:opacity/80",
+                "bg-muted text-muted-foreground hover:bg-muted/80  hover:opacity/80",
               // Today highlight
               isToday &&
                 !disabled &&
@@ -101,7 +101,7 @@ export function CalendarDay({
               {date.get("date")}
             </motion.span>
             {isSelected && (
-              <div className="w-1 h-1  bg-white rounded-full text-green-500 absolute bottom-[5px]  -translate-x-1/2 left-1/2" />
+              <div className="w-1 h-1  bg-background invert rounded-full text-green-500 absolute bottom-[5px]  -translate-x-1/2 left-1/2" />
             )}
           </Button>
         </motion.div>

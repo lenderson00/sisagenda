@@ -1,9 +1,9 @@
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
-const API_KEY = process.env.BUNNY_API_KEY;
-const STORAGE_ZONE = "sisagenda";
-const CDN_BASE_URL = "https://sisagenda.b-cdn.net";
-const STORAGE_BASE_URL = `https://br.storage.bunnycdn.com/${STORAGE_ZONE}/files`;
+const API_KEY = process.env.BUNNY_API_KEY!;
+const STORAGE_ZONE = "framer";
+const CDN_BASE_URL = "https://framer.b-cdn.net";
+const STORAGE_BASE_URL = `https://storage.bunnycdn.com/${STORAGE_ZONE}/sisagenda`;
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -11,10 +11,6 @@ export async function POST(req: NextRequest) {
 
   if (!file) {
     return new Response("Arquivo não encontrado", { status: 400 });
-  }
-
-  if (!API_KEY) {
-    return new Response("API key não encontrada", { status: 500 });
   }
 
   const uploadUrl = `${STORAGE_BASE_URL}/${file.name}`;
@@ -37,7 +33,7 @@ export async function POST(req: NextRequest) {
     return new Response(
       JSON.stringify({
         message: "Upload com sucesso!",
-        url: `${CDN_BASE_URL}/files/${file.name}`,
+        url: `${CDN_BASE_URL}/sisagenda/${file.name}`,
       }),
       {
         status: 200,

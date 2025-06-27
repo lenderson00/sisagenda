@@ -179,7 +179,7 @@ export function TimePicker({
                                   "text-xs font-medium",
                                   isAvailable
                                     ? isSelected
-                                      ? "text-white"
+                                      ? "text-foreground"
                                       : "text-emerald-500"
                                     : null,
                                 )}
