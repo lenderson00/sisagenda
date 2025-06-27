@@ -73,8 +73,6 @@ export function AppointmentActivityItem({
 }) {
   const activityDescription = getActivityDescription(activity);
 
-  console.log(activity.type, isLast, isFirst);
-
   switch (activity.type) {
     case "COMMENT":
       return <Comment activity={activity} isLast={isLast} />;

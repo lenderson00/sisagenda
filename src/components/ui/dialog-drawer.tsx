@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
-import type { TablerIcon } from "@tabler/icons-react";
+import { IconPlus, type TablerIcon } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 type DrawerDialogProps = {
@@ -48,14 +48,14 @@ export function DrawerDialog({
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const Icon = icon as React.ElementType;
+  const Icon = (icon as React.ElementType) ?? IconPlus;
   if (isDesktop) {
     return (
       <Dialog open={isOpen || open} onOpenChange={setIsOpen || setOpen}>
         <DialogTrigger asChild>
           <Button variant="default">
             {" "}
-            {icon && <Icon className="mr-2" />} {action}
+            {<Icon className="mr-2" />} {action}
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-2xl">

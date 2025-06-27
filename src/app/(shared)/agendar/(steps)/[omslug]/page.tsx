@@ -49,7 +49,6 @@ export default async function AgendarOM({
   });
 
   if (!organization) {
-    console.log("Organization not found");
     return;
   }
 

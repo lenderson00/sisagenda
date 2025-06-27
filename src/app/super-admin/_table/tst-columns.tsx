@@ -14,6 +14,7 @@ import type { Organization } from "@prisma/client";
 import { IconDots, IconEye, IconPencil } from "@tabler/icons-react";
 import { createColumnHelper } from "@tanstack/react-table";
 import Link from "next/link";
+import { EditOrganizationDialog } from "../_components/edit-organization-dialog";
 
 type OrganizationResponse = Organization & {
   comimsup: {
@@ -122,9 +123,11 @@ export const tstColumnsDefs = [
               <Link href={`/${row.original.id}`}>Ver Detalhes</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`/${row.original.id}`}>Editar</Link>
-            </DropdownMenuItem>
+            <EditOrganizationDialog organization={row.original}>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                Editar
+              </DropdownMenuItem>
+            </EditOrganizationDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       );

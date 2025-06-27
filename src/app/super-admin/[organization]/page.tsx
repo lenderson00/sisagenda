@@ -2,6 +2,10 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { OrganizationAdminClient } from "./page-client";
+import { PageHeader } from "@/components/page-header";
+import { DrawerDialog } from "@/components/ui/dialog-drawer";
+import { IconPlus } from "@tabler/icons-react";
+import { AdminForm } from "./_components/admin-form";
 
 export default async function OrganizationAdminPage({
   params,
@@ -21,11 +25,36 @@ export default async function OrganizationAdminPage({
       id: nextParams.organization,
       deletedAt: null,
     },
+    include: {
+      militares: {
+        where: {
+          role: "ADMIN",
+        },
+      },
+    },
   });
 
   if (!organization) {
     return notFound();
   }
 
-  return <OrganizationAdminClient organization={organization} />;
+  return (
+    <>
+      <PageHeader
+        title={organization.name}
+        subtitle={organization.description || ""}
+      >
+        {organization.militares && organization.militares.length < 2 && (
+          <DrawerDialog
+            action="Adicionar Administrador"
+            title="Adicionar Administrador"
+            description="Adicione um administrador para gerenciar esta organização."
+          >
+            <AdminForm organizationId={organization.id} />
+          </DrawerDialog>
+        )}
+      </PageHeader>
+      <OrganizationAdminClient organization={organization} />;
+    </>
+  );
 }

@@ -20,34 +20,7 @@ export function OrganizationAdminClient({
 
   return (
     <div className="h-full">
-      <div className="border-b  py-4 md:py-8 px-4 md:px-0 ">
-        <div className="max-w-5xl mx-auto flex items-center justify-between mt-4">
-          <div>
-            <div className="flex gap-2">
-              <h1 className="text-xl md:max-w-xl text-balance md:text-3xl font-bold tracking-tight">
-                {organization.name}
-              </h1>
-            </div>
-            <p className="text-muted-foreground mt-1">
-              {organization.description}
-            </p>
-          </div>
-          <div>
-            {admins && admins.length < 2 && (
-              <DrawerDialog
-                action="Adicionar Administrador"
-                icon={IconPlus}
-                title="Adicionar Administrador"
-                description="Adicione um administrador para gerenciar esta organização."
-              >
-                <AdminForm organizationId={organization.id} />
-              </DrawerDialog>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-5xl mx-auto py-8 px-4 md:px-0">
+      <div className="p-4">
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">Loading...</p>
