@@ -1,14 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import {
-  type ReactNode,
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { type ReactNode, createContext, useContext, useMemo } from "react";
 import type { AppointmentWithRelations } from "../types/app";
 
 export type AllowedActions = {
@@ -53,19 +46,10 @@ interface ActionsProviderProps {
 }
 
 export function ActionsProvider({
-  appointment: initialAppointment,
+  appointment,
   children,
 }: ActionsProviderProps) {
   const { data: session } = useSession();
-  const { data: appointment } = useQuery<AppointmentWithRelations>({
-    queryKey: ["appointment", initialAppointment.id],
-    queryFn: async () => {
-      const res = await fetch(`/api/appointments/${initialAppointment.id}`);
-      if (!res.ok) throw new Error("Failed to fetch appointment data");
-      return res.json();
-    },
-    initialData: initialAppointment,
-  });
 
   const allowedActions = useMemo<AllowedActions>(() => {
     const actions: AllowedActions = { ...defaultAllowedActions };

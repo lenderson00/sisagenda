@@ -1,6 +1,6 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Provider } from "jotai";
-import { UserSidebar } from "../_components/user-sidebar";
+import { UserSidebar } from "./_components/user-sidebar";
 
 const UserLayout = ({ children }: { children: React.ReactNode }) => {
   return (
