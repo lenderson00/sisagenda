@@ -31,6 +31,7 @@ import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { Skeleton } from "./ui/skeleton";
+import { ModeSwitcher } from "./mode-switcher";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -102,6 +103,12 @@ export function NavUser() {
               <DropdownMenuItem>
                 <IconUsers />
                 Usuários
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <ModeSwitcher />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
