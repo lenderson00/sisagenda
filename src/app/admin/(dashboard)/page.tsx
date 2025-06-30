@@ -1,4 +1,5 @@
 import { AppointmentStatusChart } from "@/components/dashboard/appointment-status-chart";
+import { AppointmentsTable } from "@/components/dashboard/appointments-table";
 import { AppointmentsTimelineChart } from "@/components/dashboard/appointments-timeline-chart";
 import { RecentAppointmentsTable } from "@/components/dashboard/recent-appointments-table";
 import { StatsCard } from "@/components/dashboard/stats-card";
@@ -7,6 +8,7 @@ import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import {
   getDashboardData,
+  getDashboardAppointments,
   getOrganizationInfo,
 } from "@/lib/services/dashboard-service";
 import { Calendar, Clock, Package, Users } from "lucide-react";
@@ -27,31 +29,35 @@ export default async function DashboardPage() {
     recentAppointments,
   } = await getDashboardData(session.user.organizationId);
 
+  const appointments = await getDashboardAppointments(
+    session.user.organizationId,
+  );
+
   const organization = await getOrganizationInfo(session.user.organizationId);
 
   return (
     <>
       <PageHeader
         title={` Dashboard ${organization?.sigla ? ` - ${organization.sigla}` : ""}`}
-        subtitle="Veja"
+        subtitle="Visão geral do sistema"
         main
       />
       <div className="flex flex-col gap-4 px-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
-            title="Today's Appointments"
+            title="Agendamentos de hoje"
             value={stats.todayAppointments}
             icon={Clock}
-            description="Appointments scheduled for today"
+            description="Agendamentos marcados para hoje"
           />
           <StatsCard
-            title="Pending Appointments"
+            title="Agendamentos pendentes"
             value={stats.pendingAppointments}
             icon={Calendar}
-            description="Appointments needing confirmation"
+            description="Agendamentos aguardando confirmação"
           />
           <StatsCard
-            title="Completion Rate"
+            title="Taxa de conclusão"
             value={
               stats.totalAppointments > 0
                 ? Math.round(
@@ -62,17 +68,23 @@ export default async function DashboardPage() {
             }
             unit="%"
             icon={Package}
-            description="Based on all-time appointments"
+            description="Baseado em todos os agendamentos"
           />
           <StatsCard
-            title="Active Suppliers"
+            title="Fornecedores ativos"
             value={supplierPerformance.length}
             icon={Users}
-            description="Suppliers with appointments"
+            description="Fornecedores com agendamentos"
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <AppointmentsTable
+          todayAppointments={appointments.today}
+          tomorrowAppointments={appointments.tomorrow}
+          weekAppointments={appointments.week}
+        />
+
+        {/* <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <AppointmentsTimelineChart
             data={timeSeriesData}
             className="lg:col-span-2"
@@ -92,7 +104,7 @@ export default async function DashboardPage() {
             appointments={recentAppointments}
             className="lg:col-span-2"
           />
-        </div>
+        </div> */}
       </div>
     </>
   );

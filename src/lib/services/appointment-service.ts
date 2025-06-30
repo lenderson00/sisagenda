@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Appointment, AppointmentStatus } from "@prisma/client";
+import { type Appointment, AppointmentStatus, ActivityType } from "@prisma/client";
 import type { Session } from "next-auth";
 import {
   notifyAppointmentCreated,
@@ -11,6 +11,7 @@ import {
   notifyAppointmentRescheduleRequested,
   notifyAppointmentRescheduled,
 } from "./notification-utils";
+import { endOfDay, startOfDay, startOfWeek, endOfWeek, addDays } from "date-fns";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: {
@@ -687,3 +688,4 @@ export class AppointmentService {
     return result;
   }
 }
+
