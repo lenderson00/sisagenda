@@ -115,7 +115,7 @@ export function NavUser() {
 
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
-              Log out
+              Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
