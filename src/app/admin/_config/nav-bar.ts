@@ -1,0 +1,43 @@
+import { IconDashboard, IconTruck, IconCalendar, IconCalendarOff, IconUsers, IconBuilding, IconSettings } from "@tabler/icons-react";
+
+export const mainMenuItems = [
+  {
+    name: "Dashboard",
+    url: "/",
+
+    icon: IconDashboard,
+  },
+  {
+    name: "Tipos de Entrega",
+    url: "/tipos-de-entrega",
+    icon: IconTruck,
+  },
+  {
+    name: "Agenda",
+    url: "/agenda",
+    icon: IconCalendar,
+  },
+
+  {
+    name: "Disponibilidade",
+    url: "/disponibilidade",
+    icon: IconCalendarOff,
+  },
+
+  {
+    name: "Usuários",
+    url: "/usuarios",
+    icon: IconUsers,
+  },
+  {
+    name: "Fornecedores",
+    url: "/fornecedores",
+    icon: IconBuilding,
+  },
+
+  {
+    name: "Configurações",
+    url: "/configuracoes",
+    icon: IconSettings,
+  },
+];
