@@ -177,10 +177,12 @@ export function Inbox({ className }: InboxProps) {
   }
 
   return (
-    <Card className={className}>
-      <CardHeader className="p-4 border-b">
+    <Card className={`${className} !py-2 gap-1`}>
+      <CardHeader className=" border-b !pb-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Notificações</CardTitle>
+          <CardTitle className="text-lg font-semibold !py-0">
+            Notificações
+          </CardTitle>
           <div className="flex items-center gap-1">
             {unreadCount > 0 && (
               <Button
@@ -208,9 +210,12 @@ export function Inbox({ className }: InboxProps) {
           setPage(1); // Reset page when changing tabs
         }}
       >
-        <div className="px-4 pt-2 border-b">
-          <TabsList>
-            <TabsTrigger value="unread" className="flex items-center gap-2">
+        <div className="px-4 border-b !pt-0">
+          <TabsList className="text-foreground h-auto gap-2 rounded-none border-b bg-transparent p-0">
+            <TabsTrigger
+              value="unread"
+              className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-px after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none flex items-center gap-2"
+            >
               Caixa de Entrada
               {unreadCount > 0 && (
                 <Badge variant="destructive" className="h-5 w-auto px-1.5 ml-2">
@@ -218,7 +223,10 @@ export function Inbox({ className }: InboxProps) {
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="all" className="flex items-center gap-2">
+            <TabsTrigger
+              value="all"
+              className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-px after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none flex items-center gap-2"
+            >
               Geral
             </TabsTrigger>
           </TabsList>

@@ -71,6 +71,7 @@
     "nuqs": "^2.4.3",
     "pg": "^8.16.1",
     "prisma": "^6.10.1",
+    "radix-ui": "^1.4.2",
     "react": "19.1.0",
     "react-activity-calendar": "^2.7.12",
     "react-day-picker": "^9.7.0",
