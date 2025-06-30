@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
 
   const finalWhere = hasTab ? where : fornecedor ? { userId: session.user.id } : {};
 
-  console.log(finalWhere);
+
 
   try {
     const appointments = await prisma.appointment.findMany({

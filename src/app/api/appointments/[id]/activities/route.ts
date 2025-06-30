@@ -82,14 +82,6 @@ export async function POST(
       );
     }
 
-    console.log("Creating activity with data:", {
-      type,
-      title: type === "COMMENT" ? "Comentário" : type,
-      content,
-      appointmentId: id,
-      userId: session.user.id,
-    });
-
     const activity = await prisma.appointmentActivity.create({
       data: {
         type: type,
