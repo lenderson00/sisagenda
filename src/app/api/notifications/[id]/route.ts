@@ -10,7 +10,7 @@ const updateNotificationSchema = z.object({
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
 
@@ -21,7 +21,7 @@ export async function PATCH(
   try {
     const body = await req.json();
     const { action } = updateNotificationSchema.parse(body);
-    const notificationId = params.id;
+    const notificationId = (await params).id;
 
     let success = false;
     let actionName = "";
