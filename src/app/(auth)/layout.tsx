@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/components/mode-toggle";
 import { GalleryVerticalEnd } from "lucide-react";
 
 export default function AuthLayout({
@@ -13,6 +14,9 @@ export default function AuthLayout({
           SisAgenda
         </a>
         {children}
+      </div>
+      <div className="flex items-center gap-1 fixed bottom-6 right-6 z-20 p-1">
+        <ModeToggle />
       </div>
     </div>
   );
