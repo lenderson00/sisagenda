@@ -25,12 +25,12 @@ import {
   Truck,
 } from "lucide-react";
 import { useState } from "react";
-import type { AppointmentWithRelations } from "../types/app";
+import type { AppointmentWithRelationsAndStringPrice } from "../types/app";
 import { AppointmentItemsDialog } from "./appointment-items-dialog";
 import { CancellationDialog } from "./cancellation-dialog";
 
 interface AppointmentDetailsCardProps {
-  appointment: AppointmentWithRelations;
+  appointment: AppointmentWithRelationsAndStringPrice;
 }
 
 export function AppointmentDetailsCard({

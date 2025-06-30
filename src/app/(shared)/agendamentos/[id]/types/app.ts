@@ -18,3 +18,12 @@ const appointmentWithRelations =
 export type AppointmentWithRelations = Prisma.AppointmentGetPayload<
   typeof appointmentWithRelations
 >;
+
+export type AppointmentWithRelationsAndStringPrice = Omit<
+  AppointmentWithRelations,
+  "items"
+> & {
+  items: (Omit<AppointmentWithRelations["items"][number], "price"> & {
+    price: string;
+  })[];
+};

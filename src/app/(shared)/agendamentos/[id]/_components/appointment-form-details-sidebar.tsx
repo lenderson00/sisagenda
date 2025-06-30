@@ -12,12 +12,12 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { useState } from "react";
-import type { AppointmentWithRelations } from "../types/app";
+import type { AppointmentWithRelationsAndStringPrice } from "../types/app";
 import { CancellationDialog } from "./cancellation-dialog";
 import { RescheduleDialog } from "./reschedule-dialog";
 
 interface AppointmentFormDetailsSidebarProps {
-  appointment: AppointmentWithRelations;
+  appointment: AppointmentWithRelationsAndStringPrice;
 }
 
 export function AppointmentFormDetailsSidebar({

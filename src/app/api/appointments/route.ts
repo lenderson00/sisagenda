@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma, UserRole } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -37,10 +37,19 @@ const createAppointmentInput = z.object({
   attachments: z.array(attachmentSchema),
 });
 
-const buildWhere = (tab: string): Prisma.AppointmentWhereInput => {
+const buildWhere = (tab: string, role?: UserRole, userId?: string): Prisma.AppointmentWhereInput => {
+  let where: Prisma.AppointmentWhereInput = {};
+
+  if (role === "FORNECEDOR") {
+    where = {
+      userId,
+    };
+  }
+
   switch (tab) {
     case "pendentes":
       return {
+        ...where,
         date: {
           gte: new Date(),
         },
@@ -54,17 +63,23 @@ const buildWhere = (tab: string): Prisma.AppointmentWhereInput => {
       };
     case "proximos":
       return {
+        ...where,
         date: { gte: new Date() },
         status: { in: ["CONFIRMED", "RESCHEDULE_CONFIRMED"] },
       };
     case "anteriores":
-      return { date: { lt: new Date() }, status: { notIn: ["COMPLETED"] } };
+      return {
+        ...where,
+        date: { lt: new Date() },
+        status: { notIn: ["COMPLETED"] },
+      };
     case "cancelados":
-      return { status: "CANCELLED" };
+      return { ...where, status: "CANCELLED" };
     case "concluidos":
-      return { status: "COMPLETED" };
+      return { ...where, status: "COMPLETED" };
     default:
       return {
+        ...where,
         date: { gte: new Date() },
         status: { in: ["CONFIRMED", "RESCHEDULE_CONFIRMED"] },
       };
@@ -74,15 +89,16 @@ const buildWhere = (tab: string): Prisma.AppointmentWhereInput => {
 export async function GET(req: NextRequest) {
   const session = await auth();
 
-  if (!session) {
+  if (!session || !session.user.role || !session.user.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const hasTab = req.nextUrl.searchParams.has("tab");
+  const fornecedor = session.user.role === "FORNECEDOR";
 
   const tab = req.nextUrl.searchParams.get("tab") || "pendentes";
 
-  const where = buildWhere(tab);
+  const where = buildWhere(tab, session.user.role as UserRole, session.user.id);
 
   if (!session.user.organizationId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -101,9 +117,13 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const finalWhere = hasTab ? where : fornecedor ? { userId: session.user.id } : {};
+
+  console.log(finalWhere);
+
   try {
     const appointments = await prisma.appointment.findMany({
-      where: hasTab ? where : {},
+      where: finalWhere,
       orderBy: {
         date: "asc",
       },

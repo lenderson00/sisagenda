@@ -45,8 +45,16 @@ const AgendamentosLayout = async ({
     notFound();
   }
 
+  const plainAppointment = {
+    ...appointment,
+    items: appointment.items.map((item) => ({
+      ...item,
+      price: item.price.toString(),
+    })),
+  };
+
   return (
-    <ActionsProvider appointment={appointment}>
+    <ActionsProvider appointment={plainAppointment}>
       <div className="flex flex-col items-center justify-start pt-12 min-h-screen h-fit bg-background relative">
         <div className="w-full container flex flex-col gap-4 items-center">
           <div className="flex flex-col gap-0 items-center">

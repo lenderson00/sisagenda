@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { type ReactNode, createContext, useContext, useMemo } from "react";
-import type { AppointmentWithRelations } from "../types/app";
+import type { AppointmentWithRelationsAndStringPrice } from "../types/app";
 
 export type AllowedActions = {
   canApprove: boolean;
@@ -41,7 +41,7 @@ const ActionsContext = createContext<ActionsContextValue | undefined>(
 );
 
 interface ActionsProviderProps {
-  appointment: AppointmentWithRelations;
+  appointment: AppointmentWithRelationsAndStringPrice;
   children: ReactNode;
 }
 

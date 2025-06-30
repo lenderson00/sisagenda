@@ -75,11 +75,19 @@ export default async function AppointmentPage({
     notFound();
   }
 
+  const plainAppointment = {
+    ...appointment,
+    items: appointment.items.map((item) => ({
+      ...item,
+      price: item.price.toString(),
+    })),
+  };
+
   return (
     <div className="container mx-auto py-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <AppointmentDetailsCard appointment={appointment} />
+          <AppointmentDetailsCard appointment={plainAppointment} />
           <AppointmentActivityList
             appointmentId={id}
             initialActivities={appointment.activities}
@@ -90,8 +98,8 @@ export default async function AppointmentPage({
         </div>
         {/* Right Column: Sidebar */}
         <div className="lg:col-span-1 space-y-6">
-          <AppointmentActions appointment={appointment} />
-          <AppointmentFormDetailsSidebar appointment={appointment} />
+          <AppointmentActions appointment={plainAppointment} />
+          <AppointmentFormDetailsSidebar appointment={plainAppointment} />
         </div>
       </div>
     </div>

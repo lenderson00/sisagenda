@@ -21,8 +21,12 @@ import {
 import type { AppointmentItem } from "@prisma/client";
 import { Package } from "lucide-react";
 
+type AppointmentItemWithStringPrice = Omit<AppointmentItem, "price"> & {
+  price: string;
+};
+
 interface AppointmentItemsDialogProps {
-  items: AppointmentItem[];
+  items: AppointmentItemWithStringPrice[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

@@ -113,11 +113,11 @@ export function AppointmentActivityList({
     }
   }, [commentErrors]);
 
-  const timelineActivities = activities.filter(
-    (activity) => activity.type !== "COMMENT",
+  const sortedActivities = [...activities].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
-  const lastTimelineActivity =
-    timelineActivities[timelineActivities.length - 1];
+
+  const lastActivity = sortedActivities[sortedActivities.length - 1];
 
   const isAppointmentCancelled = activities.some((activity) => {
     return activity.type === "CANCELLED";
@@ -131,21 +131,15 @@ export function AppointmentActivityList({
         </div>
         <div className="flex flex-col mt-4">
           <div className="flex flex-col ">
-            {activities.length !== 0 &&
-              activities
-                .sort(
-                  (a, b) =>
-                    new Date(a.createdAt).getTime() -
-                    new Date(b.createdAt).getTime(),
-                )
-                .map((activity, index) => (
-                  <AppointmentActivityItem
-                    key={activity.id}
-                    activity={activity}
-                    isLast={activity.id === lastTimelineActivity?.id}
-                    isFirst={index === 0}
-                  />
-                ))}
+            {sortedActivities.length !== 0 &&
+              sortedActivities.map((activity, index) => (
+                <AppointmentActivityItem
+                  key={activity.id}
+                  activity={activity}
+                  isLast={activity.id === lastActivity?.id}
+                  isFirst={index === 0}
+                />
+              ))}
           </div>
 
           <div className=" relative">

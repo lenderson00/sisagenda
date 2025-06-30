@@ -98,7 +98,7 @@ async function getSupplierDashboard(userId: string, year: number) {
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: { year?: string };
+  searchParams: Promise<{ year?: string }>;
 }) {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "FORNECEDOR") {
@@ -109,12 +109,13 @@ export default async function Page({
     where: { id: session.user.id },
     select: { createdAt: true },
   });
+  const searchParamsResolved = await searchParams;
   const startYear = user?.createdAt
     ? new Date(user.createdAt).getFullYear()
     : new Date().getFullYear();
   const years = getYearsRange(startYear);
-  const selectedYear = searchParams?.year
-    ? Number.parseInt(searchParams.year)
+  const selectedYear = searchParamsResolved?.year
+    ? Number.parseInt(searchParamsResolved.year)
     : years[years.length - 1];
   const {
     user: supplier,

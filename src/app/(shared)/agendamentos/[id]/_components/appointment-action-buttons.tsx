@@ -21,12 +21,12 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { AppointmentWithRelations } from "../types/app";
+import type { AppointmentWithRelationsAndStringPrice } from "../types/app";
 import type { AllowedActions } from "./appointment-actions";
 import { RescheduleDialog } from "./reschedule-dialog";
 
 interface AppointmentActionButtonsProps {
-  appointment: AppointmentWithRelations;
+  appointment: AppointmentWithRelationsAndStringPrice;
   allowedActions: AllowedActions;
 }
 
