@@ -35,9 +35,9 @@ export const ChatHeader = ({ className }: { className?: string }) => {
 
       <div className="flex items-center gap-4 relative z-10">
         <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
-          <div className="hidden w-full flex-1 md:flex md:w-auto md:flex-none border rounded-md">
-            <CommandMenu tree={mockTree} colors={mockColors} />
-          </div>
+          {/* <div className="hidden w-full flex-1 md:flex md:w-auto md:flex-none border rounded-md">
+            <CommandMenu tree={mockTree} />
+          </div> */}
 
           <nav className="flex items-center gap-2 ml-4">
             <AccountAvatar className="size-6" />

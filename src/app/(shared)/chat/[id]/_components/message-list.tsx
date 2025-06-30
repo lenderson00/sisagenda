@@ -31,7 +31,7 @@ function MessageListComponent({ messages, status }: MessageListProps) {
         messages.length > 0 &&
         messages[messages.length - 1].role === "user" && (
           <div className="h-10 ">
-            <IconPointFilled className="size-10 motion-preset-pulse-md  text-neutral-400" />
+            <IconPointFilled className="size-10 motion-preset-pulse-md " />
           </div>
         )}
       <div className="absolute bottom-0 inset-x-0 max-w-2xl mx-auto">

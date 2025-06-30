@@ -93,7 +93,7 @@ function ChatView({
 
   return (
     <AnimatePresence mode="wait">
-      <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col bg-white">
+      <div className="flex h-[calc(100svh-72px-64px)] w-full flex-col ">
         <ChatContainerRoot className="relative w-full no-scrollbar h-full flex-1">
           <MessageList messages={messages} status={status} />
         </ChatContainerRoot>

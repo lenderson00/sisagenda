@@ -73,7 +73,9 @@ export const ChatMessage = memo(
                 <div
                   className={cn(
                     "p-2 rounded-lg [&>p]:m-0 w-full prose prose-sm max-w-2xl",
-                    isUser ? "bg-neutral-100 px-4 max-w-md" : "bg-transparent",
+                    isUser
+                      ? "bg-muted px-4 max-w-md text-foreground"
+                      : "bg-transparent dark:text-white",
                   )}
                 >
                   <ReactMarkdown>{message.content}</ReactMarkdown>

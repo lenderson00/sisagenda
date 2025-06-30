@@ -1,4 +1,4 @@
-import { IconBuilding, IconCalendar, IconDashboard, IconSearch, type TablerIcon } from '@tabler/icons-react'
+import { IconBuilding, IconCalendar, IconDashboard, IconMessageCircle, IconSearch, type TablerIcon } from '@tabler/icons-react'
 
 export const comimsupAdminNavItems: {
   name: string
@@ -20,4 +20,9 @@ export const comimsupAdminNavItems: {
       url: '/consulta',
       icon: IconSearch,
     },
+    {
+      name: 'Chat',
+      url: '/chat',
+      icon: IconMessageCircle,
+    }
   ]
