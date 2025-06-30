@@ -1,6 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import type { Appointment, AppointmentStatus } from "@prisma/client";
 import type { Session } from "next-auth";
+import {
+  notifyAppointmentCreated,
+  notifyAppointmentConfirmed,
+  notifyAppointmentRejected,
+  notifyAppointmentCancelled,
+  notifyAppointmentCompleted,
+  notifyAppointmentSupplierNoShow,
+  notifyAppointmentRescheduleRequested,
+  notifyAppointmentRescheduled,
+} from "./notification-utils";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: {
@@ -8,6 +18,12 @@ type AppointmentWithRelations = Appointment & {
   };
 };
 
+/**
+ * Service for managing appointments with integrated notification system.
+ *
+ * For appointment creation, use the static method:
+ * await AppointmentService.notifyAppointmentCreated(appointmentId, organizationId, createdByUserId);
+ */
 export class AppointmentService {
   private user: Session["user"];
 
@@ -16,6 +32,22 @@ export class AppointmentService {
       throw new Error("User not authenticated");
     }
     this.user = session.user;
+  }
+
+  /**
+   * Static method to notify about appointment creation.
+   * Call this after creating a new appointment.
+   *
+   * @param appointmentId - ID of the created appointment
+   * @param organizationId - Organization ID where the appointment was created
+   * @param createdByUserId - ID of the user who created the appointment
+   */
+  static async notifyAppointmentCreated(
+    appointmentId: string,
+    organizationId: string,
+    createdByUserId: string
+  ): Promise<void> {
+    await notifyAppointmentCreated(appointmentId, organizationId, createdByUserId);
   }
 
   private async getAppointment(
@@ -58,7 +90,7 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       await tx.appointmentActivity.create({
         data: {
           appointmentId,
@@ -85,6 +117,15 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentConfirmed(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id
+    );
+
+    return result;
   }
 
   async reject(appointmentId: string) {
@@ -101,7 +142,7 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "REJECTED" },
@@ -134,6 +175,15 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentRejected(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id
+    );
+
+    return result;
   }
 
   async cancel(appointmentId: string) {
@@ -148,7 +198,7 @@ export class AppointmentService {
 
     const previousStatus = appointment.status;
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "CANCELLED" },
@@ -166,6 +216,15 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentCancelled(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id
+    );
+
+    return result;
   }
 
   async requestCancellation(appointmentId: string) {
@@ -186,7 +245,7 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "CANCELLATION_REQUESTED" },
@@ -204,6 +263,16 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION - notify organization users about cancellation request
+    await notifyAppointmentCancelled(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id,
+      "Fornecedor solicitou cancelamento"
+    );
+
+    return result;
   }
 
   async approveCancellation(appointmentId: string) {
@@ -218,7 +287,7 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "CANCELLED" },
@@ -252,6 +321,16 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentCancelled(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id,
+      "Solicitação de cancelamento aprovada"
+    );
+
+    return result;
   }
 
   async rejectCancellation(appointmentId: string) {
@@ -315,7 +394,7 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status or date");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "SUPPLIER_NO_SHOW" },
@@ -333,6 +412,15 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentSupplierNoShow(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id
+    );
+
+    return result;
   }
 
   async markAsCompleted(appointmentId: string) {
@@ -350,7 +438,7 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status or date");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "COMPLETED" },
@@ -369,6 +457,15 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentCompleted(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id
+    );
+
+    return result;
   }
 
   async requestReschedule(
@@ -393,7 +490,7 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "RESCHEDULE_REQUESTED" },
@@ -415,6 +512,17 @@ export class AppointmentService {
 
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentRescheduleRequested(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id,
+      newDate,
+      reason
+    );
+
+    return result;
   }
 
   async approveReschedule(appointmentId: string) {
@@ -439,7 +547,7 @@ export class AppointmentService {
       throw new Error("Could not find new date in reschedule request");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: { status: "CONFIRMED", date: new Date(newDate) },
@@ -458,6 +566,16 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentRescheduled(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id,
+      appointment.date // previous date
+    );
+
+    return result;
   }
 
   async rejectReschedule(appointmentId: string) {
@@ -517,7 +635,9 @@ export class AppointmentService {
       throw new Error("Invalid action for current appointment status");
     }
 
-    return prisma.$transaction(async (tx) => {
+    const previousDate = appointment.date;
+
+    const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
         data: {
@@ -532,9 +652,8 @@ export class AppointmentService {
           userId: this.user.id,
           type: "STATUS_CHANGE",
           title: "Agendamento Reagendado",
-          content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${
-            reason ? `Motivo: ${reason}` : ""
-          }`,
+          content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${reason ? `Motivo: ${reason}` : ""
+            }`,
           previousStatus,
           newStatus: "RESCHEDULED",
         },
@@ -556,5 +675,15 @@ export class AppointmentService {
       });
       return updatedAppointment;
     });
+
+    // 🔔 DISPATCH NOTIFICATION
+    await notifyAppointmentRescheduled(
+      appointmentId,
+      appointment.deliveryType.organizationId,
+      this.user.id,
+      previousDate
+    );
+
+    return result;
   }
 }

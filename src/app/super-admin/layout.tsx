@@ -1,6 +1,7 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Provider } from "jotai";
 import { SuperAdminSidebar } from "./_components/super-admin-sidebar";
+import { NotificationBell } from "@/components/notification-bell";
 
 const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -116,7 +116,8 @@ export default auth(async (req: NextAuthRequest) => {
     path.includes("/docs") ||
     path.includes("/perfil") ||
     path.includes("/agendamentos") ||
-    path.startsWith("/agendar")
+    path.startsWith("/agendar") ||
+    path.includes("/notificacoes")
   ) {
     return response;
   }

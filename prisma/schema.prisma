@@ -54,6 +54,7 @@ model User {
   AppointmentActivity AppointmentActivity[]
   Chat                Chat[]
   MessageFeedback     MessageFeedback[]
+  Notification        Notification[]
 
   @@index([email])
   @@index([organizationId])
@@ -103,6 +104,7 @@ model Organization {
   Organization Organization[] @relation("ComimsupRelation")
   Account      Account[]
   Schedule     Schedule[]
+  Notification Notification[]
 
   @@index([sigla])
 }
@@ -213,9 +215,10 @@ model Appointment {
   items       AppointmentItem[]
   attachments AppointmentAttachment[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  Notification Notification[]
 
   @@index([userId])
   @@index([organizationId])
@@ -479,4 +482,63 @@ model MessageFeedback {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, messageId])
+}
+
+/// Represents different statuses for notifications
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+/// Represents different types of notifications related to appointments
+enum NotificationType {
+  APPOINTMENT_CREATED
+  APPOINTMENT_UPDATED
+  APPOINTMENT_CONFIRMED
+  APPOINTMENT_CANCELLED
+  APPOINTMENT_RESCHEDULE_REQUESTED
+  APPOINTMENT_RESCHEDULED
+  APPOINTMENT_COMPLETED
+  APPOINTMENT_REJECTED
+  APPOINTMENT_SUPPLIER_NO_SHOW
+}
+
+/// Represents notifications sent to users
+model Notification {
+  id String @id @default(cuid())
+
+  // Notification content
+  title   String
+  content String
+  payload Json? // Additional data related to the notification
+
+  // Notification metadata
+  type   NotificationType
+  status NotificationStatus @default(UNREAD)
+
+  // User who receives the notification
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Organization context
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  // Related appointment (optional for future extensibility)
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  readAt    DateTime? // When the notification was read
+
+  // Indexes for better query performance
+  @@index([userId])
+  @@index([organizationId])
+  @@index([appointmentId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
 }
