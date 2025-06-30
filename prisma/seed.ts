@@ -24,7 +24,6 @@ async function main() {
     },
   });
 
-  console.log("Super admin user ensured.", user);
 }
 
 main()

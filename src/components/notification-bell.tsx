@@ -27,11 +27,16 @@ export function NotificationBell({ className }: NotificationBellProps) {
   const unreadCount = unreadData?.count || 0;
 
   // Prefetch notifications when popover opens
-  const { isLoading: isNotificationsLoading } = useNotifications({
-    page: 1,
-    limit: 5,
-    status: "UNREAD",
-  });
+  useNotifications(
+    {
+      page: 1,
+      limit: 5,
+      status: "UNREAD",
+    },
+    {
+      enabled: isOpen,
+    },
+  );
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -40,6 +45,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
           variant="outline"
           size="sm"
           className={`relative h-9 w-9 p-0 ${className}`}
+          aria-label={`Notificações. ${unreadCount} não lidas.`}
         >
           <Bell className="h-4 w-4" />
           {isUnreadLoading ? (
@@ -47,7 +53,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
           ) : unreadCount > 0 ? (
             <Badge
               variant="destructive"
-              className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
+              className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs flex items-center justify-center rounded-full"
             >
               {unreadCount > 99 ? "99+" : unreadCount}
             </Badge>
@@ -60,14 +66,12 @@ export function NotificationBell({ className }: NotificationBellProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-96 p-0"
+        className="w-[450px] p-0"
         align="end"
         side="bottom"
-        sideOffset={8}
+        sideOffset={12}
       >
-        <div className="max-h-[80vh] overflow-hidden">
-          <Inbox className="border-0 shadow-none" />
-        </div>
+        <Inbox className="border-0 shadow-none" />
       </PopoverContent>
     </Popover>
   );

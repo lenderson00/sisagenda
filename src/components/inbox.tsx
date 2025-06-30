@@ -16,7 +16,10 @@ import {
   CircleDot,
   Loader2,
   RefreshCw,
+  MoreHorizontal,
+  Settings,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,6 +43,7 @@ import {
   useMarkAsRead,
   useMarkAsArchived,
   useMarkAllAsRead,
+  useUnreadCount,
   type Notification,
 } from "@/hooks/use-notifications";
 
@@ -83,20 +87,19 @@ interface InboxProps {
 }
 
 export function Inbox({ className }: InboxProps) {
-  const [activeTab, setActiveTab] = useState<"all" | "unread" | "archived">(
-    "all",
-  );
+  const [activeTab, setActiveTab] = useState<"unread" | "all">("unread");
   const [page, setPage] = useState(1);
+  const router = useRouter();
 
   // Determine status filter based on active tab
   const statusFilter = useMemo(() => {
     switch (activeTab) {
       case "unread":
         return "UNREAD" as const;
-      case "archived":
-        return "ARCHIVED" as const;
-      default:
+      case "all":
         return undefined;
+      default:
+        return "UNREAD" as const;
     }
   }, [activeTab]);
 
@@ -106,11 +109,17 @@ export function Inbox({ className }: InboxProps) {
     isLoading,
     isError,
     refetch,
-  } = useNotifications({
-    page,
-    limit: 20,
-    status: statusFilter,
-  });
+  } = useNotifications(
+    {
+      page,
+      limit: 20,
+      status: statusFilter,
+    },
+    { enabled: true },
+  );
+
+  const { data: unreadData } = useUnreadCount();
+  const unreadCount = unreadData?.count || 0;
 
   // Mutations
   const markAsReadMutation = useMarkAsRead();
@@ -124,8 +133,15 @@ export function Inbox({ className }: InboxProps) {
     markAsReadMutation.mutate(notificationId);
   };
 
-  const handleMarkAsArchived = (notificationId: string) => {
-    markAsArchivedMutation.mutate(notificationId);
+  const handleNotificationClick = (notification: Notification) => {
+    if (notification.status === "UNREAD") {
+      handleMarkAsRead(notification.id);
+    }
+    if (notification.appointmentId) {
+      router.push(`/agendamentos/${notification.appointmentId}`);
+    } else {
+      router.push("/notifications");
+    }
   };
 
   const handleMarkAllAsRead = () => {
@@ -162,42 +178,25 @@ export function Inbox({ className }: InboxProps) {
 
   return (
     <Card className={className}>
-      <CardHeader className="pb-3">
+      <CardHeader className="p-4 border-b">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <InboxIcon className="h-5 w-5" />
-            Notificações
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isLoading}
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
-              />
+          <CardTitle className="text-lg font-semibold">Notificações</CardTitle>
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button
+                variant="link"
+                size="sm"
+                className="text-primary pr-2"
+                onClick={handleMarkAllAsRead}
+                disabled={markAllAsReadMutation.isPending}
+              >
+                Marcar todas como lidas
+              </Button>
+            )}
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Settings className="h-4 w-4" />
+              <span className="sr-only">Configurações</span>
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Ações
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Ações em massa</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleMarkAllAsRead}
-                  disabled={markAllAsReadMutation.isPending}
-                >
-                  <CheckCheck className="h-4 w-4 mr-2" />
-                  Marcar todas como lidas
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
@@ -205,34 +204,33 @@ export function Inbox({ className }: InboxProps) {
       <Tabs
         value={activeTab}
         onValueChange={(value) => {
-          setActiveTab(value as "all" | "unread" | "archived");
+          setActiveTab(value as "unread" | "all");
           setPage(1); // Reset page when changing tabs
         }}
       >
-        <div className="px-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <InboxIcon className="h-4 w-4" />
-              Todas
-            </TabsTrigger>
+        <div className="px-4 pt-2 border-b">
+          <TabsList>
             <TabsTrigger value="unread" className="flex items-center gap-2">
-              <CircleDot className="h-4 w-4" />
-              Não lidas
+              Caixa de Entrada
+              {unreadCount > 0 && (
+                <Badge variant="destructive" className="h-5 w-auto px-1.5 ml-2">
+                  {unreadCount}
+                </Badge>
+              )}
             </TabsTrigger>
-            <TabsTrigger value="archived" className="flex items-center gap-2">
-              <Archive className="h-4 w-4" />
-              Arquivadas
+            <TabsTrigger value="all" className="flex items-center gap-2">
+              Geral
             </TabsTrigger>
           </TabsList>
         </div>
 
         <CardContent className="p-0">
           <TabsContent value={activeTab} className="mt-0">
-            <ScrollArea className="h-[600px]">
-              {isLoading ? (
-                <div className="p-6 space-y-4">
+            <ScrollArea className="h-[550px]">
+              {isLoading && notifications.length === 0 ? (
+                <div className="p-4 space-y-4">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex items-start space-x-4">
+                    <div key={i} className="flex items-center space-x-4 p-2">
                       <Skeleton className="h-10 w-10 rounded-full" />
                       <div className="space-y-2 flex-1">
                         <Skeleton className="h-4 w-3/4" />
@@ -242,61 +240,46 @@ export function Inbox({ className }: InboxProps) {
                   ))}
                 </div>
               ) : notifications.length === 0 ? (
-                <div className="flex items-center justify-center py-12">
-                  <div className="text-center">
-                    <InboxIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                      Nenhuma notificação
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {activeTab === "unread" &&
-                        "Você não tem notificações não lidas"}
-                      {activeTab === "archived" &&
-                        "Você não tem notificações arquivadas"}
-                      {activeTab === "all" && "Você não tem notificações"}
-                    </p>
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="p-3 rounded-full bg-muted mb-4">
+                    <InboxIcon className="h-8 w-8 text-muted-foreground" />
                   </div>
+                  <h3 className="text-lg font-medium text-foreground mb-1">
+                    Nenhuma notificação por aqui
+                  </h3>
+                  <p className="text-sm text-muted-foreground px-4">
+                    {activeTab === "unread"
+                      ? "Você está em dia com suas notificações."
+                      : "Quando houver novas notificações, elas aparecerão aqui."}
+                  </p>
                 </div>
               ) : (
-                <div className="divide-y">
+                <div className="divide-y divide-border">
                   {notifications.map((notification) => (
                     <NotificationItem
                       key={notification.id}
                       notification={notification}
-                      onMarkAsRead={handleMarkAsRead}
-                      onMarkAsArchived={handleMarkAsArchived}
-                      isMarkingAsRead={markAsReadMutation.isPending}
+                      onClick={() => handleNotificationClick(notification)}
                       isArchiving={markAsArchivedMutation.isPending}
                     />
                   ))}
                 </div>
               )}
 
-              {/* Pagination */}
               {pagination && pagination.totalPages > 1 && (
-                <div className="flex items-center justify-between px-6 py-4 border-t">
-                  <div className="text-sm text-muted-foreground">
-                    Página {pagination.page} de {pagination.totalPages}(
-                    {pagination.total} notificações)
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage(page - 1)}
-                      disabled={page <= 1 || isLoading}
-                    >
-                      Anterior
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage(page + 1)}
-                      disabled={page >= pagination.totalPages || isLoading}
-                    >
-                      Próxima
-                    </Button>
-                  </div>
+                <div className="flex items-center justify-center px-4 py-3 border-t">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPage(page + 1)}
+                    disabled={page >= pagination.totalPages || isLoading}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Carregar mais"
+                    )}
+                  </Button>
                 </div>
               )}
             </ScrollArea>
@@ -309,17 +292,13 @@ export function Inbox({ className }: InboxProps) {
 
 interface NotificationItemProps {
   notification: Notification;
-  onMarkAsRead: (id: string) => void;
-  onMarkAsArchived: (id: string) => void;
-  isMarkingAsRead: boolean;
+  onClick: () => void;
   isArchiving: boolean;
 }
 
 function NotificationItem({
   notification,
-  onMarkAsRead,
-  onMarkAsArchived,
-  isMarkingAsRead,
+  onClick,
   isArchiving,
 }: NotificationItemProps) {
   const getNotificationIcon = (type: string) => {
@@ -328,118 +307,55 @@ function NotificationItem({
     return IconComponent;
   };
 
-  const getNotificationColor = (type: string) => {
-    return (
-      notificationColors[type as keyof typeof notificationColors] ||
-      "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
-    );
-  };
-
   const IconComponent = getNotificationIcon(notification.type);
-  const colorClass = getNotificationColor(notification.type);
   const isUnread = notification.status === "UNREAD";
+
+  const isActionable = notification.type === "APPOINTMENT_RESCHEDULE_REQUESTED";
 
   return (
     <div
-      className={`p-4 hover:bg-muted/50 transition-colors ${isUnread ? "bg-muted/30" : ""}`}
+      className="group transition-colors hover:bg-muted/50"
+      aria-hidden="true"
     >
-      <div className="flex items-start space-x-4">
-        <Avatar className={`h-10 w-10 ${colorClass}`}>
-          <AvatarFallback className={colorClass}>
-            <IconComponent className="h-5 w-5" />
-          </AvatarFallback>
-        </Avatar>
+      <button
+        type="button"
+        className="flex w-full items-center gap-3 p-4 text-left cursor-pointer"
+        onClick={onClick}
+      >
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary flex-shrink-0">
+          <IconComponent className="h-5 w-5" />
+        </div>
 
-        <div className="flex-1 space-y-2">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <h4
-                  className={`text-sm font-medium ${isUnread ? "font-semibold" : ""}`}
-                >
-                  {notification.title}
-                </h4>
-                {isUnread && (
-                  <Badge variant="secondary" className="h-5 px-1.5 text-xs">
-                    Nova
-                  </Badge>
-                )}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {notification.content}
-              </p>
-            </div>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <span className="sr-only">Abrir menu</span>
-                  <span className="text-lg">⋯</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {isUnread && (
-                  <DropdownMenuItem
-                    onClick={() => onMarkAsRead(notification.id)}
-                    disabled={isMarkingAsRead}
-                  >
-                    {isMarkingAsRead ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Check className="h-4 w-4 mr-2" />
-                    )}
-                    Marcar como lida
-                  </DropdownMenuItem>
-                )}
-                {notification.status !== "ARCHIVED" && (
-                  <DropdownMenuItem
-                    onClick={() => onMarkAsArchived(notification.id)}
-                    disabled={isArchiving}
-                  >
-                    {isArchiving ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Archive className="h-4 w-4 mr-2" />
-                    )}
-                    Arquivar
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+        <div className="flex-1 space-y-1">
+          <p className="text-sm text-foreground">{notification.content}</p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span>
               {formatDistanceToNow(new Date(notification.createdAt), {
                 addSuffix: true,
                 locale: ptBR,
               })}
             </span>
-            {notification.appointment && (
-              <>
-                <Separator orientation="vertical" className="h-3" />
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {notification.appointment.internalId}
-                </span>
-              </>
-            )}
-            {notification.readAt && (
-              <>
-                <Separator orientation="vertical" className="h-3" />
-                <span className="flex items-center gap-1">
-                  <Check className="h-3 w-3" />
-                  Lida{" "}
-                  {formatDistanceToNow(new Date(notification.readAt), {
-                    addSuffix: true,
-                    locale: ptBR,
-                  })}
-                </span>
-              </>
-            )}
+            <span className="text-muted-foreground/50">•</span>
+            <span>{notification.title}</span>
           </div>
         </div>
-      </div>
+
+        {isUnread && (
+          <div
+            className="h-2 w-2 bg-blue-500 rounded-full ml-auto self-start mt-1"
+            aria-label="Notificação não lida"
+          />
+        )}
+      </button>
+
+      {isActionable && (
+        <div className="flex justify-end gap-2 pb-3 px-4">
+          <Button variant="outline" size="sm">
+            Recusar
+          </Button>
+          <Button size="sm">Aceitar</Button>
+        </div>
+      )}
     </div>
   );
 }

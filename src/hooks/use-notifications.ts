@@ -18,6 +18,7 @@ export interface Notification {
   createdAt: string;
   updatedAt: string;
   appointment?: {
+    id: string
     internalId: string;
     date: string;
     deliveryType: {
@@ -37,13 +38,16 @@ export interface NotificationsResponse {
 }
 
 // Hook to fetch notifications
-export const useNotifications = (options?: {
-  page?: number;
-  limit?: number;
-  status?: "UNREAD" | "READ" | "ARCHIVED";
-  type?: string;
-}) => {
-  const { page = 1, limit = 20, status, type } = options || {};
+export const useNotifications = (
+  params?: {
+    page?: number;
+    limit?: number;
+    status?: "UNREAD" | "READ" | "ARCHIVED";
+    type?: string;
+  },
+  options?: { enabled?: boolean },
+) => {
+  const { page = 1, limit = 20, status, type } = params || {};
 
   const searchParams = new URLSearchParams();
   searchParams.set("page", page.toString());
@@ -61,6 +65,7 @@ export const useNotifications = (options?: {
     staleTime: 30 * 1000, // 30 seconds
     refetchOnWindowFocus: true,
     retry: 2,
+    ...options, // Spread the options here
   });
 };
 
