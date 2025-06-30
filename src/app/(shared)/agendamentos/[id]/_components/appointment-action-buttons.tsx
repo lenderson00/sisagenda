@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import type { AppointmentWithRelationsAndStringPrice } from "../types/app";
 import type { AllowedActions } from "./appointment-actions";
 import { RescheduleDialog } from "./reschedule-dialog";
+import { useRouter } from "next/navigation";
 
 interface AppointmentActionButtonsProps {
   appointment: AppointmentWithRelationsAndStringPrice;
@@ -46,6 +47,8 @@ export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
     useState(false);
   const [currentActionDetails, setCurrentActionDetails] =
     useState<ActionDetails | null>(null);
+
+  const router = useRouter();
 
   // Guard against undefined appointment prop
   if (!props?.appointment) {
@@ -85,6 +88,7 @@ export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
       toast.success("Sucesso!", {
         description: `A ação "${variables.action}" foi executada com sucesso.`,
       });
+
       if (isRescheduleDialogOpen) {
         setIsRescheduleDialogOpen(false);
       }
@@ -94,6 +98,8 @@ export function AppointmentActionButtons(props: AppointmentActionButtonsProps) {
       queryClient.invalidateQueries({
         queryKey: ["appointment-activities", appointmentId],
       });
+
+      router.refresh();
     },
     onError: (error: Error) => {
       toast.error("Erro!", {

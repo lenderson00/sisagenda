@@ -88,9 +88,6 @@ function AppointmentActionsContent({
           }),
         },
       );
-
-      console.log(response);
-
       if (!response.ok) {
         const errorData = await response.text();
         throw new Error(errorData || "Failed to perform action");

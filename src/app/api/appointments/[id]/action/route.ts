@@ -118,7 +118,18 @@ export async function PATCH(
         return new NextResponse("Invalid action", { status: 400 });
     }
 
-    return NextResponse.json({ success: true });
+    const updatedAppointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        user: true,
+        deliveryType: true,
+        items: true,
+        activities: true,
+        attachments: true,
+      },
+    });
+
+    return NextResponse.json(updatedAppointment);
   } catch (error) {
     if (error instanceof Error) {
       return new NextResponse(error.message, { status: 400 });
