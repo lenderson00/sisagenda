@@ -92,6 +92,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 export const appointmentSchema = z.object({
   id: z.string(),
@@ -123,6 +124,8 @@ export const appointmentSchema = z.object({
 });
 
 type Appointment = z.infer<typeof appointmentSchema>;
+
+const TABLE_HEIGHT = 450;
 
 function StatusBadge({ status }: { status: Appointment["status"] }) {
   const statusConfig = {
@@ -203,7 +206,11 @@ const columns: ColumnDef<Appointment>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <StatusBadge status={row.original.status} />,
+    cell: ({ row }) => (
+      <Link href={`/agendamentos/${row.original.id}`}>
+        <StatusBadge status={row.original.status} />
+      </Link>
+    ),
   },
   {
     accessorKey: "date",
@@ -406,54 +413,60 @@ export function AppointmentsTable({
         </div>
 
         <div className="overflow-hidden rounded-lg border">
-          <Table>
-            <TableHeader className="sticky top-0 z-10 bg-muted">
-              {table.getHeaderGroups().map((headerGroup: any) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header: any) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row: any) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell: any) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
+          <div style={{ minHeight: TABLE_HEIGHT, overflow: "auto" }}>
+            <Table>
+              <TableHeader className="sticky top-0 z-10 bg-muted">
+                {table.getHeaderGroups().map((headerGroup: any) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header: any) => {
+                      return (
+                        <TableHead key={header.id} colSpan={header.colSpan}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      );
+                    })}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-[250px] text-center bg-card"
-                  >
-                    Nenhum agendamento encontrado.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row: any) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell: any) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="text-center bg-card h-full flex-1"
+                      style={{
+                        height: TABLE_HEIGHT - 40,
+                        maxHeight: TABLE_HEIGHT,
+                      }}
+                    >
+                      Nenhum agendamento encontrado.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
 
         <div className="flex items-center justify-between px-4">
