@@ -6,6 +6,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { generateInternalId } from "@/lib/nanoid";
 import { prisma } from "@/lib/prisma";
+import { AppointmentService } from "@/lib/services/appointment-service";
 
 const itemSchema = z.object({
   pi: z.string().optional(),
@@ -217,6 +218,13 @@ export async function POST(req: Request) {
 
       return appointment;
     });
+
+    // Notify OM users
+    await AppointmentService.notifyAppointmentCreated(
+      result.id,
+      result.organizationId,
+      result.userId
+    );
 
     return new Response(JSON.stringify(result), { status: 201 });
   } catch (error) {
