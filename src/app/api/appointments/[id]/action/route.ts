@@ -47,14 +47,13 @@ export async function PATCH(
     const appointment = await prisma.appointment.findUnique({
       where: {
         id: appointmentId,
+        deletedAt: null,
       },
     });
 
     const lockEvent = [
       "COMPLETED",
       "CANCELLED",
-      "CANCELLATION_REQUESTED",
-      "RESCHEDULE_REQUESTED",
       "RESCHEDULE_REJECTED",
       "RESCHEDULE_APPROVED",
     ];

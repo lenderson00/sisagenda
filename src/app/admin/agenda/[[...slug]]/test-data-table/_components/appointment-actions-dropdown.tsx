@@ -64,7 +64,6 @@ function AppointmentActionsContent({
 }: {
   appointment: AppointmentWithRelations;
 }) {
-  const { data: session } = useSession();
   const router = useRouter();
   const allowedActions = useAllowedActions();
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +88,8 @@ function AppointmentActionsContent({
           }),
         },
       );
+
+      console.log(response);
 
       if (!response.ok) {
         const errorData = await response.text();
@@ -397,6 +398,8 @@ export function AppointmentActionsDropdown({
   const compatibleAppointment = {
     ...appointment,
     activities: [], // Assuming activities are not needed for this context
+    attachments: [],
+    items: [],
   };
 
   return (
