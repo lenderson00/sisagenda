@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ userId: string }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -17,10 +17,10 @@ export async function POST(
     const tempPassword = randomBytes(4).toString("hex");
     const hashedPassword = await hash(tempPassword, 12);
 
-    const { userId } = await params;
+    const { id } = await params;
 
     await prisma.user.update({
-      where: { id: userId },
+      where: { id },
       data: {
         password: hashedPassword,
         mustChangePassword: true,

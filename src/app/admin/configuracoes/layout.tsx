@@ -9,11 +9,19 @@ const createSidebarNavItems = () => {
   return [
     {
       title: "Geral",
-      href: `/configuracoes`,
+      href: "/configuracoes",
+    },
+    {
+      title: "Usuário",
+      href: "/configuracoes/usuario",
+    },
+    {
+      title: "Notificações",
+      href: "/configuracoes/notificacoes",
     },
     {
       title: "Avançado",
-      href: `/configuracoes/avancado`,
+      href: "/configuracoes/avancado",
     },
   ];
 };

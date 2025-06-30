@@ -48,13 +48,14 @@ model User {
   address String?
   cnpj    String?
 
-  organizationId      String?
-  organization        Organization?         @relation(fields: [organizationId], references: [id])
-  PasswordResetToken  PasswordResetToken[]
-  AppointmentActivity AppointmentActivity[]
-  Chat                Chat[]
-  MessageFeedback     MessageFeedback[]
-  Notification        Notification[]
+  organizationId            String?
+  organization              Organization?              @relation(fields: [organizationId], references: [id])
+  PasswordResetToken        PasswordResetToken[]
+  AppointmentActivity       AppointmentActivity[]
+  Chat                      Chat[]
+  MessageFeedback           MessageFeedback[]
+  Notification              Notification[]
+  WhatsappVerificationToken WhatsappVerificationToken?
 
   @@index([email])
   @@index([organizationId])
@@ -541,4 +542,13 @@ model Notification {
   @@index([status])
   @@index([type])
   @@index([createdAt])
+}
+
+model WhatsappVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expires   DateTime
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }

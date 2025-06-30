@@ -1,9 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { GeneralTab } from "./_components/general-tab";
 
-export default async function ConfiguracoesPage() {
+export default async function ConfiguracoesNotificacoesPage() {
   const session = await auth();
 
   if (!session) {
@@ -31,5 +30,5 @@ export default async function ConfiguracoesPage() {
     redirect("/");
   }
 
-  return <GeneralTab organization={organization} />;
+  return <div>Notificações</div>;
 }

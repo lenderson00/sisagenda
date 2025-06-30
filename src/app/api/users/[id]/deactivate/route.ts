@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ userId: string }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -13,7 +13,7 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { userId } = await params;
+    const { id: userId } = await params;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -41,7 +41,7 @@ export async function POST(
         id: userId,
       },
       data: {
-        isActive: true,
+        isActive: false,
       },
     });
 
@@ -51,7 +51,7 @@ export async function POST(
       return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
 
-    console.error("[ADMIN_ACTIVATE_USER]", error);
+    console.error("[ADMIN_DEACTIVATE_USER]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }

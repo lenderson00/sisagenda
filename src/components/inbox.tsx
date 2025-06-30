@@ -46,6 +46,7 @@ import {
   useUnreadCount,
   type Notification,
 } from "@/hooks/use-notifications";
+import Link from "next/link";
 
 // Notification type icons mapping
 const notificationIcons = {
@@ -195,10 +196,12 @@ export function Inbox({ className }: InboxProps) {
                 Marcar todas como lidas
               </Button>
             )}
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Settings className="h-4 w-4" />
-              <span className="sr-only">Configurações</span>
-            </Button>
+            <Link href="/configuracoes/notificacoes">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Settings className="h-4 w-4" />
+                <span className="sr-only">Configurações</span>
+              </Button>
+            </Link>
           </div>
         </div>
       </CardHeader>

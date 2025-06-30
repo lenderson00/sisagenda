@@ -21,8 +21,8 @@ export const userQuerySchema = z.object({
   search: z.string().optional(),
 });
 
-export const userIdParamSchema = z.object({
-  userId: z.string().cuid(),
+export const idParamSchema = z.object({
+  id: z.string().cuid(),
 });
 
 export const toggleTwoFactorSchema = z.object({
@@ -32,5 +32,5 @@ export const toggleTwoFactorSchema = z.object({
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type UserQueryInput = z.infer<typeof userQuerySchema>;
-export type UserIdParam = z.infer<typeof userIdParamSchema>;
+export type IdParam = z.infer<typeof idParamSchema>;
 export type ToggleTwoFactorInput = z.infer<typeof toggleTwoFactorSchema>;
