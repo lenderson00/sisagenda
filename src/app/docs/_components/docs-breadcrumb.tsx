@@ -1,7 +1,6 @@
 "use client";
 
 import { useBreadcrumb } from "fumadocs-core/breadcrumb";
-import type { PageTree } from "fumadocs-core/source";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
@@ -19,11 +18,11 @@ export function DocsBreadcrumb({
   tree,
   className,
 }: {
-  tree: PageTree;
+  tree: any;
   className?: string;
 }) {
   const pathname = usePathname();
-  const items = useBreadcrumb(tree, pathname);
+  const items = useBreadcrumb(tree, pathname as any);
 
   return (
     <Breadcrumb className={className}>
@@ -38,7 +37,7 @@ export function DocsBreadcrumb({
         <BreadcrumbSeparator />
         {items.map((item, index) => (
           <Fragment key={index}>
-            {i !== 0 && <BreadcrumbSeparator />}
+            {index !== 0 && <BreadcrumbSeparator />}
             {item.url ? (
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>

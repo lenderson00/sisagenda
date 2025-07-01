@@ -108,8 +108,12 @@ export const mdxComponents = {
     />
   ),
   img: ({ className, alt, ...props }: React.ComponentProps<"img">) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img className={cn("rounded-md", className)} alt={alt} {...props} />
+    <img
+      className={cn("rounded-md", className)}
+      alt={alt || ""}
+      {...props}
+      aria-label={alt || ""}
+    />
   ),
   hr: ({ ...props }: React.ComponentProps<"hr">) => (
     <hr className="my-4 md:my-8" {...props} />
