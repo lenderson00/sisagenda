@@ -5,7 +5,7 @@ import { idParamSchema, updateUserSchema } from "../_schemas/user-schemas";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -13,7 +13,8 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const validatedParams = idParamSchema.safeParse(params);
+    const awaitableParams = await params;
+    const validatedParams = idParamSchema.safeParse(awaitableParams);
     if (!validatedParams.success) {
       return new NextResponse("Invalid user ID", { status: 400 });
     }
@@ -52,7 +53,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -60,7 +61,8 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const validatedParams = idParamSchema.safeParse(params);
+    const awaitableParams = await params;
+    const validatedParams = idParamSchema.safeParse(awaitableParams);
     if (!validatedParams.success) {
       return new NextResponse("Invalid user ID", { status: 400 });
     }
@@ -127,7 +129,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
@@ -135,7 +137,8 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const validatedParams = idParamSchema.safeParse(params);
+    const awaitableParams = await params;
+    const validatedParams = idParamSchema.safeParse(awaitableParams);
 
     if (!validatedParams.success) {
       return new NextResponse("Invalid user ID", { status: 400 });
