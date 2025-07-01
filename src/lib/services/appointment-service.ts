@@ -376,8 +376,18 @@ export class AppointmentService {
         },
       });
 
+      await notifyAppointmentCancelled(
+        appointmentId,
+        appointment.deliveryType.organizationId,
+        this.user.id,
+        "Solicitação de cancelamento rejeitada"
+      );
+
       return updatedAppointment;
+
     });
+
+
   }
 
   async markAsNoShow(appointmentId: string) {
