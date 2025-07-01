@@ -103,6 +103,10 @@ export function ActionsProvider({
           actions.canApprove = true;
           break;
         case "CANCELLATION_REQUESTED":
+          actions.canApproveOrRejectCancellation = true;
+          break;
+        case "RESCHEDULE_REQUESTED":
+          actions.canApproveOrRejectReschedule = true;
           break;
         default:
       }

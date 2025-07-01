@@ -44,17 +44,19 @@ export function getNotificationActions(
       break;
 
     case "CANCELLATION_REQUESTED":
-      if (userRole === "ADMIN") {
+      if (userRole === "ADMIN" || userRole === "USER") {
         actions.canApproveCancellation = true;
         actions.canRejectCancellation = true;
       }
+
       break;
 
     case "RESCHEDULE_REQUESTED":
-      if (userRole === "ADMIN") {
+      if (userRole === "ADMIN" || userRole === "USER") {
         actions.canApproveReschedule = true;
         actions.canRejectReschedule = true;
       }
+
       break;
 
     default:

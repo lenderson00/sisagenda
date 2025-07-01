@@ -281,7 +281,7 @@ export class AppointmentService {
     if (!appointment || !this.isUserAuthorized(appointment)) {
       throw new Error("Not authorized");
     }
-    if (this.user.role !== "ADMIN") {
+    if (this.user.role !== "ADMIN" && this.user.role !== "USER") {
       throw new Error("Forbidden");
     }
     if (appointment.status !== "CANCELLATION_REQUESTED") {
@@ -339,7 +339,7 @@ export class AppointmentService {
     if (!appointment || !this.isUserAuthorized(appointment)) {
       throw new Error("Not authorized");
     }
-    if (this.user.role !== "ADMIN") {
+    if (this.user.role !== "ADMIN" && this.user.role !== "USER") {
       throw new Error("Forbidden");
     }
     if (appointment.status !== "CANCELLATION_REQUESTED") {
@@ -541,7 +541,7 @@ export class AppointmentService {
     if (!appointment || !this.isUserAuthorized(appointment)) {
       throw new Error("Not authorized");
     }
-    if (this.user.role !== "ADMIN") {
+    if (this.user.role !== "ADMIN" && this.user.role !== "USER") {
       throw new Error("Forbidden");
     }
     if (appointment.status !== "RESCHEDULE_REQUESTED") {
@@ -610,7 +610,7 @@ export class AppointmentService {
     if (!appointment || !this.isUserAuthorized(appointment)) {
       throw new Error("Not authorized");
     }
-    if (this.user.role !== "ADMIN") {
+    if (this.user.role !== "ADMIN" && this.user.role !== "USER") {
       throw new Error("Forbidden");
     }
     if (appointment.status !== "RESCHEDULE_REQUESTED") {
