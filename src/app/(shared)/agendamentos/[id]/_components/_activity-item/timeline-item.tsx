@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/tooltip";
 import dayjs from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
-import type { AppointmentActivity, User } from "@prisma/client";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { ReactNode } from "react";
@@ -17,9 +17,7 @@ export function TimelineItem({
   isLast,
   isFirst,
 }: {
-  activity: AppointmentActivity & {
-    user: User;
-  };
+  activity: AppointmentActivityWithRelations;
   icon: ReactNode;
   children: ReactNode;
   isLast?: boolean;

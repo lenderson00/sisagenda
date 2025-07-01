@@ -1,7 +1,7 @@
 "use client";
 
 import { getStatusReadableName } from "@/lib/utils";
-import type { AppointmentActivity, User } from "@prisma/client";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 import {
   Activity,
   Check,
@@ -16,7 +16,7 @@ import {
 import { Comment } from "./_activity-item/comment";
 import { TimelineItem } from "./_activity-item/timeline-item";
 
-const getActivityDescription = (activity: AppointmentActivity) => {
+const getActivityDescription = (activity: AppointmentActivityWithRelations) => {
   switch (activity.type) {
     case "CREATED":
       return "criou o agendamento";
@@ -65,9 +65,7 @@ export function AppointmentActivityItem({
   isLast,
   isFirst,
 }: {
-  activity: AppointmentActivity & {
-    user: User;
-  };
+  activity: AppointmentActivityWithRelations;
   isLast?: boolean;
   isFirst?: boolean;
 }) {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Textarea } from "@/components/ui/textarea";
-import type { AppointmentActivity, User } from "@prisma/client";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 import { IconArrowUp } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow } from "date-fns";
@@ -27,9 +27,7 @@ import { AppointmentActivityItem } from "./appointment-activity-item";
 
 interface AppointmentActivityListProps {
   appointmentId: string;
-  initialActivities: (AppointmentActivity & {
-    user: User;
-  })[];
+  initialActivities: AppointmentActivityWithRelations[];
   currentUser: {
     name: string;
   };
@@ -49,7 +47,7 @@ export function AppointmentActivityList({
 
   // Use React Query to manage activities with real-time updates
   const { data: activities = initialActivities } = useQuery<
-    (AppointmentActivity & { user: User })[]
+    AppointmentActivityWithRelations[]
   >({
     queryKey: ["appointment-activities", appointmentId],
     queryFn: async () => {

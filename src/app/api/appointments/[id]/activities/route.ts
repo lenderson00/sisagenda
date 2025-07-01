@@ -21,6 +21,16 @@ export async function GET(
       },
       include: {
         user: true,
+        replies: {
+          include: {
+            user: true,
+            replies: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -51,7 +61,7 @@ export async function POST(
 
   try {
     const body = await request.json();
-    const { type, content } = body;
+    const { type, content, parentId } = body;
 
     // Validate required fields
     if (!type || !content) {
@@ -82,6 +92,20 @@ export async function POST(
       );
     }
 
+    // If parentId is provided, verify the parent activity exists
+    if (parentId) {
+      const parentActivity = await prisma.appointmentActivity.findUnique({
+        where: { id: parentId },
+      });
+
+      if (!parentActivity) {
+        return NextResponse.json(
+          { error: "Parent activity not found" },
+          { status: 404 },
+        );
+      }
+    }
+
     const activity = await prisma.appointmentActivity.create({
       data: {
         type: type,
@@ -89,9 +113,15 @@ export async function POST(
         content: content,
         appointmentId: id,
         userId: session.user.id,
+        parentId: parentId || null,
       },
       include: {
         user: true,
+        replies: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 

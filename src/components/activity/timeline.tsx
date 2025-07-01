@@ -4,6 +4,7 @@ import {
   type AppointmentActivity as PrismaAppointmentActivity,
   type User,
 } from "@prisma/client";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 import {
   AlertCircle,
   Calendar,
@@ -15,12 +16,8 @@ import {
   XCircle,
 } from "lucide-react";
 
-type AppointmentActivity = PrismaAppointmentActivity & {
-  user: User;
-};
-
 interface AppointmentTimelineEventItemProps {
-  event: AppointmentActivity;
+  event: AppointmentActivityWithRelations;
 }
 
 export const AppointmentTimelineEventItem: React.FC<
@@ -115,88 +112,59 @@ export const AppointmentTimelineEventItem: React.FC<
   } | null;
 
   return (
-    <div className="group relative flex animate-fade-in items-start space-x-4 pb-6">
-      {/* Linha vertical conectora */}
-      <div className="absolute left-6 top-12 h-full w-0.5 bg-gray-200 group-last:hidden" />
-
-      {/* Ícone do evento */}
-      <div
-        className={`relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200 hover:scale-105 ${styling.icon} ${isImportant ? "shadow-lg" : "shadow-sm"}`}
-      >
-        {getEventIcon(eventKey)}
-        {isImportant && (
+    <div className="relative">
+      <div className="flex items-start space-x-3">
+        <div className="flex-shrink-0">
           <div
-            className={`absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full ${styling.dot}`}
-          />
-        )}
-      </div>
-
-      {/* Conteúdo do evento */}
-      <div className="min-w-0 flex-1 rounded-lg border bg-white shadow-sm transition-shadow duration-200">
-        <div className="p-4">
-          {/* Header do evento */}
-          <div className="mb-2 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <img
-                src={event.user.image || "/default-avatar.png"}
-                alt={event.user.name || "User"}
-                className="h-6 w-6 rounded-full border"
-              />
-              <span className="text-sm font-medium text-gray-900">
-                {event.user.name}
-              </span>
-              {isImportant && (
-                <Badge variant="outline" className="text-xs">
-                  <AlertCircle className="mr-1 h-3 w-3" />
-                  Importante
-                </Badge>
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${styling.icon}`}
+          >
+            {getEventIcon(eventKey)}
+          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm font-medium text-gray-900">
+              {event.user?.name || "Sistema"}
+            </span>
+            <span className="text-sm text-gray-500">
+              {event.type === "COMMENT"
+                ? "comentou:"
+                : "realizou uma atividade"}
+            </span>
+            {isImportant && (
+              <Badge variant="secondary" className="text-xs">
+                Importante
+              </Badge>
+            )}
+          </div>
+          {event.content && (
+            <p className="text-sm text-gray-700 mt-1">{event.content}</p>
+          )}
+          {metadata && (
+            <div className="mt-2 space-y-1">
+              {metadata.address && (
+                <div className="flex items-center text-xs text-gray-500">
+                  <MapPin className="w-3 h-3 mr-1" />
+                  {metadata.address}
+                </div>
+              )}
+              {metadata.driverName && (
+                <div className="flex items-center text-xs text-gray-500">
+                  <UserIcon className="w-3 h-3 mr-1" />
+                  {metadata.driverName}
+                </div>
+              )}
+              {metadata.reason && (
+                <div className="flex items-center text-xs text-gray-500">
+                  <AlertCircle className="w-3 h-3 mr-1" />
+                  {metadata.reason}
+                </div>
               )}
             </div>
-
-            <span className="text-xs text-gray-500">
-              {new Date(event.createdAt).toLocaleString("pt-BR")}
-            </span>
-          </div>
-
-          {/* Descrição do evento */}
-          <div className="text-sm leading-relaxed text-gray-700">
-            <p className="font-semibold">{event.title}</p>
-            {event.content && <p>{event.content}</p>}
-          </div>
-
-          {/* Informações adicionais para eventos específicos */}
-          {event.type === ActivityType.UPDATED && metadata?.address && (
-            <div className="mt-3 rounded-lg border border-green-200 bg-green-50 p-3">
-              <div className="flex items-center space-x-2 text-sm text-green-800">
-                <MapPin className="h-4 w-4" />
-                <span className="font-medium">
-                  Endereço validado e confirmado
-                </span>
-              </div>
-            </div>
           )}
-
-          {event.type === ActivityType.ASSIGNED && metadata?.driverName && (
-            <div className="mt-3 rounded-lg border border-purple-200 bg-purple-50 p-3">
-              <div className="flex items-center space-x-2 text-sm text-purple-800">
-                <UserIcon className="h-4 w-4" />
-                <span>
-                  Entregador <strong>{metadata.driverName}</strong> foi
-                  notificado
-                </span>
-              </div>
-            </div>
-          )}
-
-          {(event.type === ActivityType.SUPPLIER_NO_SHOW ||
-            event.type === ActivityType.CANCELLED) &&
-            metadata?.reason && (
-              <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
-                <div className="text-sm text-red-800">
-                  <strong>Motivo:</strong> {metadata.reason}
-                </div>
-              </div>
-            )}
+          <div className="text-xs text-gray-400 mt-1">
+            {new Date(event.createdAt).toLocaleString("pt-BR")}
+          </div>
         </div>
       </div>
     </div>

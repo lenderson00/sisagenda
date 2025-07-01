@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/tooltip";
 import dayjs from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
-import type { AppointmentActivity, User } from "@prisma/client";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -13,9 +13,7 @@ export function Comment({
   activity,
   isLast,
 }: {
-  activity: AppointmentActivity & {
-    user: User;
-  };
+  activity: AppointmentActivityWithRelations;
   isLast?: boolean;
 }) {
   return (

@@ -63,8 +63,6 @@ export async function POST(req: Request) {
         description: validatedData.description,
         slug,
         duration: validatedData.duration || 60, // 60 minutes
-        lunchTimeStart: 12 * 60, // 12:00
-        lunchTimeEnd: 13 * 60, // 13:00
         isVisible: true,
         organizationId: validatedData.organizationId,
       },

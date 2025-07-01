@@ -27,7 +27,7 @@ export function AppointmentsExport() {
 
   const handleExport = () => {
     if (appointments) {
-      exportAppointmentsToPDF(appointments, user);
+      exportAppointmentsToPDF(appointments, user as any);
     }
   };
 

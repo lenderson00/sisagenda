@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 import { AppointmentActions } from "./_components/appointment-actions";
 import { AppointmentActivityList } from "./_components/appointment-activity";
 import { AppointmentDetailsCard } from "./_components/appointment-details-card";
@@ -30,6 +31,16 @@ async function getAppointment(id: string) {
       activities: {
         include: {
           user: true,
+          replies: {
+            include: {
+              user: true,
+              replies: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -90,7 +101,9 @@ export default async function AppointmentPage({
           <AppointmentDetailsCard appointment={plainAppointment} />
           <AppointmentActivityList
             appointmentId={id}
-            initialActivities={appointment.activities}
+            initialActivities={
+              appointment.activities as AppointmentActivityWithRelations[]
+            }
             currentUser={{
               name: session.user.name || "Usuário",
             }}

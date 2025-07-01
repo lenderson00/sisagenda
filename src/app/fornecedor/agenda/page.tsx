@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { PageHeader } from "../../admin/_components/page-header";
 import { AgendaPageClient } from "./page-client";
 
 export type AppointmentWithRelations = {

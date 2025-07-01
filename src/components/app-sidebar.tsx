@@ -90,9 +90,9 @@ export function AppSidebar({
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navDashboard} title="" />
-        <NavMain items={adminMain} title="Administração" />
-        <NavMain items={navMain} title="Outros" />
+        <NavMain items={navDashboard} />
+        <NavMain items={adminMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

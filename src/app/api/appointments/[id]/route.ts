@@ -30,6 +30,16 @@ export async function GET(
         activities: {
           include: {
             user: true,
+            replies: {
+              include: {
+                user: true,
+                replies: {
+                  include: {
+                    user: true,
+                  },
+                },
+              },
+            },
           },
           orderBy: {
             createdAt: "desc",

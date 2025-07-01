@@ -1,9 +1,9 @@
-import type { ActivityComment } from "../../@types/activity";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 import { DeliveryCommentItem } from "./comment";
 import { CommentEditor } from "./comment-editor";
 
 interface CommentSectionProps {
-  comments: ActivityComment[];
+  comments: AppointmentActivityWithRelations[];
   onAddComment: (content: string, parentId?: string) => void;
 }
 

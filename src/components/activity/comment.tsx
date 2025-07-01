@@ -21,10 +21,10 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import type { ActivityComment } from "../../@types/activity";
+import type { AppointmentActivityWithRelations } from "@/types/appointment-activity";
 
 interface DeliveryCommentItemProps {
-  comment: ActivityComment;
+  comment: AppointmentActivityWithRelations;
   onAddReply: (content: string, parentId: string) => void;
   isReply?: boolean;
 }
@@ -63,13 +63,13 @@ export const DeliveryCommentItem: React.FC<DeliveryCommentItemProps> = ({
         <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-gray-50 to-gray-25">
           <div className="flex items-center space-x-3">
             <img
-              src={comment.user.image ?? "/placeholder-user.jpg"}
-              alt={comment.user.name ?? "User"}
+              src={comment.user?.image ?? "/placeholder-user.jpg"}
+              alt={comment.user?.name ?? "User"}
               className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
             />
             <div>
               <span className="font-semibold text-gray-900">
-                {comment.user.name}
+                {comment.user?.name}
               </span>
               <div className="flex items-center space-x-2 text-xs text-gray-500 mt-0.5">
                 <MessageCircle className="w-3 h-3" />

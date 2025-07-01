@@ -57,9 +57,7 @@ export function AccountAvatar({ className }: Props) {
           <div className="py-2 px-3 border-b border-border">
             <div className="flex items-center space-x-3">
               <div>
-                <p className="text-sm font-medium">
-                  {user?.postoGraduacao || ""} {user?.name || ""}
-                </p>
+                <p className="text-sm font-medium">{user?.name || ""}</p>
                 <p className="text-xs text-muted-foreground">
                   {user?.email || ""}
                 </p>
