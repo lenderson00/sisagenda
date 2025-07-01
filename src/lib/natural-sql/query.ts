@@ -170,7 +170,6 @@ export const runGenerateSQLQuery = async (query: string) => {
     await client.end();
   } catch (e: any) {
     if (e.message.includes('relation "unicorns" does not exist')) {
-
       // throw error
       throw Error("Table does not exist");
     }

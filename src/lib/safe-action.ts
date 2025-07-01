@@ -38,31 +38,33 @@ export const authUserActionClient = actionClient.use(async ({ next }) => {
   });
 });
 
-export const organizationActionClient = authUserActionClient.use(async ({ next }) => {
-  const session = await auth();
+export const organizationActionClient = authUserActionClient.use(
+  async ({ next }) => {
+    const session = await auth();
 
-  if (!session?.user.id) {
-    throw new Error("Unauthorized: Login required.");
-  }
+    if (!session?.user.id) {
+      throw new Error("Unauthorized: Login required.");
+    }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      organization: true,
-    },
-  });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        organization: true,
+      },
+    });
 
-  if (!user) {
-    throw new Error("User not found.");
-  }
+    if (!user) {
+      throw new Error("User not found.");
+    }
 
-  const { organization } = user;
+    const { organization } = user;
 
-  return next({
-    ctx: {
-      organization,
-    },
-  });
-});
+    return next({
+      ctx: {
+        organization,
+      },
+    });
+  },
+);

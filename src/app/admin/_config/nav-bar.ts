@@ -1,4 +1,12 @@
-import { IconDashboard, IconTruck, IconCalendar, IconCalendarOff, IconUsers, IconBuilding, IconSettings } from "@tabler/icons-react";
+import {
+  IconBuilding,
+  IconCalendar,
+  IconCalendarOff,
+  IconDashboard,
+  IconSettings,
+  IconTruck,
+  IconUsers,
+} from "@tabler/icons-react";
 
 export const mainMenuItems = [
   {

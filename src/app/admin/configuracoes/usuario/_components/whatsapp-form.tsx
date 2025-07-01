@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { User } from "@prisma/client";
 import { CheckCircle2 } from "lucide-react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { IMaskInput } from "react-imask";
 import { toast } from "sonner";
@@ -18,7 +19,6 @@ import { useUpdateUser } from "../_hooks/use-update-user";
 import { useVerifyWhatsappToken } from "../_hooks/use-verify-whatsapp-token";
 import { WhatsappFormSkeleton } from "./whatsapp-form-skeleton";
 import { WhatsappVerificationDialog } from "./whatsapp-verification-dialog";
-import { useState } from "react";
 
 const whatsappFormSchema = z.object({
   whatsapp: z.string().optional(),

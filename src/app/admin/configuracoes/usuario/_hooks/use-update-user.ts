@@ -17,18 +17,18 @@ type UpdateUserParams = {
   cpf?: string;
   whatsapp?: string;
   postoGraduacao?:
-  | "GM"
-  | "VA"
-  | "CA"
-  | "CMG"
-  | "CF"
-  | "CC"
-  | "CT"
-  | "SO"
-  | "SG"
-  | "CB"
-  | "MN"
-  | null;
+    | "GM"
+    | "VA"
+    | "CA"
+    | "CMG"
+    | "CF"
+    | "CC"
+    | "CT"
+    | "SO"
+    | "SG"
+    | "CB"
+    | "MN"
+    | null;
 };
 
 export function useUpdateUser() {

@@ -25,7 +25,7 @@ function deepHash(value: any, cache = new WeakMap<object, string>()): string {
   if (type === "object") {
     // If we’ve seen this object before, return the cached hash.
     if (cache.has(value)) {
-      return cache.get(value)!;
+      return cache.get(value) || "";
     }
     let hash: string;
     if (Array.isArray(value)) {
@@ -101,7 +101,7 @@ export function uniq<T>(arr: T[]): T[] {
     const hash = deepHash(item);
     if (seen.has(hash)) {
       // There is a potential duplicate; check the stored items with the same hash.
-      const itemsWithHash = seen.get(hash)!;
+      const itemsWithHash = seen.get(hash) || [];
       let duplicateFound = false;
       for (const existing of itemsWithHash) {
         if (deepEqual(existing, item)) {

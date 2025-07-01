@@ -1,32 +1,27 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
-  Bell,
+  AlertCircle,
   Archive,
+  Bell,
+  Calendar,
   Check,
   CheckCheck,
+  CircleAlertIcon,
+  CircleDot,
   Filter,
   Inbox as InboxIcon,
-  Calendar,
-  Package,
-  AlertCircle,
-  CircleDot,
   Loader2,
-  RefreshCw,
   MoreHorizontal,
+  Package,
+  RefreshCw,
   Settings,
-  CircleAlertIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +33,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,27 +45,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import {
-  useNotifications,
-  useMarkAsRead,
-  useMarkAsArchived,
-  useMarkAllAsRead,
-  useUnreadCount,
-  useApproveAppointment,
-  useRejectAppointment,
-  useApproveCancellation,
-  useRejectCancellation,
-  useApproveReschedule,
-  useRejectReschedule,
   type Notification,
+  useApproveAppointment,
+  useApproveCancellation,
+  useApproveReschedule,
+  useMarkAllAsRead,
+  useMarkAsArchived,
+  useMarkAsRead,
+  useNotifications,
+  useRejectAppointment,
+  useRejectCancellation,
+  useRejectReschedule,
+  useUnreadCount,
 } from "@/hooks/use-notifications";
-import { useSession } from "next-auth/react";
 import { getNotificationActionButtons } from "@/lib/utils/notification-actions";
 import type { AppointmentStatus } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 // Notification type icons mapping

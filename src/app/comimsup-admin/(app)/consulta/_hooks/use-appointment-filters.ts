@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import type { FilterCondition } from "@/lib/query/types";
+import { useQuery } from "@tanstack/react-query";
 
 interface AppointmentFilters {
   filters: FilterCondition[];
@@ -19,7 +19,9 @@ interface AppointmentResponse {
   };
 }
 
-async function fetchAppointmentData(filters: AppointmentFilters): Promise<AppointmentResponse> {
+async function fetchAppointmentData(
+  filters: AppointmentFilters,
+): Promise<AppointmentResponse> {
   const params = new URLSearchParams();
 
   if (filters.filters.length > 0) {
@@ -47,7 +49,10 @@ async function fetchAppointmentData(filters: AppointmentFilters): Promise<Appoin
   return response.json();
 }
 
-export function useAppointmentFilters(filters: AppointmentFilters, enabled = true) {
+export function useAppointmentFilters(
+  filters: AppointmentFilters,
+  enabled = true,
+) {
   return useQuery({
     queryKey: ["appointment-filters", filters],
     queryFn: () => fetchAppointmentData(filters),

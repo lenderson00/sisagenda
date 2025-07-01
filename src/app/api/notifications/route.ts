@@ -6,8 +6,14 @@ import { auth } from "@/lib/auth";
 import { notificationService } from "@/lib/services/notification-service";
 
 const querySchema = z.object({
-  page: z.string().optional().transform((val) => (val ? Number.parseInt(val, 10) : 1)),
-  limit: z.string().optional().transform((val) => (val ? Number.parseInt(val, 10) : 20)),
+  page: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number.parseInt(val, 10) : 1)),
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number.parseInt(val, 10) : 20)),
   status: z.enum(["UNREAD", "READ", "ARCHIVED"]).optional().nullable(),
   type: z.string().optional().nullable(),
 });
@@ -40,7 +46,7 @@ export async function GET(req: NextRequest) {
 
     const result = await notificationService.getUserNotifications(
       session.user.id,
-      sanitizedQuery
+      sanitizedQuery,
     );
 
     return NextResponse.json(result);
@@ -48,7 +54,7 @@ export async function GET(req: NextRequest) {
     console.error("Failed to fetch notifications:", error);
     return NextResponse.json(
       { error: "Failed to fetch notifications" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -68,7 +74,7 @@ export async function PATCH(req: NextRequest) {
       const count = await notificationService.markAllAsRead(session.user.id);
       return NextResponse.json({
         success: true,
-        message: `${count} notifications marked as read`
+        message: `${count} notifications marked as read`,
       });
     }
 
@@ -77,7 +83,7 @@ export async function PATCH(req: NextRequest) {
     console.error("Failed to update notifications:", error);
     return NextResponse.json(
       { error: "Failed to update notifications" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

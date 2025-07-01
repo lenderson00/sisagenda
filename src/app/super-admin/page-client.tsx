@@ -1,12 +1,12 @@
 "use client";
 
 import { EmptyCard } from "@/components/empty-card";
+import { PageHeader } from "@/components/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IconUser } from "@tabler/icons-react";
 import { CreateOrganization } from "./_components/create-organization-dialog";
 import { useOrganizations } from "./_hooks/use-organizations";
 import { OrganizationsDataTable } from "./_table/data-table";
-import { PageHeader } from "@/components/page-header";
 
 export function OrganizationList() {
   const { data, isPending } = useOrganizations();

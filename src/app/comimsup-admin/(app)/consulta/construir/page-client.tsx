@@ -1,20 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import {
-  IconDatabase,
-  IconArrowRight,
-  IconLoader,
-  IconArrowLeft,
-} from "@tabler/icons-react";
-import { FilterBuilder } from "../_components/filter-builder";
-import { DragDropColumnSelector } from "../_components/drag-drop-column-selector";
-import { useFilterConfig } from "../_hooks/use-filter-config";
-import { useFilterContext } from "../_context/filter-context";
-import { Stepper } from "../_components/stepper";
 import type { AppointmentFilterFields } from "@/lib/query/types";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconDatabase,
+  IconLoader,
+} from "@tabler/icons-react";
+import { useState } from "react";
+import { DragDropColumnSelector } from "../_components/drag-drop-column-selector";
+import { FilterBuilder } from "../_components/filter-builder";
+import { Stepper } from "../_components/stepper";
+import { useFilterContext } from "../_context/filter-context";
+import { useFilterConfig } from "../_hooks/use-filter-config";
 
 // All available columns for appointments
 const AVAILABLE_COLUMNS = [

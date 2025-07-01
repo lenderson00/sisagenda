@@ -1,4 +1,4 @@
-import type { FilterCondition } from './types'
+import type { FilterCondition } from "./types";
 
 /**
  * Example filter conditions for testing the buildWhere function
@@ -6,43 +6,43 @@ import type { FilterCondition } from './types'
 export const exampleFilters: FilterCondition[] = [
   // Date filters
   {
-    field: 'createdAt',
-    operator: 'after',
-    value: '2024-01-01T00:00:00Z'
+    field: "createdAt",
+    operator: "after",
+    value: "2024-01-01T00:00:00Z",
   },
   {
-    field: 'updatedAt',
-    operator: 'between',
-    value: '2024-01-01T00:00:00Z',
-    value2: '2024-12-31T23:59:59Z'
+    field: "updatedAt",
+    operator: "between",
+    value: "2024-01-01T00:00:00Z",
+    value2: "2024-12-31T23:59:59Z",
   },
 
   // String filters
   {
-    field: 'ordemDeCompra',
-    operator: 'contains',
-    value: 'OC2024'
+    field: "ordemDeCompra",
+    operator: "contains",
+    value: "OC2024",
   },
   {
-    field: 'status',
-    operator: 'in',
-    value: ['CONFIRMED', 'COMPLETED']
+    field: "status",
+    operator: "in",
+    value: ["CONFIRMED", "COMPLETED"],
   },
 
   // Boolean filters
   {
-    field: 'isFirstDelivery',
-    operator: 'is',
-    value: true
+    field: "isFirstDelivery",
+    operator: "is",
+    value: true,
   },
 
   // Numeric filters
   {
-    field: 'duration',
-    operator: 'gte',
-    value: 60
-  }
-]
+    field: "duration",
+    operator: "gte",
+    value: 60,
+  },
+];
 
 /**
  * Example API usage:

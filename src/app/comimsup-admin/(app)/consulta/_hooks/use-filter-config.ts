@@ -3,12 +3,15 @@
 import { useQuery } from "@tanstack/react-query";
 
 interface FilterConfig {
-  fields: Record<string, {
-    type: string;
-    operators: string[];
-    label: string;
-    options?: Array<{ value: string; label: string }>;
-  }>;
+  fields: Record<
+    string,
+    {
+      type: string;
+      operators: string[];
+      label: string;
+      options?: Array<{ value: string; label: string }>;
+    }
+  >;
 }
 
 async function fetchFilterConfig(): Promise<FilterConfig> {

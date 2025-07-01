@@ -156,7 +156,7 @@ export function OverrideForm({
     const currentDates = fields.map((f) => f.date);
     const newDates = dates?.map((d) => dayjs(d).format("YYYY-MM-DD")) || [];
 
-    newDates.forEach((dateStr) => {
+    for (const dateStr of newDates) {
       if (!currentDates.includes(dateStr)) {
         append({
           id: crypto.randomUUID(),
@@ -167,7 +167,7 @@ export function OverrideForm({
           comment: "",
         });
       }
-    });
+    }
 
     const removedDates = fields
       .filter((field) => !newDates.includes(field.date))
@@ -177,7 +177,9 @@ export function OverrideForm({
         .map((field, index) => (removedDates.includes(field.date) ? index : -1))
         .filter((index) => index !== -1)
         .reverse();
-      indicesToRemove.forEach((index) => remove(index));
+      for (const index of indicesToRemove) {
+        remove(index);
+      }
     }
 
     if (activeDate && removedDates.includes(activeDate)) {
@@ -244,11 +246,7 @@ export function OverrideForm({
               disabled={isDateDisabled}
               formatters={{
                 formatMonthCaption: (date) => {
-                  return (
-                    date.toLocaleString("pt-BR", { month: "long" }) +
-                    " de " +
-                    date.getFullYear()
-                  );
+                  return `${date.toLocaleString("pt-BR", { month: "long" })} de ${date.getFullYear()}`;
                 },
                 formatWeekdayName: (date) => {
                   return date.toLocaleString("pt-BR", { weekday: "short" });

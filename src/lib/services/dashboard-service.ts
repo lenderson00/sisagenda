@@ -117,7 +117,6 @@ export async function getOrganizationInfo(organizationId: string) {
   });
 }
 
-
 async function getConfirmedAppointmentsByDateRange(
   organizationId: string,
   startDate: Date,

@@ -33,8 +33,8 @@ export function AppointmentsHeader() {
   return (
     <>
       <PageHeader
-        title={`  Agendamentos ${user?.name && `- ${user.name}`}`}
-        subtitle={``}
+        title={`  Agendamentos ${user?.name ? `- ${user.name}` : ""}`}
+        subtitle={""}
       >
         <div className="flex items-center gap-2">
           <ViewToggle />

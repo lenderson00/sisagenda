@@ -26,7 +26,6 @@
  * ```
  */
 
-import * as React from "react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -41,28 +40,29 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import {
+  CalendarDaysIcon,
+  CalendarIcon,
   CheckCircle2Icon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
+  ClockIcon,
   ColumnsIcon,
+  FileTextIcon,
   LoaderIcon,
   MoreVerticalIcon,
-  PlusIcon,
-  ClockIcon,
-  CalendarIcon,
-  CalendarDaysIcon,
-  UserIcon,
   PackageIcon,
-  FileTextIcon,
+  PlusIcon,
+  UserIcon,
 } from "lucide-react";
+import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -76,6 +76,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -83,7 +84,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import {
   Table,

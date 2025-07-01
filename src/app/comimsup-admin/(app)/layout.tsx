@@ -1,3 +1,4 @@
+import { NotificationBell } from "@/components/notification-bell";
 import {
   SidebarInset,
   SidebarProvider,
@@ -5,7 +6,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Provider } from "jotai";
 import { ComimsupAdminSidebar } from "../_components/comimsup-admin-sidebar";
-import { NotificationBell } from "@/components/notification-bell";
 
 const ComimsupAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (

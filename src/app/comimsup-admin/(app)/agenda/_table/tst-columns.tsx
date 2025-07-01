@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils";
 import type {
   Appointment,
   DeliveryType,
-  User,
   Organization,
+  User,
 } from "@prisma/client";
 import { IconDots, IconEye } from "@tabler/icons-react";
 import { createColumnHelper } from "@tanstack/react-table";

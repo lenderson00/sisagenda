@@ -9,8 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { NovaSenhaFields } from "./nova-senha-fields";
 import { useNovaSenhaForm } from "../_hooks/use-nova-senha-form";
+import { NovaSenhaFields } from "./nova-senha-fields";
 
 interface NovaSenhaFormProps {
   email: string;

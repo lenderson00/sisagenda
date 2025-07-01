@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { IconLoader } from "@tabler/icons-react";
-import { LoginFields } from "./login-fields";
 import { useLoginForm } from "../hooks/use-login-form";
+import { LoginFields } from "./login-fields";
 
 export const LoginForm: React.FC = () => {
   const { form, onSubmit } = useLoginForm();

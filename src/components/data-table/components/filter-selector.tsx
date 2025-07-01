@@ -82,7 +82,7 @@ function __FilterSelector<TData>({
     () =>
       property && column ? (
         <FilterValueController
-          filter={filter!}
+          filter={filter as any}
           column={column as Column<TData, ColumnDataType>}
           actions={actions}
           strategy={strategy}

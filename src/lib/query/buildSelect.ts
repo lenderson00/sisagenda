@@ -5,31 +5,45 @@
  */
 export function buildSelect(columns: string[]) {
   if (!columns || columns.length === 0) {
-    return undefined // Return all fields if no columns specified
+    return undefined; // Return all fields if no columns specified
   }
 
   // Create the select object with flexible typing
-  const select: Record<string, any> = {}
+  const select: Record<string, any> = {};
 
   // Process each requested column
   for (const column of columns) {
-    const trimmedColumn = column.trim()
+    const trimmedColumn = column.trim();
 
     // Handle basic fields
     const basicFields = [
-      'id', 'internalId', 'date', 'duration', 'ordemDeCompra',
-      'notaFiscal', 'isFirstDelivery', 'processNumber', 'needsLabAnalysis',
-      'observation', 'observations', 'status', 'createdAt', 'updatedAt',
-      'deletedAt', 'userId', 'deliveryTypeId', 'organizationId'
-    ]
+      "id",
+      "internalId",
+      "date",
+      "duration",
+      "ordemDeCompra",
+      "notaFiscal",
+      "isFirstDelivery",
+      "processNumber",
+      "needsLabAnalysis",
+      "observation",
+      "observations",
+      "status",
+      "createdAt",
+      "updatedAt",
+      "deletedAt",
+      "userId",
+      "deliveryTypeId",
+      "organizationId",
+    ];
 
     if (basicFields.includes(trimmedColumn)) {
-      select[trimmedColumn] = true
-      continue
+      select[trimmedColumn] = true;
+      continue;
     }
 
     // Handle relation includes
-    if (trimmedColumn === 'user') {
+    if (trimmedColumn === "user") {
       select.user = {
         select: {
           id: true,
@@ -39,13 +53,13 @@ export function buildSelect(columns: string[]) {
           nip: true,
           cpf: true,
           isActive: true,
-          role: true
-        }
-      }
-      continue
+          role: true,
+        },
+      };
+      continue;
     }
 
-    if (trimmedColumn === 'deliveryType') {
+    if (trimmedColumn === "deliveryType") {
       select.deliveryType = {
         select: {
           id: true,
@@ -53,13 +67,13 @@ export function buildSelect(columns: string[]) {
           description: true,
           slug: true,
           duration: true,
-          isActive: true
-        }
-      }
-      continue
+          isActive: true,
+        },
+      };
+      continue;
     }
 
-    if (trimmedColumn === 'organization') {
+    if (trimmedColumn === "organization") {
       select.organization = {
         select: {
           id: true,
@@ -67,13 +81,13 @@ export function buildSelect(columns: string[]) {
           sigla: true,
           description: true,
           isActive: true,
-          role: true
-        }
-      }
-      continue
+          role: true,
+        },
+      };
+      continue;
     }
 
-    if (trimmedColumn === 'activities') {
+    if (trimmedColumn === "activities") {
       select.activities = {
         select: {
           id: true,
@@ -89,18 +103,18 @@ export function buildSelect(columns: string[]) {
             select: {
               id: true,
               name: true,
-              email: true
-            }
-          }
+              email: true,
+            },
+          },
         },
         orderBy: {
-          createdAt: 'desc'
-        }
-      }
-      continue
+          createdAt: "desc",
+        },
+      };
+      continue;
     }
 
-    if (trimmedColumn === 'items') {
+    if (trimmedColumn === "items") {
       select.items = {
         select: {
           id: true,
@@ -108,13 +122,13 @@ export function buildSelect(columns: string[]) {
           name: true,
           unit: true,
           quantity: true,
-          price: true
-        }
-      }
-      continue
+          price: true,
+        },
+      };
+      continue;
     }
 
-    if (trimmedColumn === 'attachments') {
+    if (trimmedColumn === "attachments") {
       select.attachments = {
         select: {
           id: true,
@@ -122,15 +136,15 @@ export function buildSelect(columns: string[]) {
           fileUrl: true,
           fileSize: true,
           mimeType: true,
-          createdAt: true
-        }
-      }
-      continue
+          createdAt: true,
+        },
+      };
+      continue;
     }
 
     // If column is not recognized, skip it (or you could throw an error)
-    console.warn(`Unknown column: ${trimmedColumn}`)
+    console.warn(`Unknown column: ${trimmedColumn}`);
   }
 
-  return Object.keys(select).length > 0 ? select : undefined
+  return Object.keys(select).length > 0 ? select : undefined;
 }

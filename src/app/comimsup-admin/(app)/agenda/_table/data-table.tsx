@@ -9,8 +9,8 @@ import {
 import type {
   Appointment,
   DeliveryType,
-  User,
   Organization,
+  User,
 } from "@prisma/client";
 import {
   getCoreRowModel,

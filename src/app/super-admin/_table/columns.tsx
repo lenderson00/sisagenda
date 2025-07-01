@@ -1,8 +1,8 @@
 "use client";
 
 import { createColumnConfigHelper } from "@/components/data-table/core/filters";
-import { IconBuilding, IconCalendar, IconUser } from "@tabler/icons-react";
 import type { Organization } from "@prisma/client";
+import { IconBuilding, IconCalendar, IconUser } from "@tabler/icons-react";
 
 type OrganizationResponse = Organization & {
   comimsup: {

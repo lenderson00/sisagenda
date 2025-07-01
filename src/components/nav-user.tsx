@@ -30,8 +30,8 @@ import { IconBuilding, IconUsers } from "@tabler/icons-react";
 import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
-import { Skeleton } from "./ui/skeleton";
 import { ModeSwitcher } from "./mode-switcher";
+import { Skeleton } from "./ui/skeleton";
 
 export function NavUser() {
   const { isMobile } = useSidebar();

@@ -2,10 +2,10 @@
 
 import { EmptyCard } from "@/components/empty-card";
 import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IconCalendar, IconPlus } from "@tabler/icons-react";
 import { AgendamentosDataTable } from "./_table/data-table";
-import { Button } from "@/components/ui/button";
 
 // Mock hook - replace with actual implementation
 function useAppointments() {

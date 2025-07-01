@@ -1,21 +1,21 @@
 import { prisma } from "@/lib/prisma";
+import {
+  AppointmentCancelledHandler,
+  AppointmentCompletedHandler,
+  AppointmentConfirmedHandler,
+  AppointmentCreatedHandler,
+  AppointmentRejectedHandler,
+  AppointmentRescheduleRequestedHandler,
+  AppointmentRescheduledHandler,
+  AppointmentSupplierNoShowHandler,
+  AppointmentUpdatedHandler,
+} from "./notification-handlers";
 import type {
+  NotificationData,
+  NotificationDispatchResult,
   NotificationEvent,
   NotificationHandlerConfig,
-  NotificationDispatchResult,
-  NotificationData,
 } from "./notification-types";
-import {
-  AppointmentCreatedHandler,
-  AppointmentConfirmedHandler,
-  AppointmentRejectedHandler,
-  AppointmentCancelledHandler,
-  AppointmentRescheduleRequestedHandler,
-  AppointmentUpdatedHandler,
-  AppointmentCompletedHandler,
-  AppointmentSupplierNoShowHandler,
-  AppointmentRescheduledHandler,
-} from "./notification-handlers";
 
 export class NotificationService {
   private handlers: Map<string, NotificationHandlerConfig>;
@@ -81,7 +81,9 @@ export class NotificationService {
    * @param event - The notification event to dispatch
    * @returns Promise<NotificationDispatchResult> - Result of the dispatch operation
    */
-  async dispatch(event: NotificationEvent): Promise<NotificationDispatchResult> {
+  async dispatch(
+    event: NotificationEvent,
+  ): Promise<NotificationDispatchResult> {
     const result: NotificationDispatchResult = {
       success: false,
       notificationsCreated: 0,
@@ -112,17 +114,23 @@ export class NotificationService {
       }
 
       // Create notifications in database using transaction for consistency
-      const createdNotifications = await this.createNotifications(notificationsData);
+      const createdNotifications =
+        await this.createNotifications(notificationsData);
 
       result.success = true;
       result.notificationsCreated = createdNotifications.length;
 
-      console.log(`[NotificationService] Successfully dispatched ${result.notificationsCreated} notifications for event ${event.type}`);
-
+      console.log(
+        `[NotificationService] Successfully dispatched ${result.notificationsCreated} notifications for event ${event.type}`,
+      );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       result.errors.push(errorMessage);
-      console.error(`[NotificationService] Error dispatching event ${event.type}:`, error);
+      console.error(
+        `[NotificationService] Error dispatching event ${event.type}:`,
+        error,
+      );
     }
 
     return result;
@@ -134,7 +142,9 @@ export class NotificationService {
    * @param notificationsData - Array of notification data to create
    * @returns Promise<any[]> - Created notifications
    */
-  private async createNotifications(notificationsData: NotificationData[]): Promise<any[]> {
+  private async createNotifications(
+    notificationsData: NotificationData[],
+  ): Promise<any[]> {
     return prisma.$transaction(async (tx) => {
       const createdNotifications = [];
 
@@ -154,7 +164,10 @@ export class NotificationService {
           });
           createdNotifications.push(notification);
         } catch (error) {
-          console.error("[NotificationService] Error creating notification:", error);
+          console.error(
+            "[NotificationService] Error creating notification:",
+            error,
+          );
           // Continue with other notifications even if one fails
         }
       }
@@ -192,7 +205,7 @@ export class NotificationService {
       limit?: number;
       status?: "UNREAD" | "READ" | "ARCHIVED";
       type?: string;
-    } = {}
+    } = {},
   ) {
     const { page = 1, limit = 20, status, type } = options;
     const skip = (page - 1) * limit;
@@ -253,7 +266,10 @@ export class NotificationService {
       });
       return true;
     } catch (error) {
-      console.error("[NotificationService] Error marking notification as read:", error);
+      console.error(
+        "[NotificationService] Error marking notification as read:",
+        error,
+      );
       return false;
     }
   }
@@ -265,7 +281,10 @@ export class NotificationService {
    * @param userId - User ID (for authorization)
    * @returns Promise<boolean> - Success status
    */
-  async markAsArchived(notificationId: string, userId: string): Promise<boolean> {
+  async markAsArchived(
+    notificationId: string,
+    userId: string,
+  ): Promise<boolean> {
     try {
       await prisma.notification.updateMany({
         where: {
@@ -278,7 +297,10 @@ export class NotificationService {
       });
       return true;
     } catch (error) {
-      console.error("[NotificationService] Error archiving notification:", error);
+      console.error(
+        "[NotificationService] Error archiving notification:",
+        error,
+      );
       return false;
     }
   }
@@ -303,7 +325,10 @@ export class NotificationService {
       });
       return result.count;
     } catch (error) {
-      console.error("[NotificationService] Error marking all notifications as read:", error);
+      console.error(
+        "[NotificationService] Error marking all notifications as read:",
+        error,
+      );
       return 0;
     }
   }

@@ -1,21 +1,21 @@
+import { ActivityCalendarComponent } from "@/components/dashboard/activity-calendar";
 import { AppointmentStatusChart } from "@/components/dashboard/appointment-status-chart";
 import { AppointmentsTable } from "@/components/dashboard/appointments-table";
 import { AppointmentsTimelineChart } from "@/components/dashboard/appointments-timeline-chart";
 import { RecentAppointmentsTable } from "@/components/dashboard/recent-appointments-table";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { SupplierPerformanceChart } from "@/components/dashboard/supplier-performance-chart";
-import { ActivityCalendarComponent } from "@/components/dashboard/activity-calendar";
 import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import {
-  getDashboardData,
+  getActivityStats,
+  getYearlyActivity,
+} from "@/lib/services/activity-service";
+import {
   getDashboardAppointments,
+  getDashboardData,
   getOrganizationInfo,
 } from "@/lib/services/dashboard-service";
-import {
-  getYearlyActivity,
-  getActivityStats,
-} from "@/lib/services/activity-service";
 import { Calendar, Clock, Package, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 

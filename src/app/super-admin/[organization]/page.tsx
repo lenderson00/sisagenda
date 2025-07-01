@@ -1,11 +1,11 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import { OrganizationAdminClient } from "./page-client";
 import { PageHeader } from "@/components/page-header";
 import { DrawerDialog } from "@/components/ui/dialog-drawer";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { IconPlus } from "@tabler/icons-react";
+import { notFound } from "next/navigation";
 import { AdminForm } from "./_components/admin-form";
+import { OrganizationAdminClient } from "./page-client";
 
 export default async function OrganizationAdminPage({
   params,
@@ -54,7 +54,7 @@ export default async function OrganizationAdminPage({
           </DrawerDialog>
         )}
       </PageHeader>
-      <OrganizationAdminClient organization={organization} />;
+      <OrganizationAdminClient organization={organization} />
     </>
   );
 }

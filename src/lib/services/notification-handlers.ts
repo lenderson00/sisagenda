@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import type {
+  NotificationData,
   NotificationEvent,
   NotificationEventHandler,
-  NotificationData,
   NotificationRecipientContext,
 } from "./notification-types";
 
@@ -22,7 +22,7 @@ abstract class BaseNotificationHandler implements NotificationEventHandler {
   }
 
   protected async getOrganizationUsers(
-    context: NotificationRecipientContext
+    context: NotificationRecipientContext,
   ): Promise<string[]> {
     const where: any = {
       organizationId: context.organizationId,
@@ -185,7 +185,7 @@ export class AppointmentCancelledHandler extends BaseNotificationHandler {
           userId,
           organizationId: event.organizationId,
           appointmentId: event.appointmentId,
-        }))
+        })),
       );
     }
 

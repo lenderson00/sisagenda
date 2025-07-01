@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 // Types for notifications
@@ -18,7 +18,7 @@ export interface Notification {
   createdAt: string;
   updatedAt: string;
   appointment?: {
-    id: string
+    id: string;
     internalId: string;
     date: string;
     status: string;
@@ -167,7 +167,9 @@ export const useMarkAllAsRead = () => {
     onSuccess: (data) => {
       // Invalidate and refetch notifications
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      toast.success(data.message || "Todas as notificações marcadas como lidas");
+      toast.success(
+        data.message || "Todas as notificações marcadas como lidas",
+      );
     },
     onError: (error) => {
       toast.error("Erro ao marcar todas as notificações como lidas");
@@ -182,11 +184,14 @@ export const useApproveAppointment = () => {
 
   return useMutation({
     mutationFn: async (appointmentId: string) => {
-      const response = await fetch(`/api/appointments/${appointmentId}/action`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "approve" }),
-      });
+      const response = await fetch(
+        `/api/appointments/${appointmentId}/action`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "approve" }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to approve appointment");
@@ -212,11 +217,14 @@ export const useRejectAppointment = () => {
 
   return useMutation({
     mutationFn: async (appointmentId: string) => {
-      const response = await fetch(`/api/appointments/${appointmentId}/action`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "reject" }),
-      });
+      const response = await fetch(
+        `/api/appointments/${appointmentId}/action`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "reject" }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to reject appointment");
@@ -242,11 +250,14 @@ export const useApproveCancellation = () => {
 
   return useMutation({
     mutationFn: async (appointmentId: string) => {
-      const response = await fetch(`/api/appointments/${appointmentId}/action`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "approve_cancellation" }),
-      });
+      const response = await fetch(
+        `/api/appointments/${appointmentId}/action`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "approve_cancellation" }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to approve cancellation");
@@ -272,11 +283,14 @@ export const useRejectCancellation = () => {
 
   return useMutation({
     mutationFn: async (appointmentId: string) => {
-      const response = await fetch(`/api/appointments/${appointmentId}/action`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "reject_cancellation" }),
-      });
+      const response = await fetch(
+        `/api/appointments/${appointmentId}/action`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "reject_cancellation" }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to reject cancellation");
@@ -302,11 +316,14 @@ export const useApproveReschedule = () => {
 
   return useMutation({
     mutationFn: async (appointmentId: string) => {
-      const response = await fetch(`/api/appointments/${appointmentId}/action`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "approve_reschedule" }),
-      });
+      const response = await fetch(
+        `/api/appointments/${appointmentId}/action`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "approve_reschedule" }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to approve reschedule");
@@ -332,11 +349,14 @@ export const useRejectReschedule = () => {
 
   return useMutation({
     mutationFn: async (appointmentId: string) => {
-      const response = await fetch(`/api/appointments/${appointmentId}/action`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "reject_reschedule" }),
-      });
+      const response = await fetch(
+        `/api/appointments/${appointmentId}/action`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "reject_reschedule" }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to reject reschedule");

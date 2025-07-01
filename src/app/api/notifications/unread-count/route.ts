@@ -18,7 +18,7 @@ export async function GET() {
     console.error("Failed to fetch unread count:", error);
     return NextResponse.json(
       { error: "Failed to fetch unread count" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

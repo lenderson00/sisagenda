@@ -94,8 +94,6 @@ function CalendarDay({
         isToday && "bg-blue-50 border-blue-200",
       )}
       onClick={() => onClick(date)}
-      role="button"
-      tabIndex={0}
       aria-label={`View appointments for ${date.toLocaleDateString()}`}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -215,7 +213,7 @@ export function AppointmentsCalendarView({
   const appointmentsByDate = useMemo(() => {
     const grouped: { [key: string]: AppointmentWithRelations[] } = {};
 
-    appointments.forEach((appointment) => {
+    for (const appointment of appointments) {
       const appDate = new Date(appointment.date);
       const dateStr = formatDate(appDate);
 
@@ -223,7 +221,7 @@ export function AppointmentsCalendarView({
         grouped[dateStr] = [];
       }
       grouped[dateStr].push(appointment);
-    });
+    }
 
     return grouped;
   }, [appointments]);

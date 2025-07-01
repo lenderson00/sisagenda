@@ -37,7 +37,11 @@ const createAppointmentInput = z.object({
   attachments: z.array(attachmentSchema),
 });
 
-const buildWhere = (tab: string, role?: UserRole, userId?: string): Prisma.AppointmentWhereInput => {
+const buildWhere = (
+  tab: string,
+  role?: UserRole,
+  userId?: string,
+): Prisma.AppointmentWhereInput => {
   let where: Prisma.AppointmentWhereInput = {};
 
   if (role === "FORNECEDOR") {
@@ -117,7 +121,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const finalWhere = hasTab ? where : fornecedor ? { userId: session.user.id } : {};
+  const finalWhere = hasTab
+    ? where
+    : fornecedor
+      ? { userId: session.user.id }
+      : {};
 
   try {
     const appointments = await prisma.appointment.findMany({
@@ -241,7 +249,7 @@ export async function POST(req: Request) {
     await AppointmentService.notifyAppointmentCreated(
       result.id,
       result.organizationId,
-      result.userId
+      result.userId,
     );
 
     return new Response(JSON.stringify(result), { status: 201 });

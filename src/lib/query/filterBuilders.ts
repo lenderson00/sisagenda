@@ -1,210 +1,239 @@
-import type { FilterCondition, FilterOperator } from './types'
+import type { FilterCondition, FilterOperator } from "./types";
 
 /**
  * Builds date filter conditions for Prisma
  */
-export function buildDateFilter(field: string, operator: FilterOperator, value: any, value2?: any) {
-  const dateValue = new Date(value)
-  const dateValue2 = value2 ? new Date(value2) : null
+export function buildDateFilter(
+  field: string,
+  operator: FilterOperator,
+  value: any,
+  value2?: any,
+) {
+  const dateValue = new Date(value);
+  const dateValue2 = value2 ? new Date(value2) : null;
 
   switch (operator) {
-    case 'equals':
+    case "equals":
       return {
         [field]: {
-          gte: new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate()),
-          lt: new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate() + 1)
-        }
-      }
+          gte: new Date(
+            dateValue.getFullYear(),
+            dateValue.getMonth(),
+            dateValue.getDate(),
+          ),
+          lt: new Date(
+            dateValue.getFullYear(),
+            dateValue.getMonth(),
+            dateValue.getDate() + 1,
+          ),
+        },
+      };
 
-    case 'before':
+    case "before":
       return {
         [field]: {
-          lt: dateValue
-        }
-      }
+          lt: dateValue,
+        },
+      };
 
-    case 'after':
+    case "after":
       return {
         [field]: {
-          gt: dateValue
-        }
-      }
+          gt: dateValue,
+        },
+      };
 
-    case 'between':
+    case "between":
       if (!dateValue2) {
-        throw new Error('Between operator requires two values')
+        throw new Error("Between operator requires two values");
       }
       return {
         [field]: {
           gte: dateValue,
-          lte: dateValue2
-        }
-      }
+          lte: dateValue2,
+        },
+      };
 
     default:
-      throw new Error(`Unsupported date operator: ${operator}`)
+      throw new Error(`Unsupported date operator: ${operator}`);
   }
 }
 
 /**
  * Builds string filter conditions for Prisma
  */
-export function buildStringFilter(field: string, operator: FilterOperator, value: any) {
+export function buildStringFilter(
+  field: string,
+  operator: FilterOperator,
+  value: any,
+) {
   switch (operator) {
-    case 'equals':
+    case "equals":
       return {
-        [field]: value
-      }
+        [field]: value,
+      };
 
-    case 'contains':
+    case "contains":
       return {
         [field]: {
           contains: value,
-          mode: 'insensitive'
-        }
-      }
+          mode: "insensitive",
+        },
+      };
 
-    case 'startsWith':
+    case "startsWith":
       return {
         [field]: {
           startsWith: value,
-          mode: 'insensitive'
-        }
-      }
+          mode: "insensitive",
+        },
+      };
 
-    case 'endsWith':
+    case "endsWith":
       return {
         [field]: {
           endsWith: value,
-          mode: 'insensitive'
-        }
-      }
+          mode: "insensitive",
+        },
+      };
 
-    case 'in':
+    case "in":
       return {
         [field]: {
-          in: Array.isArray(value) ? value : [value]
-        }
-      }
+          in: Array.isArray(value) ? value : [value],
+        },
+      };
 
-    case 'notIn':
+    case "notIn":
       return {
         [field]: {
-          notIn: Array.isArray(value) ? value : [value]
-        }
-      }
+          notIn: Array.isArray(value) ? value : [value],
+        },
+      };
 
     default:
-      throw new Error(`Unsupported string operator: ${operator}`)
+      throw new Error(`Unsupported string operator: ${operator}`);
   }
 }
 
 /**
  * Builds numeric filter conditions for Prisma
  */
-export function buildNumberFilter(field: string, operator: FilterOperator, value: any) {
-  const numericValue = Number(value)
+export function buildNumberFilter(
+  field: string,
+  operator: FilterOperator,
+  value: any,
+) {
+  const numericValue = Number(value);
 
   switch (operator) {
-    case 'equals':
+    case "equals":
       return {
-        [field]: numericValue
-      }
+        [field]: numericValue,
+      };
 
-    case 'gt':
+    case "gt":
       return {
         [field]: {
-          gt: numericValue
-        }
-      }
+          gt: numericValue,
+        },
+      };
 
-    case 'gte':
+    case "gte":
       return {
         [field]: {
-          gte: numericValue
-        }
-      }
+          gte: numericValue,
+        },
+      };
 
-    case 'lt':
+    case "lt":
       return {
         [field]: {
-          lt: numericValue
-        }
-      }
+          lt: numericValue,
+        },
+      };
 
-    case 'lte':
+    case "lte":
       return {
         [field]: {
-          lte: numericValue
-        }
-      }
+          lte: numericValue,
+        },
+      };
 
-    case 'in':
+    case "in":
       return {
         [field]: {
-          in: Array.isArray(value) ? value.map(Number) : [numericValue]
-        }
-      }
+          in: Array.isArray(value) ? value.map(Number) : [numericValue],
+        },
+      };
 
-    case 'notIn':
+    case "notIn":
       return {
         [field]: {
-          notIn: Array.isArray(value) ? value.map(Number) : [numericValue]
-        }
-      }
+          notIn: Array.isArray(value) ? value.map(Number) : [numericValue],
+        },
+      };
 
     default:
-      throw new Error(`Unsupported number operator: ${operator}`)
+      throw new Error(`Unsupported number operator: ${operator}`);
   }
 }
 
 /**
  * Builds boolean filter conditions for Prisma
  */
-export function buildBooleanFilter(field: string, operator: FilterOperator, value: any) {
-  const booleanValue = Boolean(value)
+export function buildBooleanFilter(
+  field: string,
+  operator: FilterOperator,
+  value: any,
+) {
+  const booleanValue = Boolean(value);
 
   switch (operator) {
-    case 'is':
+    case "is":
       return {
-        [field]: booleanValue
-      }
+        [field]: booleanValue,
+      };
 
-    case 'isNot':
+    case "isNot":
       return {
-        [field]: !booleanValue
-      }
+        [field]: !booleanValue,
+      };
 
     default:
-      throw new Error(`Unsupported boolean operator: ${operator}`)
+      throw new Error(`Unsupported boolean operator: ${operator}`);
   }
 }
 
 /**
  * Builds enum filter conditions for Prisma
  */
-export function buildEnumFilter(field: string, operator: FilterOperator, value: any) {
+export function buildEnumFilter(
+  field: string,
+  operator: FilterOperator,
+  value: any,
+) {
   switch (operator) {
-    case 'equals':
+    case "equals":
       return {
-        [field]: value
-      }
+        [field]: value,
+      };
 
-    case 'in':
+    case "in":
       return {
         [field]: {
-          in: Array.isArray(value) ? value : [value]
-        }
-      }
+          in: Array.isArray(value) ? value : [value],
+        },
+      };
 
-    case 'notIn':
+    case "notIn":
       return {
         [field]: {
-          notIn: Array.isArray(value) ? value : [value]
-        }
-      }
+          notIn: Array.isArray(value) ? value : [value],
+        },
+      };
 
     default:
-      throw new Error(`Unsupported enum operator: ${operator}`)
+      throw new Error(`Unsupported enum operator: ${operator}`);
   }
 }

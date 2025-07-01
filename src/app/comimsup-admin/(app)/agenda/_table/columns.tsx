@@ -1,16 +1,16 @@
 import { createColumnConfigHelper } from "@/components/data-table/core/filters";
-import {
-  IconCalendar,
-  IconUser,
-  IconTruck,
-  IconBuilding,
-} from "@tabler/icons-react";
 import type {
   Appointment,
   DeliveryType,
-  User,
   Organization,
+  User,
 } from "@prisma/client";
+import {
+  IconBuilding,
+  IconCalendar,
+  IconTruck,
+  IconUser,
+} from "@tabler/icons-react";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;

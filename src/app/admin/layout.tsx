@@ -1,3 +1,4 @@
+import { NotificationBell } from "@/components/notification-bell";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -6,7 +7,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./_components/admin-sidebar";
-import { NotificationBell } from "@/components/notification-bell";
 
 const SuperAdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -1,4 +1,8 @@
-import type { NotificationType, NotificationStatus, Prisma } from "@prisma/client";
+import type {
+  NotificationStatus,
+  NotificationType,
+  Prisma,
+} from "@prisma/client";
 
 // Event types that can trigger notifications
 export interface NotificationEvent {

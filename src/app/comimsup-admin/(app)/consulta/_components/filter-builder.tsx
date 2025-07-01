@@ -2,6 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -9,22 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import type {
+  AppointmentFilterFieldName,
+  FilterCondition,
+  FilterConfig,
+  FilterOperator,
+} from "@/lib/query/types";
 import {
+  IconCalendar,
   IconFilter,
   IconPlus,
   IconTrash,
-  IconCalendar,
   IconX,
 } from "@tabler/icons-react";
-import type {
-  FilterCondition,
-  FilterConfig,
-  AppointmentFilterFieldName,
-  FilterOperator,
-} from "@/lib/query/types";
 
 interface FilterBuilderProps {
   config: FilterConfig["fields"];

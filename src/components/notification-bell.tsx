@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { Bell } from "lucide-react";
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { useUnreadCount, useNotifications } from "@/hooks/use-notifications";
+import { useNotifications, useUnreadCount } from "@/hooks/use-notifications";
 import { Inbox } from "./inbox";
 
 interface NotificationBellProps {

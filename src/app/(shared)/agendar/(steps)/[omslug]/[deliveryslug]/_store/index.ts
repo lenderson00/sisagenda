@@ -27,7 +27,7 @@ const isValidSchedule = (data: any): data is ScheduleStore => {
   if (typeof data.deliveryTypeId !== "string") return false;
   if (
     !(new Date(data.dateTime) instanceof Date) ||
-    isNaN(new Date(data.dateTime).getTime())
+    Number.isNaN(new Date(data.dateTime).getTime())
   )
     return false;
   if (typeof data.lastUpdated !== "number") return false;

@@ -1,7 +1,7 @@
-import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { AppointmentStatus } from "@prisma/client";
-import { startOfYear, endOfYear, format, eachDayOfInterval } from "date-fns";
+import { eachDayOfInterval, endOfYear, format, startOfYear } from "date-fns";
+import { z } from "zod";
 
 export const activitySchema = z.object({
   date: z.string(),
@@ -14,7 +14,9 @@ export type Activity = z.infer<typeof activitySchema>;
 /**
  * Gets real activity data for the entire year based on completed appointments
  */
-export async function getYearlyActivity(organizationId: string): Promise<Activity[]> {
+export async function getYearlyActivity(
+  organizationId: string,
+): Promise<Activity[]> {
   const currentYear = new Date().getFullYear();
   const startDate = startOfYear(new Date(currentYear, 0, 1));
   const endDate = endOfYear(new Date(currentYear, 11, 31));
@@ -56,13 +58,16 @@ export async function getYearlyActivity(organizationId: string): Promise<Activit
 
   // Count completed appointments
   for (const appointment of completedAppointments) {
-    const dateString = format(appointment.date, 'yyyy-MM-dd');
-    appointmentsByDate.set(dateString, (appointmentsByDate.get(dateString) || 0) + 1);
+    const dateString = format(appointment.date, "yyyy-MM-dd");
+    appointmentsByDate.set(
+      dateString,
+      (appointmentsByDate.get(dateString) || 0) + 1,
+    );
   }
 
   // Add confirmed appointments (weighted less than completed)
   for (const appointment of confirmedAppointments) {
-    const dateString = format(appointment.date, 'yyyy-MM-dd');
+    const dateString = format(appointment.date, "yyyy-MM-dd");
     const currentCount = appointmentsByDate.get(dateString) || 0;
     appointmentsByDate.set(dateString, currentCount + 0.5); // Weight confirmed appointments as 0.5
   }
@@ -72,7 +77,7 @@ export async function getYearlyActivity(organizationId: string): Promise<Activit
   const allDays = eachDayOfInterval({ start: startDate, end: endDate });
 
   for (const date of allDays) {
-    const dateString = format(date, 'yyyy-MM-dd');
+    const dateString = format(date, "yyyy-MM-dd");
     const count = appointmentsByDate.get(dateString) || 0;
     const level = getActivityLevel(count);
 
@@ -103,11 +108,11 @@ function getActivityLevel(count: number): number {
 export async function getActivityRange(
   organizationId: string,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): Promise<Activity[]> {
   const allActivities = await getYearlyActivity(organizationId);
 
-  return allActivities.filter(activity => {
+  return allActivities.filter((activity) => {
     const activityDate = new Date(activity.date);
     return activityDate >= startDate && activityDate <= endDate;
   });
@@ -126,10 +131,11 @@ export async function getActivityStats(organizationId: string): Promise<{
   const activities = await getYearlyActivity(organizationId);
 
   const totalDays = activities.length;
-  const activeDays = activities.filter(a => a.count > 0).length;
+  const activeDays = activities.filter((a) => a.count > 0).length;
   const totalActivity = activities.reduce((sum, a) => sum + a.count, 0);
-  const averageActivity = totalDays > 0 ? Math.round(totalActivity / totalDays) : 0;
-  const maxActivity = Math.max(...activities.map(a => a.count));
+  const averageActivity =
+    totalDays > 0 ? Math.round(totalActivity / totalDays) : 0;
+  const maxActivity = Math.max(...activities.map((a) => a.count));
 
   return {
     totalDays,

@@ -19,12 +19,12 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { AppointmentWithRelationsAndStringPrice } from "../types/app";
 import type { AllowedActions } from "./appointment-actions";
 import { RescheduleDialog } from "./reschedule-dialog";
-import { useRouter } from "next/navigation";
 
 interface AppointmentActionButtonsProps {
   appointment: AppointmentWithRelationsAndStringPrice;

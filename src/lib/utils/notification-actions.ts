@@ -1,5 +1,5 @@
-import type { Session } from "next-auth";
 import type { AppointmentStatus } from "@prisma/client";
+import type { Session } from "next-auth";
 
 export interface NotificationActions {
   canApprove: boolean;
@@ -17,7 +17,7 @@ export interface NotificationActions {
 export function getNotificationActions(
   appointmentStatus: AppointmentStatus,
   userRole: Session["user"]["role"],
-  appointmentDate?: Date
+  appointmentDate?: Date,
 ): NotificationActions {
   const actions: NotificationActions = {
     canApprove: false,
@@ -74,12 +74,19 @@ export function getNotificationActionButtons(
   notificationType: string,
   appointmentStatus: AppointmentStatus,
   userRole: Session["user"]["role"],
-  appointmentDate?: Date
+  appointmentDate?: Date,
 ) {
-  const actions = getNotificationActions(appointmentStatus, userRole, appointmentDate);
+  const actions = getNotificationActions(
+    appointmentStatus,
+    userRole,
+    appointmentDate,
+  );
 
   // Only show action buttons for specific notification types that require action
-  if (notificationType === "APPOINTMENT_CREATED" && appointmentStatus === "PENDING_CONFIRMATION") {
+  if (
+    notificationType === "APPOINTMENT_CREATED" &&
+    appointmentStatus === "PENDING_CONFIRMATION"
+  ) {
     return {
       showActions: actions.canApprove || actions.canReject,
       actions: {
@@ -89,9 +96,13 @@ export function getNotificationActionButtons(
     };
   }
 
-  if (notificationType === "APPOINTMENT_CANCELLED" && appointmentStatus === "CANCELLATION_REQUESTED") {
+  if (
+    notificationType === "APPOINTMENT_CANCELLED" &&
+    appointmentStatus === "CANCELLATION_REQUESTED"
+  ) {
     return {
-      showActions: actions.canApproveCancellation || actions.canRejectCancellation,
+      showActions:
+        actions.canApproveCancellation || actions.canRejectCancellation,
       actions: {
         approveCancellation: actions.canApproveCancellation,
         rejectCancellation: actions.canRejectCancellation,
@@ -99,7 +110,10 @@ export function getNotificationActionButtons(
     };
   }
 
-  if (notificationType === "APPOINTMENT_RESCHEDULE_REQUESTED" && appointmentStatus === "RESCHEDULE_REQUESTED") {
+  if (
+    notificationType === "APPOINTMENT_RESCHEDULE_REQUESTED" &&
+    appointmentStatus === "RESCHEDULE_REQUESTED"
+  ) {
     return {
       showActions: actions.canApproveReschedule || actions.canRejectReschedule,
       actions: {

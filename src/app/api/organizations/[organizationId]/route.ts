@@ -73,8 +73,8 @@ export async function PATCH(
     // Remove restricted fields for non-super admins
     const updateData = { ...validatedData };
     if (!isSuperAdmin) {
-      delete (updateData as Partial<typeof updateData>).role;
-      delete (updateData as Partial<typeof updateData>).isActive;
+      (updateData as any).role = undefined;
+      (updateData as any).isActive = undefined;
     }
 
     const organization = await prisma.organization.update({

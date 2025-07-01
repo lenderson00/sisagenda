@@ -1,6 +1,6 @@
 import type { NotificationType } from "@prisma/client";
-import type { NotificationEvent } from "./notification-types";
 import { notificationService } from "./notification-service";
+import type { NotificationEvent } from "./notification-types";
 
 /**
  * Utility functions to dispatch notifications from appointment operations
@@ -32,7 +32,10 @@ export async function dispatchAppointmentNotification(params: {
     const result = await notificationService.dispatch(event);
 
     if (!result.success) {
-      console.error("[NotificationUtils] Failed to dispatch notification:", result.errors);
+      console.error(
+        "[NotificationUtils] Failed to dispatch notification:",
+        result.errors,
+      );
     }
   } catch (error) {
     console.error("[NotificationUtils] Error dispatching notification:", error);
@@ -46,7 +49,7 @@ export async function dispatchAppointmentNotification(params: {
 export async function notifyAppointmentCreated(
   appointmentId: string,
   organizationId: string,
-  triggeredByUserId: string
+  triggeredByUserId: string,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_CREATED",
@@ -59,7 +62,7 @@ export async function notifyAppointmentCreated(
 export async function notifyAppointmentConfirmed(
   appointmentId: string,
   organizationId: string,
-  triggeredByUserId: string
+  triggeredByUserId: string,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_CONFIRMED",
@@ -73,7 +76,7 @@ export async function notifyAppointmentRejected(
   appointmentId: string,
   organizationId: string,
   triggeredByUserId: string,
-  reason?: string
+  reason?: string,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_REJECTED",
@@ -88,7 +91,7 @@ export async function notifyAppointmentCancelled(
   appointmentId: string,
   organizationId: string,
   triggeredByUserId: string,
-  reason?: string
+  reason?: string,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_CANCELLED",
@@ -104,7 +107,7 @@ export async function notifyAppointmentRescheduleRequested(
   organizationId: string,
   triggeredByUserId: string,
   newDate: Date,
-  reason?: string
+  reason?: string,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_RESCHEDULE_REQUESTED",
@@ -119,7 +122,7 @@ export async function notifyAppointmentUpdated(
   appointmentId: string,
   organizationId: string,
   triggeredByUserId: string,
-  changes?: Record<string, any>
+  changes?: Record<string, any>,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_UPDATED",
@@ -133,7 +136,7 @@ export async function notifyAppointmentUpdated(
 export async function notifyAppointmentCompleted(
   appointmentId: string,
   organizationId: string,
-  triggeredByUserId: string
+  triggeredByUserId: string,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_COMPLETED",
@@ -146,7 +149,7 @@ export async function notifyAppointmentCompleted(
 export async function notifyAppointmentSupplierNoShow(
   appointmentId: string,
   organizationId: string,
-  triggeredByUserId: string
+  triggeredByUserId: string,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_SUPPLIER_NO_SHOW",
@@ -160,7 +163,7 @@ export async function notifyAppointmentRescheduled(
   appointmentId: string,
   organizationId: string,
   triggeredByUserId: string,
-  previousDate?: Date
+  previousDate?: Date,
 ) {
   return dispatchAppointmentNotification({
     type: "APPOINTMENT_RESCHEDULED",

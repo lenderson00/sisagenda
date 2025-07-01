@@ -133,7 +133,6 @@ export async function PATCH(
   } catch (error) {
     console.error(error);
     if (error instanceof Error) {
-
       return new NextResponse(error.message, { status: 400 });
     }
     return new NextResponse("Internal Server Error", { status: 500 });

@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   IconColumns,
-  IconX,
   IconGripVertical,
   IconPlus,
   IconTrash,
+  IconX,
 } from "@tabler/icons-react";
+import { useState } from "react";
 
 interface DragDropColumnSelectorProps {
   availableColumns: string[];

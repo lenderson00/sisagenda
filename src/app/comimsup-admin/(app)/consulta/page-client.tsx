@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,12 +10,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  IconArrowRight,
   IconDatabase,
   IconSearch,
-  IconTable,
-  IconArrowRight,
   IconSettings,
+  IconTable,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export function ConsultaParametrizadaClient() {
   const router = useRouter();

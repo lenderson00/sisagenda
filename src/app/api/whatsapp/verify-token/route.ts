@@ -18,9 +18,11 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validatedData = verifyTokenSchema.parse(body);
 
-    const verificationToken = await prisma.whatsappVerificationToken.findUnique({
-      where: { userId: session.user.id, token: validatedData.token },
-    });
+    const verificationToken = await prisma.whatsappVerificationToken.findUnique(
+      {
+        where: { userId: session.user.id, token: validatedData.token },
+      },
+    );
 
     if (!verificationToken) {
       return new NextResponse("Invalid verification code.", { status: 400 });

@@ -27,7 +27,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!comimsupOrg) {
-      return NextResponse.json({ error: "COMIMSUP organization not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "COMIMSUP organization not found" },
+        { status: 404 },
+      );
     }
 
     // Get all child organizations where COMIMSUP is the parent
@@ -60,9 +63,14 @@ export async function POST(request: NextRequest) {
               },
             }),
             ...(filters.ordemDeCompra && {
-              ordemDeCompra: { contains: filters.ordemDeCompra, mode: "insensitive" },
+              ordemDeCompra: {
+                contains: filters.ordemDeCompra,
+                mode: "insensitive",
+              },
             }),
-            ...(filters.dateFrom && { date: { gte: new Date(filters.dateFrom) } }),
+            ...(filters.dateFrom && {
+              date: { gte: new Date(filters.dateFrom) },
+            }),
             ...(filters.dateTo && { date: { lte: new Date(filters.dateTo) } }),
           },
           include: {
@@ -85,9 +93,15 @@ export async function POST(request: NextRequest) {
           where: {
             comimsupId: comimsupOrg.id,
             ...(filters.role && { role: filters.role }),
-            ...(filters.name && { name: { contains: filters.name, mode: "insensitive" } }),
-            ...(filters.sigla && { sigla: { contains: filters.sigla, mode: "insensitive" } }),
-            ...(filters.isActive !== undefined && { isActive: filters.isActive }),
+            ...(filters.name && {
+              name: { contains: filters.name, mode: "insensitive" },
+            }),
+            ...(filters.sigla && {
+              sigla: { contains: filters.sigla, mode: "insensitive" },
+            }),
+            ...(filters.isActive !== undefined && {
+              isActive: filters.isActive,
+            }),
           },
           include: {
             militares: {
@@ -109,10 +123,21 @@ export async function POST(request: NextRequest) {
           where: {
             organizationId: { in: childOrgIds },
             ...(filters.role && { role: filters.role }),
-            ...(filters.name && { name: { contains: filters.name, mode: "insensitive" } }),
-            ...(filters.email && { email: { contains: filters.email, mode: "insensitive" } }),
-            ...(filters.postoGraduacao && { postoGraduacao: { contains: filters.postoGraduacao, mode: "insensitive" } }),
-            ...(filters.isActive !== undefined && { isActive: filters.isActive }),
+            ...(filters.name && {
+              name: { contains: filters.name, mode: "insensitive" },
+            }),
+            ...(filters.email && {
+              email: { contains: filters.email, mode: "insensitive" },
+            }),
+            ...(filters.postoGraduacao && {
+              postoGraduacao: {
+                contains: filters.postoGraduacao,
+                mode: "insensitive",
+              },
+            }),
+            ...(filters.isActive !== undefined && {
+              isActive: filters.isActive,
+            }),
           },
           include: {
             organization: {
@@ -130,9 +155,15 @@ export async function POST(request: NextRequest) {
         results = await db.deliveryType.findMany({
           where: {
             organizationId: { in: childOrgIds },
-            ...(filters.name && { name: { contains: filters.name, mode: "insensitive" } }),
-            ...(filters.slug && { slug: { contains: filters.slug, mode: "insensitive" } }),
-            ...(filters.isActive !== undefined && { isActive: filters.isActive }),
+            ...(filters.name && {
+              name: { contains: filters.name, mode: "insensitive" },
+            }),
+            ...(filters.slug && {
+              slug: { contains: filters.slug, mode: "insensitive" },
+            }),
+            ...(filters.isActive !== undefined && {
+              isActive: filters.isActive,
+            }),
             ...(filters.organization && {
               organization: {
                 name: { contains: filters.organization, mode: "insensitive" },
@@ -150,12 +181,18 @@ export async function POST(request: NextRequest) {
 
       case "custom":
         if (!customQuery) {
-          return NextResponse.json({ error: "Custom query is required" }, { status: 400 });
+          return NextResponse.json(
+            { error: "Custom query is required" },
+            { status: 400 },
+          );
         }
 
         // For security, only allow SELECT queries
         if (!customQuery.trim().toUpperCase().startsWith("SELECT")) {
-          return NextResponse.json({ error: "Only SELECT queries are allowed" }, { status: 400 });
+          return NextResponse.json(
+            { error: "Only SELECT queries are allowed" },
+            { status: 400 },
+          );
         }
 
         // Execute custom query (be careful with this in production)
@@ -163,17 +200,26 @@ export async function POST(request: NextRequest) {
           const customResults = await db.$queryRawUnsafe(customQuery);
           results = customResults as any[];
         } catch (error) {
-          return NextResponse.json({ error: "Invalid SQL query" }, { status: 400 });
+          return NextResponse.json(
+            { error: "Invalid SQL query" },
+            { status: 400 },
+          );
         }
         break;
 
       default:
-        return NextResponse.json({ error: "Invalid query type" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Invalid query type" },
+          { status: 400 },
+        );
     }
 
     return NextResponse.json(results);
   } catch (error) {
     console.error("Error in consulta API:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

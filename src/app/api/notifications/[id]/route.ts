@@ -10,7 +10,7 @@ const updateNotificationSchema = z.object({
 
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth();
 
@@ -29,13 +29,13 @@ export async function PATCH(
     if (action === "markAsRead") {
       success = await notificationService.markAsRead(
         notificationId,
-        session.user.id
+        session.user.id,
       );
       actionName = "read";
     } else if (action === "markAsArchived") {
       success = await notificationService.markAsArchived(
         notificationId,
-        session.user.id
+        session.user.id,
       );
       actionName = "archived";
     }
@@ -43,19 +43,19 @@ export async function PATCH(
     if (!success) {
       return NextResponse.json(
         { error: "Failed to update notification or notification not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: `Notification marked as ${actionName}`
+      message: `Notification marked as ${actionName}`,
     });
   } catch (error) {
     console.error("Failed to update notification:", error);
     return NextResponse.json(
       { error: "Failed to update notification" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

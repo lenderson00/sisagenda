@@ -17,9 +17,9 @@ import { useRouter } from "next/navigation";
 import {
   type Dispatch,
   type SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
-  useCallback,
 } from "react";
 import type { AppointmentWithRelations } from "../page-client";
 import { columnsConfig } from "./columns";

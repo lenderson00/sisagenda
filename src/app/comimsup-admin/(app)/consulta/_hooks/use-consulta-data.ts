@@ -1,7 +1,12 @@
 "use client";
 
+import type {
+  Appointment,
+  DeliveryType,
+  Organization,
+  User,
+} from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import type { Appointment, Organization, User, DeliveryType } from "@prisma/client";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: DeliveryType;
@@ -57,7 +62,7 @@ export function useMockConsultaData(filters: ConsultaFilters) {
     queryKey: ["consulta-data", filters],
     queryFn: async () => {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockData = {
         appointments: [

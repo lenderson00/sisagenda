@@ -202,7 +202,7 @@ export function FilterValueOptionDisplay<TData>({
     <div className="inline-flex items-center gap-0.5">
       {hasOptionIcons &&
         take(selected, 3).map(({ value, icon }) => {
-          const Icon = icon!;
+          const Icon = icon as any;
           return isValidElement(Icon) ? (
             Icon
           ) : (
@@ -251,7 +251,7 @@ export function FilterValueMultiOptionDisplay<TData>({
       {hasOptionIcons && (
         <div key="icons" className="inline-flex items-center gap-0.5">
           {take(selected, 3).map(({ value, icon }) => {
-            const Icon = icon!;
+            const Icon = icon as any;
             return isValidElement(Icon) ? (
               cloneElement(Icon, { key: value })
             ) : (
@@ -485,7 +485,7 @@ export function FilterValueOptionController<TData>({
       initialSelected: filter?.values.includes(o.value),
       count: counts?.get(o.value) ?? 0,
     }));
-  }, []);
+  }, [column.getFacetedUniqueValues, column.getOptions, filter?.values]);
 
   const [options, setOptions] = useState(initialOptions);
 
@@ -564,7 +564,7 @@ export function FilterValueMultiOptionController<TData>({
         count: counts?.get(o.value) ?? 0,
       };
     });
-  }, []);
+  }, [column.getFacetedUniqueValues, column.getOptions, filter?.values]);
 
   const [options, setOptions] = useState(initialOptions);
 
@@ -782,7 +782,14 @@ export function FilterValueNumberController<TData>({
       actions.setFilterOperator(column.id, newOperator);
       actions.setFilterValue(column, newValues);
     },
-    [values, column, actions, minMax],
+    [
+      values,
+      column,
+      actions,
+      minMax,
+      setFilterOperatorDebounced,
+      setFilterValueDebounced,
+    ],
   );
 
   return (

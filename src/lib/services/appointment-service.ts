@@ -1,17 +1,27 @@
 import { prisma } from "@/lib/prisma";
-import { type Appointment, AppointmentStatus, ActivityType } from "@prisma/client";
+import {
+  ActivityType,
+  type Appointment,
+  AppointmentStatus,
+} from "@prisma/client";
+import {
+  addDays,
+  endOfDay,
+  endOfWeek,
+  startOfDay,
+  startOfWeek,
+} from "date-fns";
 import type { Session } from "next-auth";
 import {
-  notifyAppointmentCreated,
-  notifyAppointmentConfirmed,
-  notifyAppointmentRejected,
   notifyAppointmentCancelled,
   notifyAppointmentCompleted,
-  notifyAppointmentSupplierNoShow,
+  notifyAppointmentConfirmed,
+  notifyAppointmentCreated,
+  notifyAppointmentRejected,
   notifyAppointmentRescheduleRequested,
   notifyAppointmentRescheduled,
+  notifyAppointmentSupplierNoShow,
 } from "./notification-utils";
-import { endOfDay, startOfDay, startOfWeek, endOfWeek, addDays } from "date-fns";
 
 type AppointmentWithRelations = Appointment & {
   deliveryType: {
@@ -46,9 +56,13 @@ export class AppointmentService {
   static async notifyAppointmentCreated(
     appointmentId: string,
     organizationId: string,
-    createdByUserId: string
+    createdByUserId: string,
   ): Promise<void> {
-    await notifyAppointmentCreated(appointmentId, organizationId, createdByUserId);
+    await notifyAppointmentCreated(
+      appointmentId,
+      organizationId,
+      createdByUserId,
+    );
   }
 
   private async getAppointment(
@@ -123,7 +137,7 @@ export class AppointmentService {
     await notifyAppointmentConfirmed(
       appointmentId,
       appointment.deliveryType.organizationId,
-      this.user.id
+      this.user.id,
     );
 
     return result;
@@ -181,7 +195,7 @@ export class AppointmentService {
     await notifyAppointmentRejected(
       appointmentId,
       appointment.deliveryType.organizationId,
-      this.user.id
+      this.user.id,
     );
 
     return result;
@@ -222,7 +236,7 @@ export class AppointmentService {
     await notifyAppointmentCancelled(
       appointmentId,
       appointment.deliveryType.organizationId,
-      this.user.id
+      this.user.id,
     );
 
     return result;
@@ -270,7 +284,7 @@ export class AppointmentService {
       appointmentId,
       appointment.deliveryType.organizationId,
       this.user.id,
-      "Fornecedor solicitou cancelamento"
+      "Fornecedor solicitou cancelamento",
     );
 
     return result;
@@ -328,7 +342,7 @@ export class AppointmentService {
       appointmentId,
       appointment.deliveryType.organizationId,
       this.user.id,
-      "Solicitação de cancelamento aprovada"
+      "Solicitação de cancelamento aprovada",
     );
 
     return result;
@@ -380,14 +394,11 @@ export class AppointmentService {
         appointmentId,
         appointment.deliveryType.organizationId,
         this.user.id,
-        "Solicitação de cancelamento rejeitada"
+        "Solicitação de cancelamento rejeitada",
       );
 
       return updatedAppointment;
-
     });
-
-
   }
 
   async markAsNoShow(appointmentId: string) {
@@ -428,7 +439,7 @@ export class AppointmentService {
     await notifyAppointmentSupplierNoShow(
       appointmentId,
       appointment.deliveryType.organizationId,
-      this.user.id
+      this.user.id,
     );
 
     return result;
@@ -473,7 +484,7 @@ export class AppointmentService {
     await notifyAppointmentCompleted(
       appointmentId,
       appointment.deliveryType.organizationId,
-      this.user.id
+      this.user.id,
     );
 
     return result;
@@ -530,7 +541,7 @@ export class AppointmentService {
       appointment.deliveryType.organizationId,
       this.user.id,
       newDate,
-      reason
+      reason,
     );
 
     return result;
@@ -599,7 +610,7 @@ export class AppointmentService {
       appointmentId,
       appointment.deliveryType.organizationId,
       this.user.id,
-      appointment.date // previous date
+      appointment.date, // previous date
     );
 
     return result;
@@ -679,8 +690,9 @@ export class AppointmentService {
           userId: this.user.id,
           type: "STATUS_CHANGE",
           title: "Agendamento Reagendado",
-          content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${reason ? `Motivo: ${reason}` : ""
-            }`,
+          content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${
+            reason ? `Motivo: ${reason}` : ""
+          }`,
           previousStatus: "RESCHEDULE_REQUESTED",
           newStatus: "RESCHEDULED",
         },
@@ -708,10 +720,9 @@ export class AppointmentService {
       appointmentId,
       appointment.deliveryType.organizationId,
       this.user.id,
-      previousDate
+      previousDate,
     );
 
     return result;
   }
 }
-

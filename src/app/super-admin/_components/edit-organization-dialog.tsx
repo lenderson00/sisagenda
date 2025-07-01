@@ -9,10 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { IconPencil } from "@tabler/icons-react";
-import { OrganizationForm } from "./organization-form";
 import type { Organization } from "@prisma/client";
+import { IconPencil } from "@tabler/icons-react";
 import { useState } from "react";
+import { OrganizationForm } from "./organization-form";
 
 type OrganizationWithComimsup = Organization & {
   comimsup: {

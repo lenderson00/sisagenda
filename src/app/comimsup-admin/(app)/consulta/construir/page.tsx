@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { FilterBuilderClient } from "./page-client";
 import { FilterContextProvider } from "../_context/filter-context";
+import { FilterBuilderClient } from "./page-client";
 
 export default async function ConsultaFilterBuilderPage() {
   const session = await auth();

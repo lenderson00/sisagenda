@@ -1,3 +1,4 @@
+import { NotificationBell } from "@/components/notification-bell";
 import {
   SidebarInset,
   SidebarProvider,
@@ -5,7 +6,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Provider } from "jotai";
 import { UserSidebar } from "./_components/user-sidebar";
-import { NotificationBell } from "@/components/notification-bell";
 
 const UserLayout = ({ children }: { children: React.ReactNode }) => {
   return (

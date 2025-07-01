@@ -1,9 +1,9 @@
 "use client";
 
-import { ActivityCalendar } from "react-activity-calendar";
-import type { Activity } from "@/lib/services/activity-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Activity } from "@/lib/services/activity-service";
 import { CalendarIcon } from "lucide-react";
+import { ActivityCalendar } from "react-activity-calendar";
 
 interface ActivityCalendarProps {
   data: Activity[];

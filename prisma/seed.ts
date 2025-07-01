@@ -23,7 +23,6 @@ async function main() {
       mustChangePassword: true,
     },
   });
-
 }
 
 main()

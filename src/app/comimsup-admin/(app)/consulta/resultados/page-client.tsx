@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,20 +10,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
+  IconArrowLeft,
   IconDatabase,
-  IconTable,
-  IconRefresh,
   IconDownload,
   IconEye,
-  IconArrowLeft,
-  IconSettings,
   IconLoader,
+  IconRefresh,
+  IconSettings,
+  IconTable,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ConsultaResultsTable } from "../_components/consulta-results-table";
-import { useAppointmentFilters } from "../_hooks/use-appointment-filters";
 import { useFilterContext } from "../_context/filter-context";
+import { useAppointmentFilters } from "../_hooks/use-appointment-filters";
 
 export function ConsultaResultsClient() {
   const router = useRouter();

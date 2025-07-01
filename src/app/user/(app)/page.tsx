@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { IconCalendar, IconClock, IconCheck, IconX } from "@tabler/icons-react";
+import { IconCalendar, IconCheck, IconClock, IconX } from "@tabler/icons-react";
 
 export default function UserDashboardPage() {
   return (

@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { IconCalendar, IconUsers, IconBuilding } from "@tabler/icons-react";
+import { IconBuilding, IconCalendar, IconUsers } from "@tabler/icons-react";
 
 export default function ComimsupAdminDashboardPage() {
   return (

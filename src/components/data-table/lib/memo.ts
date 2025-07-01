@@ -20,7 +20,7 @@ export function memo<TDeps extends readonly any[], TResult>(
       // console.log(`[memo] Cache HIT - ${options.key}`)
     }
 
-    return cachedResult!;
+    return cachedResult as TResult;
   };
 }
 

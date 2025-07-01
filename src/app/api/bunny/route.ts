@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
-const API_KEY = process.env.BUNNY_API_KEY!;
+const API_KEY = process.env.BUNNY_API_KEY || "";
 const STORAGE_ZONE = "framer";
 const CDN_BASE_URL = "https://framer.b-cdn.net";
 const STORAGE_BASE_URL = `https://storage.bunnycdn.com/${STORAGE_ZONE}/sisagenda`;
