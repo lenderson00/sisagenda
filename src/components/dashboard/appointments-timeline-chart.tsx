@@ -78,7 +78,9 @@ export function AppointmentsTimelineChart({
                 className="text-xs"
               />
               <YAxis tickLine={false} axisLine={false} className="text-xs" />
-              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartTooltip
+                content={<ChartTooltipContent payload={[]} label={""} />}
+              />
               <Legend />
               <Line
                 type="monotone"
