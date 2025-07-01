@@ -28,7 +28,6 @@ export default async function DisponibilidadePage() {
       <PageHeader
         title="Disponibilidade"
         subtitle="Veja a disponibilidade de horários para cada tipo de evento."
-        main
       >
         <CreateAvailabilityDialog orgId={orgId} />
       </PageHeader>

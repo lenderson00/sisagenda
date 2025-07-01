@@ -62,7 +62,6 @@ const DeliveryTypeLayout = async ({
         title={schedule.name}
         backButton
         subtitle="Edite o horário de disponibilidade existente."
-        main
       />
 
       <div className="flex gap-4 p-4">

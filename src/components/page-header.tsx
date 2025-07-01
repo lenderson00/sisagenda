@@ -17,7 +17,6 @@ type PageHeaderProps = {
   children?: React.ReactNode;
   backButton?: boolean;
   className?: string;
-  main?: boolean;
 };
 
 export const PageHeader = ({
@@ -26,7 +25,6 @@ export const PageHeader = ({
   children,
   backButton,
   className,
-  main = false,
 }: PageHeaderProps) => {
   const router = useRouter();
 
@@ -38,8 +36,6 @@ export const PageHeader = ({
         className,
       )}
     >
-      {main && <AppSidebarOpenTrigger />}
-
       <div
         className={cn("w-full truncate ltr:mr-4 rtl:ml-4 flex items-center")}
       >

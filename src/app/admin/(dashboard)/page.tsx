@@ -4,6 +4,7 @@ import { AppointmentsTimelineChart } from "@/components/dashboard/appointments-t
 import { RecentAppointmentsTable } from "@/components/dashboard/recent-appointments-table";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { SupplierPerformanceChart } from "@/components/dashboard/supplier-performance-chart";
+import { ActivityCalendarComponent } from "@/components/dashboard/activity-calendar";
 import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import {
@@ -11,6 +12,10 @@ import {
   getDashboardAppointments,
   getOrganizationInfo,
 } from "@/lib/services/dashboard-service";
+import {
+  getYearlyActivity,
+  getActivityStats,
+} from "@/lib/services/activity-service";
 import { Calendar, Clock, Package, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -35,12 +40,15 @@ export default async function DashboardPage() {
 
   const organization = await getOrganizationInfo(session.user.organizationId);
 
+  // Get activity data for the year
+  const activityData = await getYearlyActivity(session.user.organizationId);
+  const activityStats = await getActivityStats(session.user.organizationId);
+
   return (
     <>
       <PageHeader
         title={` Dashboard ${organization?.sigla ? ` - ${organization.sigla}` : ""}`}
         subtitle="Visão geral do sistema"
-        main
       />
       <div className="flex flex-col gap-4 px-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -78,33 +86,20 @@ export default async function DashboardPage() {
           />
         </div>
 
+        {/* <div className="w-full">
+          <ActivityCalendarComponent
+            data={activityData}
+            totalActivity={activityStats.totalActivity}
+            activeDays={activityStats.activeDays}
+            averageActivity={activityStats.averageActivity}
+          />
+        </div> */}
+
         <AppointmentsTable
           todayAppointments={appointments.today}
           tomorrowAppointments={appointments.tomorrow}
           weekAppointments={appointments.week}
         />
-
-        {/* <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <AppointmentsTimelineChart
-            data={timeSeriesData}
-            className="lg:col-span-2"
-          />
-          <AppointmentStatusChart
-            data={statusDistribution}
-            className="lg:col-span-1"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <SupplierPerformanceChart
-            data={supplierPerformance}
-            className="lg:col-span-1"
-          />
-          <RecentAppointmentsTable
-            appointments={recentAppointments}
-            className="lg:col-span-2"
-          />
-        </div> */}
       </div>
     </>
   );
