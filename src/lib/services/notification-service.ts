@@ -212,6 +212,7 @@ export class NotificationService {
             select: {
               internalId: true,
               date: true,
+              status: true,
               deliveryType: { select: { name: true } },
             },
           },

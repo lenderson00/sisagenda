@@ -18,6 +18,7 @@ import {
   RefreshCw,
   MoreHorizontal,
   Settings,
+  CircleAlertIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +27,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,8 +56,17 @@ import {
   useMarkAsArchived,
   useMarkAllAsRead,
   useUnreadCount,
+  useApproveAppointment,
+  useRejectAppointment,
+  useApproveCancellation,
+  useRejectCancellation,
+  useApproveReschedule,
+  useRejectReschedule,
   type Notification,
 } from "@/hooks/use-notifications";
+import { useSession } from "next-auth/react";
+import { getNotificationActionButtons } from "@/lib/utils/notification-actions";
+import type { AppointmentStatus } from "@prisma/client";
 import Link from "next/link";
 
 // Notification type icons mapping
@@ -91,6 +112,7 @@ export function Inbox({ className }: InboxProps) {
   const [activeTab, setActiveTab] = useState<"unread" | "all">("unread");
   const [page, setPage] = useState(1);
   const router = useRouter();
+  const { data: session } = useSession();
 
   // Determine status filter based on active tab
   const statusFilter = useMemo(() => {
@@ -126,6 +148,14 @@ export function Inbox({ className }: InboxProps) {
   const markAsReadMutation = useMarkAsRead();
   const markAsArchivedMutation = useMarkAsArchived();
   const markAllAsReadMutation = useMarkAllAsRead();
+
+  // Appointment action mutations
+  const approveAppointmentMutation = useApproveAppointment();
+  const rejectAppointmentMutation = useRejectAppointment();
+  const approveCancellationMutation = useApproveCancellation();
+  const rejectCancellationMutation = useRejectCancellation();
+  const approveRescheduleMutation = useApproveReschedule();
+  const rejectRescheduleMutation = useRejectReschedule();
 
   const notifications = notificationsData?.notifications || [];
   const pagination = notificationsData?.pagination;
@@ -266,14 +296,107 @@ export function Inbox({ className }: InboxProps) {
                 </div>
               ) : (
                 <div className="divide-y divide-border">
-                  {notifications.map((notification) => (
-                    <NotificationItem
-                      key={notification.id}
-                      notification={notification}
-                      onClick={() => handleNotificationClick(notification)}
-                      isArchiving={markAsArchivedMutation.isPending}
-                    />
-                  ))}
+                  {notifications.map((notification) => {
+                    // Get appointment status from notification data
+                    const appointmentStatus = (notification.appointment
+                      ?.status || "PENDING_CONFIRMATION") as AppointmentStatus;
+                    const userRole = session?.user?.role;
+
+                    // Determine available actions for this notification
+                    const actionButtons = getNotificationActionButtons(
+                      notification.type,
+                      appointmentStatus,
+                      userRole,
+                      notification.appointment?.date
+                        ? new Date(notification.appointment.date)
+                        : undefined,
+                    );
+
+                    return (
+                      <NotificationItem
+                        key={notification.id}
+                        notification={notification}
+                        onClick={() => handleNotificationClick(notification)}
+                        isArchiving={markAsArchivedMutation.isPending}
+                        onApprove={() => {
+                          if (notification.appointmentId) {
+                            approveAppointmentMutation.mutate(
+                              notification.appointmentId,
+                            );
+                          }
+                          // Mark notification as read
+                          if (notification.status === "UNREAD") {
+                            handleMarkAsRead(notification.id);
+                          }
+                        }}
+                        onReject={() => {
+                          if (notification.appointmentId) {
+                            rejectAppointmentMutation.mutate(
+                              notification.appointmentId,
+                            );
+                          }
+                          // Mark notification as read
+                          if (notification.status === "UNREAD") {
+                            handleMarkAsRead(notification.id);
+                          }
+                        }}
+                        onApproveCancellation={() => {
+                          if (notification.appointmentId) {
+                            approveCancellationMutation.mutate(
+                              notification.appointmentId,
+                            );
+                          }
+                          // Mark notification as read
+                          if (notification.status === "UNREAD") {
+                            handleMarkAsRead(notification.id);
+                          }
+                        }}
+                        onRejectCancellation={() => {
+                          if (notification.appointmentId) {
+                            rejectCancellationMutation.mutate(
+                              notification.appointmentId,
+                            );
+                          }
+                          // Mark notification as read
+                          if (notification.status === "UNREAD") {
+                            handleMarkAsRead(notification.id);
+                          }
+                        }}
+                        onApproveReschedule={() => {
+                          if (notification.appointmentId) {
+                            approveRescheduleMutation.mutate(
+                              notification.appointmentId,
+                            );
+                          }
+                          // Mark notification as read
+                          if (notification.status === "UNREAD") {
+                            handleMarkAsRead(notification.id);
+                          }
+                        }}
+                        onRejectReschedule={() => {
+                          if (notification.appointmentId) {
+                            rejectRescheduleMutation.mutate(
+                              notification.appointmentId,
+                            );
+                          }
+                          // Mark notification as read
+                          if (notification.status === "UNREAD") {
+                            handleMarkAsRead(notification.id);
+                          }
+                        }}
+                        showActions={actionButtons.showActions}
+                        actions={actionButtons.actions}
+                        approveAppointmentMutation={approveAppointmentMutation}
+                        rejectAppointmentMutation={rejectAppointmentMutation}
+                        approveCancellationMutation={
+                          approveCancellationMutation
+                        }
+                        rejectCancellationMutation={rejectCancellationMutation}
+                        approveRescheduleMutation={approveRescheduleMutation}
+                        rejectRescheduleMutation={rejectRescheduleMutation}
+                      />
+                    );
+                  })}
                 </div>
               )}
 
@@ -305,12 +428,47 @@ interface NotificationItemProps {
   notification: Notification;
   onClick: () => void;
   isArchiving: boolean;
+  onApprove?: () => void;
+  onReject?: () => void;
+  onApproveCancellation?: () => void;
+  onRejectCancellation?: () => void;
+  onApproveReschedule?: () => void;
+  onRejectReschedule?: () => void;
+  showActions?: boolean;
+  actions?: {
+    approve?: boolean;
+    reject?: boolean;
+    approveCancellation?: boolean;
+    rejectCancellation?: boolean;
+    approveReschedule?: boolean;
+    rejectReschedule?: boolean;
+  };
+  approveAppointmentMutation: any;
+  rejectAppointmentMutation: any;
+  approveCancellationMutation: any;
+  rejectCancellationMutation: any;
+  approveRescheduleMutation: any;
+  rejectRescheduleMutation: any;
 }
 
 function NotificationItem({
   notification,
   onClick,
   isArchiving,
+  onApprove,
+  onReject,
+  onApproveCancellation,
+  onRejectCancellation,
+  onApproveReschedule,
+  onRejectReschedule,
+  showActions = false,
+  actions = {},
+  approveAppointmentMutation,
+  rejectAppointmentMutation,
+  approveCancellationMutation,
+  rejectCancellationMutation,
+  approveRescheduleMutation,
+  rejectRescheduleMutation,
 }: NotificationItemProps) {
   const getNotificationIcon = (type: string) => {
     const IconComponent =
@@ -321,7 +479,7 @@ function NotificationItem({
   const IconComponent = getNotificationIcon(notification.type);
   const isUnread = notification.status === "UNREAD";
 
-  const isActionable = notification.type === "APPOINTMENT_RESCHEDULE_REQUESTED";
+  const isActionable = showActions && Object.values(actions).some(Boolean);
 
   return (
     <div
@@ -361,10 +519,269 @@ function NotificationItem({
 
       {isActionable && (
         <div className="flex justify-end gap-2 pb-3 px-4">
-          <Button variant="outline" size="sm">
-            Recusar
-          </Button>
-          <Button size="sm">Aceitar</Button>
+          {actions.reject && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  disabled={rejectAppointmentMutation.isPending}
+                >
+                  Recusar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                  <div
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                    aria-hidden="true"
+                  >
+                    <CircleAlertIcon className="opacity-80" size={16} />
+                  </div>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirmar Rejeição</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja rejeitar este agendamento? Esta
+                      ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onReject?.();
+                    }}
+                    disabled={rejectAppointmentMutation.isPending}
+                  >
+                    Confirmar Rejeição
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {actions.approve && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  disabled={approveAppointmentMutation.isPending}
+                >
+                  Aprovar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                  <div
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                    aria-hidden="true"
+                  >
+                    <Check className="opacity-80" size={16} />
+                  </div>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirmar Aprovação</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja aprovar este agendamento? O
+                      fornecedor será notificado da confirmação.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onApprove?.();
+                    }}
+                    disabled={approveAppointmentMutation.isPending}
+                  >
+                    Confirmar Aprovação
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {actions.approveCancellation && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  disabled={approveCancellationMutation.isPending}
+                >
+                  Aprovar Cancelamento
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                  <div
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                    aria-hidden="true"
+                  >
+                    <CircleAlertIcon className="opacity-80" size={16} />
+                  </div>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirmar Aprovação do Cancelamento
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja aprovar o cancelamento deste
+                      agendamento? O agendamento será cancelado permanentemente.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onApproveCancellation?.();
+                    }}
+                    disabled={approveCancellationMutation.isPending}
+                  >
+                    Confirmar Cancelamento
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {actions.rejectCancellation && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  disabled={rejectCancellationMutation.isPending}
+                >
+                  Rejeitar Cancelamento
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                  <div
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                    aria-hidden="true"
+                  >
+                    <Check className="opacity-80" size={16} />
+                  </div>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirmar Rejeição do Cancelamento
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja rejeitar o pedido de cancelamento?
+                      O agendamento permanecerá ativo.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRejectCancellation?.();
+                    }}
+                    disabled={rejectCancellationMutation.isPending}
+                  >
+                    Confirmar Rejeição
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {actions.approveReschedule && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  disabled={approveRescheduleMutation.isPending}
+                >
+                  Aprovar Reagendamento
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                  <div
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                    aria-hidden="true"
+                  >
+                    <Calendar className="opacity-80" size={16} />
+                  </div>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirmar Aprovação do Reagendamento
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja aprovar o reagendamento? O
+                      agendamento será movido para a nova data solicitada.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onApproveReschedule?.();
+                    }}
+                    disabled={approveRescheduleMutation.isPending}
+                  >
+                    Confirmar Reagendamento
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {actions.rejectReschedule && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  disabled={rejectRescheduleMutation.isPending}
+                >
+                  Rejeitar Reagendamento
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                  <div
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                    aria-hidden="true"
+                  >
+                    <CircleAlertIcon className="opacity-80" size={16} />
+                  </div>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirmar Rejeição do Reagendamento
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja rejeitar o pedido de reagendamento?
+                      O agendamento permanecerá na data original.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRejectReschedule?.();
+                    }}
+                    disabled={rejectRescheduleMutation.isPending}
+                  >
+                    Confirmar Rejeição
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       )}
     </div>
