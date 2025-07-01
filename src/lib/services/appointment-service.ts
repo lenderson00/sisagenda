@@ -551,19 +551,35 @@ export class AppointmentService {
     const result = await prisma.$transaction(async (tx) => {
       const updatedAppointment = await tx.appointment.update({
         where: { id: appointmentId },
-        data: { status: "CONFIRMED", date: new Date(newDate) },
+        data: { status: "RESCHEDULED", date: new Date(newDate) },
       });
       await tx.appointmentActivity.create({
         data: {
           appointmentId,
           userId: this.user.id,
-          type: "RESCHEDULE_CONFIRMED",
+          type: "STATUS_CHANGE",
           title: "Reagendamento Aprovado",
           content:
             "A solicitação de reagendamento foi aprovada pelo administrador.",
           previousStatus: "RESCHEDULE_REQUESTED",
+          newStatus: "RESCHEDULED",
+        },
+      });
+      await tx.appointmentActivity.create({
+        data: {
+          appointmentId,
+          userId: this.user.id,
+          type: "STATUS_CHANGE",
+          title: "Agendamento Reagendado",
+          content: `O sistema confirmou o agendamento para ${newDate.toLocaleString()}.`,
+          previousStatus: "RESCHEDULED",
           newStatus: "CONFIRMED",
         },
+      });
+
+      await tx.appointment.update({
+        where: { id: appointmentId },
+        data: { status: "CONFIRMED" },
       });
       return updatedAppointment;
     });
@@ -655,7 +671,7 @@ export class AppointmentService {
           title: "Agendamento Reagendado",
           content: `O agendamento foi reagendado pelo administrador para ${newDate.toLocaleString()}. ${reason ? `Motivo: ${reason}` : ""
             }`,
-          previousStatus,
+          previousStatus: "RESCHEDULE_REQUESTED",
           newStatus: "RESCHEDULED",
         },
       });
@@ -666,7 +682,7 @@ export class AppointmentService {
           type: "STATUS_CHANGE",
           title: "Agendamento Confirmado",
           content: `O agendamento foi confirmado pelo sistema para ${newDate.toLocaleString()}.`,
-          previousStatus,
+          previousStatus: "RESCHEDULED",
           newStatus: "CONFIRMED",
         },
       });
