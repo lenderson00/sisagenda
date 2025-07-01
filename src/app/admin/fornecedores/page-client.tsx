@@ -93,7 +93,7 @@ export function SuppliersPageClient({
 
   return (
     <div className="min-h-[80vh]">
-      <div className="container mx-auto pt-2">
+      <div className="px-4 pt-2">
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-3 mb-8">
           <StatCard

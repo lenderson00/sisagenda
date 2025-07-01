@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function UsersPageSkeleton() {
   return (
-    <div className="container mx-auto pt-2">
+    <div className="px-4 pt-2">
       {/* Skeleton for Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
