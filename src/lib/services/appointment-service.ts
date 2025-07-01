@@ -63,7 +63,7 @@ export class AppointmentService {
 
   private isUserAuthorized(appointment: AppointmentWithRelations): boolean {
     const userRole = this.user.role;
-    if (userRole === "SUPER_ADMIN" || userRole === "COMIMSUP") {
+    if (userRole === "COMIMSUP") {
       return true;
     }
     if (userRole === "FORNECEDOR") {
@@ -109,7 +109,7 @@ export class AppointmentService {
           userId: this.user.id,
           type: "CONFIRMED",
           title: "Agendamento confirmado",
-          content: "O sistema confirmout o agendamento",
+          content: "O sistema confirmou o agendamento.",
         },
       });
       const updatedAppointment = await tx.appointment.update({
