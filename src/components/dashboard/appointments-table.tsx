@@ -54,6 +54,7 @@ import {
   PlusIcon,
   ClockIcon,
   CalendarIcon,
+  CalendarDaysIcon,
   UserIcon,
   PackageIcon,
   FileTextIcon,
@@ -82,6 +83,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import {
   Table,
@@ -553,39 +555,55 @@ export function AppointmentsTable({
   return (
     <Tabs
       defaultValue="today"
-      className="flex w-full flex-col justify-start gap-2"
+      className="flex w-full flex-col justify-start gap-2 mt-4"
     >
-      <div className="flex items-center justify-between ">
-        <TabsList className="flex">
-          <TabsTrigger value="today" className="gap-1">
-            Hoje{" "}
+      <ScrollArea>
+        <TabsList className="mb-3">
+          <TabsTrigger value="today" className="group">
+            <CalendarIcon
+              className="-ms-0.5 me-1.5 opacity-60"
+              size={16}
+              aria-hidden="true"
+            />
+            Hoje
             <Badge
+              className="bg-primary/15 ms-1.5 min-w-5 px-1 transition-opacity group-data-[state=inactive]:opacity-50"
               variant="secondary"
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-muted-foreground/30"
             >
               {todayAppointments.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="tomorrow" className="gap-1">
-            Amanhã{" "}
+          <TabsTrigger value="tomorrow" className="group">
+            <ClockIcon
+              className="-ms-0.5 me-1.5 opacity-60"
+              size={16}
+              aria-hidden="true"
+            />
+            Amanhã
             <Badge
+              className="bg-primary/15 ms-1.5 min-w-5 px-1 transition-opacity group-data-[state=inactive]:opacity-50"
               variant="secondary"
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-muted-foreground/30"
             >
               {tomorrowAppointments.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="week" className="gap-1">
-            Esta Semana{" "}
+          <TabsTrigger value="week" className="group">
+            <CalendarDaysIcon
+              className="-ms-0.5 me-1.5 opacity-60"
+              size={16}
+              aria-hidden="true"
+            />
+            Esta Semana
             <Badge
+              className="bg-primary/15 ms-1.5 min-w-5 px-1 transition-opacity group-data-[state=inactive]:opacity-50"
               variant="secondary"
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-muted-foreground/30"
             >
               {weekAppointments.length}
             </Badge>
           </TabsTrigger>
         </TabsList>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
       <TabsContent
         value="today"
