@@ -54,7 +54,7 @@ const AgendamentosLayout = async ({
 
   return (
     <ActionsProvider appointment={plainAppointment}>
-      <div className="flex flex-col items-center justify-start pt-12 min-h-screen h-fit bg-background relative">
+      <div className="flex flex-col items-center bg-muted dark:bg-background justify-start pt-12 min-h-screen h-fit  relative">
         <div className="w-full container flex flex-col gap-4 items-center">
           <div className="flex flex-col gap-0 items-center">
             <h1 className="text-md text-muted-foreground">Agendamento</h1>

@@ -75,6 +75,7 @@ export function ActionsProvider({
             actions.canMarkAsNoShow = true;
             actions.canMarkAsCompleted = true;
           }
+
           break;
         default:
           break;
@@ -87,6 +88,23 @@ export function ActionsProvider({
       if (status === "CONFIRMED" || status === "PENDING_CONFIRMATION") {
         actions.canRequestCancellation = true;
         actions.canRequestReschedule = true;
+      }
+    }
+
+    if (user.role === "USER") {
+      switch (status) {
+        case "CONFIRMED":
+          if (new Date(date) < new Date()) {
+            actions.canMarkAsNoShow = true;
+            actions.canMarkAsCompleted = true;
+          }
+          break;
+        case "PENDING_CONFIRMATION":
+          actions.canApprove = true;
+          break;
+        case "CANCELLATION_REQUESTED":
+          break;
+        default:
       }
     }
     return actions;
