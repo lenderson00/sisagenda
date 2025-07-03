@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { CreateSupplierDialog } from "./_components/create-supplier-dialog";
+import { SearchSupplierDialog } from "./_components/search-supplier-dialog";
 import { SuppliersPageClient } from "./page-client";
 
 export default async function SuppliersPage() {
@@ -27,7 +27,7 @@ export default async function SuppliersPage() {
         title="Fornecedores"
         subtitle="Gerencie os fornecedores e suas informações"
       >
-        <CreateSupplierDialog orgId={orgId} />
+        <SearchSupplierDialog orgId={orgId} />
       </PageHeader>
       <SuppliersPageClient organizationId={orgId} />
     </>

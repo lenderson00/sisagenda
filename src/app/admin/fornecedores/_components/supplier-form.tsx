@@ -39,12 +39,34 @@ interface SupplierFormProps {
     cnpj: string;
     address?: string;
   };
+  prefillCnpj?: string;
   onSuccess?: () => void;
+}
+
+// CNPJ mask function
+function applyCnpjMask(value: string): string {
+  // Remove all non-digits
+  const numbers = value.replace(/\D/g, "");
+
+  // Apply CNPJ mask: XX.XXX.XXX/XXXX-XX
+  if (numbers.length <= 2) return numbers;
+  if (numbers.length <= 5) return `${numbers.slice(0, 2)}.${numbers.slice(2)}`;
+  if (numbers.length <= 8)
+    return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(5)}`;
+  if (numbers.length <= 12)
+    return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(5, 8)}/${numbers.slice(8)}`;
+  return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(5, 8)}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
+}
+
+// Function to remove mask for API calls
+function removeCnpjMask(value: string): string {
+  return value.replace(/\D/g, "");
 }
 
 export function SupplierForm({
   organizationId,
   supplier,
+  prefillCnpj,
   onSuccess,
 }: SupplierFormProps) {
   const createMutation = useCreateSupplier(organizationId);
@@ -56,20 +78,29 @@ export function SupplierForm({
       name: supplier?.name || "",
       email: supplier?.email || "",
       phone: supplier?.phone || "",
-      cnpj: supplier?.cnpj || "",
+      cnpj: supplier?.cnpj
+        ? applyCnpjMask(supplier.cnpj)
+        : prefillCnpj
+          ? applyCnpjMask(prefillCnpj)
+          : "",
       address: supplier?.address || "",
     },
   });
 
   const onSubmit = async (data: SupplierFormValues) => {
     try {
+      const formData = {
+        ...data,
+        cnpj: removeCnpjMask(data.cnpj), // Remove mask before sending to API
+      };
+
       if (supplier) {
         await updateMutation.mutateAsync({
           id: supplier.id,
-          ...data,
+          ...formData,
         });
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync(formData);
       }
       onSuccess?.();
     } catch (error) {
@@ -118,7 +149,18 @@ export function SupplierForm({
             <FormItem>
               <FormLabel>CNPJ</FormLabel>
               <FormControl>
-                <Input placeholder="00.000.000/0000-00" {...field} />
+                <Input
+                  placeholder="00.000.000/0000-00"
+                  {...field}
+                  value={applyCnpjMask(field.value)}
+                  onChange={(e) => {
+                    const maskedValue = applyCnpjMask(e.target.value);
+                    field.onChange(maskedValue);
+                  }}
+                  readOnly={!!prefillCnpj}
+                  className={prefillCnpj ? "bg-gray-50" : ""}
+                  maxLength={18}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -15,7 +15,7 @@ import { IconBuilding } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Building, CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
-import { CreateSupplierDialog } from "./_components/create-supplier-dialog";
+import { SearchSupplierDialog } from "./_components/search-supplier-dialog";
 import { SuppliersDataTable } from "./_components/data-table";
 import { StatCard } from "./_components/stat-card";
 import { SuppliersPageSkeleton } from "./_components/suppliers-page-skeleton";
@@ -32,6 +32,7 @@ export interface Supplier {
   name: string;
   email: string;
   phone: string;
+  cnpj?: string;
   isActive: boolean;
   address?: string;
   createdAt?: string;
@@ -115,10 +116,10 @@ export function SuppliersPageClient({
         {suppliers.length === 0 ? (
           <EmptyCard
             title="Nenhum fornecedor encontrado"
-            description="Comece criando seu primeiro fornecedor."
+            description="Comece procurando por um fornecedor existente ou criando um novo."
             icon={IconBuilding}
           >
-            <CreateSupplierDialog orgId={organizationId} />
+            <SearchSupplierDialog orgId={organizationId} />
           </EmptyCard>
         ) : (
           <SuppliersDataTable

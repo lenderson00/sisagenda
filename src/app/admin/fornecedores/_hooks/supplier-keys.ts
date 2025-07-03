@@ -5,4 +5,6 @@ export const supplierKeys = {
     [...supplierKeys.lists(), organizationId] as const,
   stats: (organizationId: string) =>
     [...supplierKeys.all, "stats", organizationId] as const,
+  searchByCnpj: (cnpj: string) =>
+    [...supplierKeys.all, "search", cnpj] as const,
 };

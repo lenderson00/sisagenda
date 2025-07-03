@@ -1,8 +1,23 @@
 import { createColumnConfigHelper } from "@/components/data-table/core/filters";
-import { Building, Calendar, CheckCircle, Mail, Phone } from "lucide-react";
+import {
+  Building,
+  Calendar,
+  CheckCircle,
+  Mail,
+  Phone,
+  Hash,
+} from "lucide-react";
 import type { Supplier } from "../page-client";
 
 const dtf = createColumnConfigHelper<Supplier>();
+
+// CNPJ mask function for display
+function formatCnpj(cnpj: string): string {
+  if (!cnpj) return "N/A";
+  const numbers = cnpj.replace(/\D/g, "");
+  if (numbers.length !== 14) return cnpj;
+  return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(5, 8)}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
+}
 
 export const columnsConfig = [
   dtf
@@ -11,6 +26,13 @@ export const columnsConfig = [
     .displayName("Nome")
     .icon(Building)
     .accessor((supplier) => supplier.name)
+    .build(),
+  dtf
+    .text()
+    .id("cnpj")
+    .displayName("CNPJ")
+    .icon(Hash)
+    .accessor((supplier) => formatCnpj(supplier.cnpj || ""))
     .build(),
   dtf
     .text()

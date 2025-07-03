@@ -10,6 +10,7 @@ export function useCreateSupplier(organizationId: string) {
       name: string;
       email: string;
       phone: string;
+      cnpj: string;
       address?: string;
     }) => {
       const response = await fetch("/api/suppliers", {
@@ -40,6 +41,42 @@ export function useCreateSupplier(organizationId: string) {
     },
     onError: () => {
       toast.error("Erro ao criar fornecedor");
+    },
+  });
+}
+
+export function useAssociateSupplier(organizationId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (supplierId: string) => {
+      const response = await fetch(`/api/suppliers/${supplierId}/associate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          organizationId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to associate supplier");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: supplierKeys.list(organizationId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: supplierKeys.stats(organizationId),
+      });
+      toast.success("Fornecedor associado com sucesso");
+    },
+    onError: () => {
+      toast.error("Erro ao associar fornecedor");
     },
   });
 }

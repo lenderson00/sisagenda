@@ -31,6 +31,7 @@ export async function GET(req: Request) {
       where: {
         organizationId,
         role: "FORNECEDOR",
+        deletedAt: null,
       },
       orderBy: {
         createdAt: "desc",
@@ -63,15 +64,43 @@ export async function POST(req: Request) {
       return new NextResponse("Invalid body", { status: 400 });
     }
 
+    const { name, email, phone, cnpj, address } = validatedBody.data;
+
+    // Check if a supplier with this CNPJ already exists globally
+    const existingSupplier = await prisma.user.findFirst({
+      where: {
+        cnpj: cnpj,
+        role: "FORNECEDOR",
+        deletedAt: null,
+      },
+    });
+
+    if (existingSupplier) {
+      return new NextResponse("A supplier with this CNPJ already exists", { status: 409 });
+    }
+
+    // Check if email is already in use
+    const existingEmail = await prisma.user.findFirst({
+      where: {
+        email: email,
+        deletedAt: null,
+      },
+    });
+
+    if (existingEmail) {
+      return new NextResponse("A user with this email already exists", { status: 409 });
+    }
+
     const hashedPassword = await hash("Fornecedor@2025", 10);
 
+    // Create the supplier for the current organization
     const supplier = await prisma.user.create({
       data: {
-        name: validatedBody.data.name,
-        email: validatedBody.data.email,
-        whatsapp: validatedBody.data.phone,
-        cnpj: validatedBody.data.cnpj,
-        address: validatedBody.data.address || "",
+        name: name,
+        email: email,
+        whatsapp: phone,
+        cnpj: cnpj,
+        address: address || "",
         organizationId: session.user.organizationId,
         role: "FORNECEDOR",
         isActive: true,
