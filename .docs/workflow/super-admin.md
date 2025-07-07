@@ -1,0 +1,4 @@
+- Pode listar todas as OM
+- Pode cadastrar as OM com (nome, sigla, descrição, permissão, commimsup (se for depósito))
+- Pode editar as OM.
+- Pode filtrar as OM por nome sliga Comimsup, Permissão, e data de criação.
