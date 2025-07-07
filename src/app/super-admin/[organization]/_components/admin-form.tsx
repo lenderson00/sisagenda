@@ -95,7 +95,13 @@ export function AdminForm({ organizationId }: AdminFormProps) {
           toast.success("Administrador criado com sucesso!");
         },
         onError: (error) => {
-          toast.error("Erro ao criar administrador");
+          if (error.message.includes("User already exists")) {
+            toast.error("Este email já está em uso.");
+          } else {
+            toast.error(
+              "Ocorreu um erro ao criar o administrador. Por favor, tente novamente.",
+            );
+          }
         },
       },
     );

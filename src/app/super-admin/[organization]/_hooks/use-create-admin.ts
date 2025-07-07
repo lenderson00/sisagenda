@@ -23,7 +23,8 @@ async function createAdmin(data: CreateAdminData) {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to create admin");
+    const errorData = await response.text();
+    throw new Error(errorData || "Falha ao criar administrador");
   }
 
   return response.json();
@@ -36,10 +37,6 @@ export function useCreateAdmin() {
     mutationFn: createAdmin,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      toast.success("Administrador criado com sucesso");
-    },
-    onError: () => {
-      toast.error("Falha ao criar administrador");
     },
   });
 }
