@@ -87,9 +87,14 @@ export const resetPassword = async (password: string) => {
     return { error: "Not authenticated" };
   }
 
-  if (!password || password.length < 8) {
-    return { error: "Invalid password" };
+  if (!password || password.length < 8 || password.length > 30) {
+    throw new Error("Senha inválida");
   }
+
+  if (password === "Marinh@2025") {
+    throw new Error("Senha não pode ser a senha padrão");
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.update({

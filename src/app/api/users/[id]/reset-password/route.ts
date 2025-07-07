@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },

@@ -36,9 +36,14 @@ export function useNovaSenhaForm(email: string) {
 
   async function onSubmit(values: NovaSenhaSchema) {
     setLoading(true);
-    await resetPassword(values.password);
-    toast.success("Senha alterada com sucesso!");
-    setLoading(false);
+    try {
+      await resetPassword(values.password);
+      toast.success("Senha alterada com sucesso!");
+      setLoading(false);
+    } catch (error: any) {
+      toast.error(error.message);
+      setLoading(false);
+    }
   }
 
   return { form, onSubmit, loading };
