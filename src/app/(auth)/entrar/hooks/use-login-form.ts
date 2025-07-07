@@ -6,7 +6,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 const loginSchema = z.object({
-  email: z.string().email("Por favor, insira um email válido"),
+  credential: z.string().min(1, "Por favor, insira um NIP ou CNPJ"),
   password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres"),
 });
 
@@ -18,9 +18,9 @@ export function useLoginForm() {
   });
 
   async function onSubmit(values: LoginSchema) {
-    const { email, password } = values;
+    const { credential, password } = values;
     try {
-      const result = await signIn({ email, password });
+      const result = await signIn({ credential, password });
       if (result?.error) {
         toast.error(result.error);
       } else {

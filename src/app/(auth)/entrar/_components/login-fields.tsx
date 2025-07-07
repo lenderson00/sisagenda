@@ -8,6 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import type { UseFormReturn } from "react-hook-form";
 import type { LoginSchema } from "../hooks/use-login-form";
+import { maskCredential, cleanCredential } from "@/utils/maskCredential";
 
 interface LoginFieldsProps {
   form: UseFormReturn<LoginSchema>;
@@ -16,15 +17,21 @@ interface LoginFieldsProps {
 export function LoginFields({ form }: LoginFieldsProps) {
   return (
     <>
-      <FormField control={form.control} name="email">
+      <FormField control={form.control} name="credential">
         {({ field }) => (
           <FormItem>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>NIP ou CNPJ</FormLabel>
             <FormControl>
               <Input
-                placeholder="Digite seu email..."
-                type="email"
-                {...field}
+                placeholder="Digite seu NIP ou CNPJ..."
+                type="text"
+                value={maskCredential(field.value || "")}
+                onChange={(e) => {
+                  const raw = cleanCredential(e.target.value);
+                  field.onChange(raw);
+                }}
+                maxLength={18}
+                autoComplete="username"
               />
             </FormControl>
             <FormMessage />

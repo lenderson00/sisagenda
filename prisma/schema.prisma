@@ -14,15 +14,13 @@ enum UserRole {
   COMIMSUP_ADMIN
   COMRJ_ADMIN
   USER
-  FORNECEDOR
 }
 
 /// Represents a user in the system
 model User {
   id                 String    @id @default(cuid())
   name               String?
-  nip                String?   @unique
-  cpf                String?   @unique
+  nip                String    @unique
   email              String    @unique
   postoGraduacao     String?
   emailVerified      DateTime?
@@ -45,9 +43,6 @@ model User {
 
   lastLogin DateTime?
 
-  address String?
-  cnpj    String?
-
   organizationId            String?
   organization              Organization?              @relation(fields: [organizationId], references: [id])
   PasswordResetToken        PasswordResetToken[]
@@ -59,6 +54,37 @@ model User {
 
   @@index([email])
   @@index([organizationId])
+}
+
+model Supplier {
+  id      String  @id @default(cuid())
+  name    String
+  cnpj    String  @unique
+  address String?
+
+  email         String?
+  emailVerified DateTime?
+
+  auditLogs AuditLog[]
+
+  password           String
+  mustChangePassword Boolean @default(true)
+
+  whatsapp         String?
+  whatsappVerified Boolean @default(false)
+
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  lastLogin DateTime?
+
+  notifications         Notification[]
+  appointments          Appointment[]
+  appointmentActivities AppointmentActivity[]
+
+  @@index([cnpj])
 }
 
 /// Stores email verification tokens
@@ -220,6 +246,8 @@ model Appointment {
   updatedAt    DateTime       @updatedAt
   deletedAt    DateTime?
   Notification Notification[]
+  Supplier     Supplier?      @relation(fields: [supplierId], references: [id])
+  supplierId   String?
 
   @@index([userId])
   @@index([organizationId])
@@ -311,8 +339,10 @@ model AppointmentActivity {
   replies  AppointmentActivity[] @relation("Replies")
 
   // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
+  supplierId String?
 
   // Indexes for better query performance
   @@index([appointmentId])
@@ -416,9 +446,11 @@ model AuditLog {
   newValues Json? // New values after the change
 
   // Metadata
-  status   String? // Success, failure, or other status
-  error    String? // Error message if any
-  metadata Json? // Additional metadata in JSON format
+  status     String? // Success, failure, or other status
+  error      String? // Error message if any
+  metadata   Json? // Additional metadata in JSON format
+  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
+  supplierId String?
 
   @@index([userId])
   @@index([entity])
@@ -531,9 +563,11 @@ model Notification {
   appointment   Appointment? @relation(fields: [appointmentId], references: [id])
 
   // Timestamps
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  readAt    DateTime? // When the notification was read
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  readAt     DateTime? // When the notification was read
+  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
+  supplierId String?
 
   // Indexes for better query performance
   @@index([userId])

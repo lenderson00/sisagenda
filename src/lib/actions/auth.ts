@@ -11,12 +11,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export const baseSignIn = async (credentials: {
-  email: string;
+  credential: string;
   password: string;
 }) => {
   try {
     await signInAction("credentials", {
-      email: credentials.email,
+      credential: credentials.credential,
       password: credentials.password,
       redirect: false,
     });
@@ -29,7 +29,7 @@ export const baseSignIn = async (credentials: {
 };
 
 export const signIn = async (credentials: {
-  email: string;
+  credential: string;
   password: string;
 }) => {
   const result = await baseSignIn(credentials);
@@ -37,9 +37,19 @@ export const signIn = async (credentials: {
     return result;
   }
 
+  if (credentials.credential.length === 14) {
+    const supplier = await prisma.supplier.findUnique({
+      where: { cnpj: credentials.credential },
+    });
+    if (supplier?.mustChangePassword) {
+      redirect("/nova-senha");
+    }
+    redirect("/");
+  }
+
   const user = await prisma.user.findUnique({
     where: {
-      email: credentials.email,
+      email: credentials.credential,
     },
   });
 
@@ -73,7 +83,7 @@ export const signOut = async () => {
 
 export const resetPassword = async (password: string) => {
   const session = await auth();
-  if (!session?.user?.email) {
+  if (!session?.user?.id) {
     return { error: "Not authenticated" };
   }
 
@@ -82,13 +92,14 @@ export const resetPassword = async (password: string) => {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await prisma.user.update({
-    where: { email: session.user.email },
+  const user = await prisma.user.update({
+    where: { id: session.user.id },
     data: { password: hashedPassword, mustChangePassword: false },
+    select: { nip: true },
   });
 
   await signInAction("credentials", {
-    email: session.user.email,
+    credential: user.nip,
     password: password,
     redirect: false,
   });

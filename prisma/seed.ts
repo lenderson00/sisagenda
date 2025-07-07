@@ -2,12 +2,12 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../src/lib/prisma";
 
 async function main() {
-  const email = process.env.SUPER_ADMIN_EMAIL;
+  const nip = process.env.SUPER_ADMIN_NIP;
   const password = process.env.SUPER_ADMIN_PASSWORD;
 
-  if (!email || !password) {
+  if (!nip || !password) {
     throw new Error(
-      "SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD must be set in .env",
+      "SUPER_ADMIN_NIP and SUPER_ADMIN_PASSWORD must be set in .env",
     );
   }
 
@@ -15,7 +15,8 @@ async function main() {
 
   const user = await prisma.user.create({
     data: {
-      email,
+      email: "superadmin@example.com",
+      nip,
       password: hashedPassword,
       role: "SUPER_ADMIN",
       isActive: true,
