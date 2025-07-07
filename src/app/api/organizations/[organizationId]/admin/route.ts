@@ -10,6 +10,7 @@ const createOrganizationAdminSchema = z.object({
   email: z.string().email(),
   postoGraduacao: z.string().min(1, "Posto/Graduacao is required"),
   organizationId: z.string().min(10, "required"),
+  nip: z.string().min(8, "NIP is required"),
 });
 
 const deleteAdminSchema = z.object({
@@ -70,6 +71,7 @@ export async function POST(req: Request) {
       data: {
         name: validatedData.name,
         email: validatedData.email,
+        nip: validatedData.nip,
         password: hashedPassword,
         role: userRole,
         organizationId: validatedData.organizationId,

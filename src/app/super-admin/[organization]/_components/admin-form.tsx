@@ -16,11 +16,19 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateAdmin } from "../_hooks/use-create-admin";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { applyNipMask, isValidNip, removeNipMask } from "@/lib/masks";
+import { useImageUploadValidation } from "@/hooks/use-image-upload-validation";
+import { toast } from "sonner";
 
 const adminFormSchema = z.object({
   name: z.string().min(2, "Mínimo 2 letras"),
   email: z.string().email("Email inválido"),
   postoGraduacao: z.string().min(2, "Mínimo 2 letras"),
+  nip: z.string().refine(isValidNip, {
+    message: "O NIP deve ter 8 dígitos.",
+  }),
+  image: z.string().optional(),
 });
 
 type AdminFormValues = z.infer<typeof adminFormSchema>;
@@ -31,8 +39,18 @@ interface AdminFormProps {
 
 export function AdminForm({ organizationId }: AdminFormProps) {
   const queryClient = useQueryClient();
-
   const createAdmin = useCreateAdmin();
+
+  const {
+    isValidating,
+    validationErrors,
+    validateFormWithImage,
+    clearValidationErrors,
+  } = useImageUploadValidation({
+    onValidationError: (error) => {
+      toast.error(error);
+    },
+  });
 
   const form = useForm<AdminFormValues>({
     resolver: zodResolver(adminFormSchema),
@@ -40,18 +58,44 @@ export function AdminForm({ organizationId }: AdminFormProps) {
       name: "",
       email: "",
       postoGraduacao: "",
+      image: undefined,
+      nip: "",
     },
   });
 
-  function onSubmit(values: AdminFormValues) {
+  // Handler for NIP mask
+  const handleNipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = applyNipMask(e.target.value);
+    form.setValue("nip", masked);
+  };
+
+  // Handler for image upload
+  const handleImageChange = (url: string | null) => {
+    form.setValue("image", url || undefined);
+    // Clear validation errors when image changes
+    clearValidationErrors();
+  };
+
+  async function onSubmit(values: AdminFormValues) {
+    // Validate that the image is uploaded before submitting
+    const isValid = await validateFormWithImage(values.image);
+
+    if (!isValid) {
+      return;
+    }
+
     createAdmin.mutate(
-      { ...values, organizationId },
+      { ...values, organizationId, nip: removeNipMask(values.nip) },
       {
         onSuccess: () => {
           form.reset();
           queryClient.invalidateQueries({
             queryKey: ["admins", organizationId],
           });
+          toast.success("Administrador criado com sucesso!");
+        },
+        onError: (error) => {
+          toast.error("Erro ao criar administrador");
         },
       },
     );
@@ -63,6 +107,30 @@ export function AdminForm({ organizationId }: AdminFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-3 w-full px-4 md:px-0"
       >
+        <div className="flex flex-col items-center mb-2">
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Foto do Admin</FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    value={field.value}
+                    onChange={handleImageChange}
+                    size="lg"
+                  />
+                </FormControl>
+                <FormMessage />
+                {validationErrors.length > 0 && (
+                  <p className="text-sm text-destructive">
+                    {validationErrors[0]}
+                  </p>
+                )}
+              </FormItem>
+            )}
+          />
+        </div>
         <div className="flex flex-col gap-3 md:flex-row">
           <FormField
             control={form.control}
@@ -93,6 +161,25 @@ export function AdminForm({ organizationId }: AdminFormProps) {
         </div>
         <FormField
           control={form.control}
+          name="nip"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>NIP</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="XX.XXXX.XX"
+                  {...field}
+                  value={field.value}
+                  onChange={handleNipChange}
+                  maxLength={10}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
@@ -108,10 +195,12 @@ export function AdminForm({ organizationId }: AdminFormProps) {
         <div className="flex justify-end gap-2 mt-4">
           <Button
             type="submit"
-            disabled={createAdmin.isPending}
+            disabled={createAdmin.isPending || isValidating}
             className="w-full"
           >
-            {createAdmin.isPending ? "Criando..." : "Criar Administrador"}
+            {createAdmin.isPending || isValidating
+              ? "Validando..."
+              : "Criar Administrador"}
           </Button>
         </div>
       </form>

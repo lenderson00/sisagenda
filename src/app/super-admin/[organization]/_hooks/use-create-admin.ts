@@ -6,6 +6,8 @@ type CreateAdminData = {
   email: string;
   postoGraduacao: string;
   organizationId: string;
+  nip: string;
+  image?: string;
 };
 
 async function createAdmin(data: CreateAdminData) {
