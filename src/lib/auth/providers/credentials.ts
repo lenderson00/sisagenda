@@ -67,8 +67,6 @@ export const Credentials: Provider = CredentialsProvider({
 
     const isPasswordValid = await compare(password, user.password);
 
-    console.log(isPasswordValid);
-
     if (!isPasswordValid || !user.isActive) {
       // Handle failed login attempt
       const failedAttempts = (user.failedLoginAttempts || 0) + 1;
