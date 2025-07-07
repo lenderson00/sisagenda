@@ -24,7 +24,7 @@ export const Credentials: Provider = CredentialsProvider({
 
     if (isSupplier) {
       user = await prisma.supplier.findUnique({
-        where: { cnpj: credential },
+        where: { cnpj: credential, isActive: true, deletedAt: null },
         select: {
           id: true,
           email: true,
@@ -33,11 +33,13 @@ export const Credentials: Provider = CredentialsProvider({
           isActive: true,
           createdAt: true,
           mustChangePassword: true,
+          failedLoginAttempts: true,
+          lockoutUntil: true,
         },
       });
     } else {
       user = await prisma.user.findUnique({
-        where: { nip: credential },
+        where: { nip: credential, isActive: true, deletedAt: null },
         select: {
           id: true,
           email: true,
@@ -48,6 +50,8 @@ export const Credentials: Provider = CredentialsProvider({
           role: true,
           organizationId: true,
           mustChangePassword: true,
+          failedLoginAttempts: true,
+          lockoutUntil: true,
         },
       });
     }
@@ -56,12 +60,65 @@ export const Credentials: Provider = CredentialsProvider({
       return null;
     }
 
+    // Account lockout check
+    if (user.lockoutUntil && new Date(user.lockoutUntil) > new Date()) {
+      throw new Error("Account is locked. Please try again later.");
+    }
+
     const isPasswordValid = await compare(password, user.password);
 
     console.log(isPasswordValid);
 
     if (!isPasswordValid || !user.isActive) {
+      // Handle failed login attempt
+      const failedAttempts = (user.failedLoginAttempts || 0) + 1;
+      const lockoutThreshold = 5;
+      const lockoutDurationMinutes = 15;
+      let lockoutUntil = null;
+      if (failedAttempts >= lockoutThreshold) {
+        lockoutUntil = new Date(Date.now() + lockoutDurationMinutes * 60 * 1000);
+      }
+      if (isSupplier) {
+        await prisma.supplier.update({
+          where: { cnpj: credential },
+          data: {
+            failedLoginAttempts: failedAttempts,
+            lockoutUntil,
+          },
+        });
+      } else {
+        await prisma.user.update({
+          where: { nip: credential },
+          data: {
+            failedLoginAttempts: failedAttempts,
+            lockoutUntil,
+          },
+        });
+      }
       throw new Error("Usuário inativo ou senha inválida");
+    }
+
+    // Reset failed attempts and lockout on successful login
+    if (user.failedLoginAttempts > 0 || user.lockoutUntil) {
+      if (isSupplier) {
+        await prisma.supplier.update({
+          where: { cnpj: credential },
+          data: {
+            failedLoginAttempts: 0,
+            lockoutUntil: null,
+            lastLogin: new Date(),
+          },
+        });
+      } else {
+        await prisma.user.update({
+          where: { nip: credential },
+          data: {
+            failedLoginAttempts: 0,
+            lockoutUntil: null,
+            lastLogin: new Date(),
+          },
+        });
+      }
     }
 
     return {
