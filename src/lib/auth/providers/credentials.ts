@@ -14,6 +14,7 @@ interface UserData {
   id: string;
   email: string | null;
   name: string | null;
+  image: string | null;
   password: string;
   isActive: boolean;
   createdAt: Date;
@@ -26,12 +27,12 @@ interface UserData {
 
 interface AuthResult {
   id: string;
-  email: string | null;
-  name: string | null;
+  email?: string | null;
+  name?: string | null;
+  image?: string;
   role: string;
-  createdAt: Date;
   organizationId?: string;
-  mustChangePassword: boolean;
+  mustChangePassword?: boolean;
 }
 
 // Constants
@@ -71,7 +72,7 @@ const findSupplierByCnpj = async (cnpj: string): Promise<UserData | null> => {
       lockoutUntil: true,
     },
   });
-  return supplier;
+  return supplier ? { ...supplier, image: null } : null;
 };
 
 const findUserByNip = async (nip: string): Promise<UserData | null> => {
@@ -81,6 +82,7 @@ const findUserByNip = async (nip: string): Promise<UserData | null> => {
       id: true,
       email: true,
       name: true,
+      image: true,
       password: true,
       isActive: true,
       createdAt: true,
@@ -97,7 +99,7 @@ const findUserByNip = async (nip: string): Promise<UserData | null> => {
 const updateSupplierLoginAttempts = async (
   cnpj: string,
   failedAttempts: number,
-  lockoutUntil: Date | null
+  lockoutUntil: Date | null,
 ): Promise<void> => {
   await prisma.supplier.update({
     where: { cnpj },
@@ -111,7 +113,7 @@ const updateSupplierLoginAttempts = async (
 const updateUserLoginAttempts = async (
   nip: string,
   failedAttempts: number,
-  lockoutUntil: Date | null
+  lockoutUntil: Date | null,
 ): Promise<void> => {
   await prisma.user.update({
     where: { nip },
@@ -145,7 +147,9 @@ const resetUserLoginAttempts = async (nip: string): Promise<void> => {
 };
 
 // Authentication logic
-const findUserByCredential = async (credential: string): Promise<UserData | null> => {
+const findUserByCredential = async (
+  credential: string,
+): Promise<UserData | null> => {
   if (isSupplierCredential(credential)) {
     return await findSupplierByCnpj(credential);
   }
@@ -155,7 +159,7 @@ const findUserByCredential = async (credential: string): Promise<UserData | null
 const handleFailedLogin = async (
   credential: string,
   user: UserData,
-  isSupplier: boolean
+  isSupplier: boolean,
 ): Promise<void> => {
   const failedAttempts = (user.failedLoginAttempts || 0) + 1;
   const lockoutUntil = calculateLockoutUntil(failedAttempts);
@@ -170,7 +174,7 @@ const handleFailedLogin = async (
 const resetLoginAttempts = async (
   credential: string,
   user: UserData,
-  isSupplier: boolean
+  isSupplier: boolean,
 ): Promise<void> => {
   if ((user.failedLoginAttempts || 0) > 0 || user.lockoutUntil) {
     if (isSupplier) {
@@ -183,7 +187,7 @@ const resetLoginAttempts = async (
 
 const validateCredentials = async (
   password: string,
-  user: UserData
+  user: UserData,
 ): Promise<boolean> => {
   const isPasswordValid = await compare(password, user.password);
   return isPasswordValid && user.isActive;
@@ -193,13 +197,19 @@ const buildAuthResult = (user: UserData): AuthResult => {
   return {
     id: user.id,
     email: user.email,
+    image: user.image || undefined,
     name: user.name,
-    role: "role" in user && typeof user.role === "string" ? user.role : "FORNECEDOR",
-    createdAt: user.createdAt,
+    role:
+      "role" in user && typeof user.role === "string"
+        ? user.role
+        : "FORNECEDOR",
     organizationId:
-      "organizationId" in user && user.organizationId ? user.organizationId : undefined,
+      "organizationId" in user && user.organizationId
+        ? user.organizationId
+        : undefined,
     mustChangePassword:
-      "mustChangePassword" in user && typeof user.mustChangePassword === "boolean"
+      "mustChangePassword" in user &&
+      typeof user.mustChangePassword === "boolean"
         ? user.mustChangePassword
         : false,
   };
@@ -237,7 +247,11 @@ const authorizeUser = async (credentials: any): Promise<AuthResult | null> => {
 export const Credentials: Provider = CredentialsProvider({
   name: "Credentials",
   credentials: {
-    credential: { label: "Credencial", type: "text", placeholder: "NIP ou CNPJ" },
+    credential: {
+      label: "Credencial",
+      type: "text",
+      placeholder: "NIP ou CNPJ",
+    },
     password: { label: "Senha", type: "password", placeholder: "**********" },
   },
   authorize: authorizeUser,

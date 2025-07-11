@@ -35,9 +35,15 @@ import { Skeleton } from "./ui/skeleton";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user, isLoading } = useUser();
+  const { user, isLoading, isAuthenticated } = useUser();
 
+  // Show skeleton while loading
   if (isLoading) {
+    return <Skeleton className="h-12 w-full" />;
+  }
+
+  // Show fallback if no user data but should be authenticated
+  if (!user && !isAuthenticated) {
     return <Skeleton className="h-12 w-full" />;
   }
 
@@ -62,12 +68,14 @@ export function NavUser() {
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
                 <AvatarFallback className="rounded-lg">
-                  {getTwoFirstLetters(user?.name || "")}
+                  {getTwoFirstLetters(user?.name || "U")}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user?.name}</span>
-                <span className="truncate text-xs">{user?.email}</span>
+                <span className="truncate font-medium">
+                  {user?.name || "Usuário"}
+                </span>
+                <span className="truncate text-xs">{user?.email || ""}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -83,12 +91,14 @@ export function NavUser() {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
                   <AvatarFallback className="rounded-lg">
-                    {getTwoFirstLetters(user?.name || "")}
+                    {getTwoFirstLetters(user?.name || "U")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user?.name}</span>
-                  <span className="truncate text-xs">{user?.email}</span>
+                  <span className="truncate font-medium">
+                    {user?.name || "Usuário"}
+                  </span>
+                  <span className="truncate text-xs">{user?.email || ""}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

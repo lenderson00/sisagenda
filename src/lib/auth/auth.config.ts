@@ -16,20 +16,21 @@ export const authOptions: NextAuthConfig = {
         token.role = u.role;
         token.organizationId = u.organizationId;
         token.mustChangePassword = u.mustChangePassword;
+        token.image = u.image;
       }
       return token;
     },
     session: async ({ session, token }) => {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string | undefined;
-        session.user.organizationId = token.organizationId as
-          | string
-          | undefined;
-        session.user.mustChangePassword = token.mustChangePassword as
-          | boolean
-          | undefined;
+        session.user.id = String(token.id);
+        session.user.role = token.role ? String(token.role) : "";
+        session.user.image = token.image as string;
+        session.user.organizationId = token.organizationId
+          ? String(token.organizationId)
+          : "";
+        session.user.mustChangePassword = Boolean(token.mustChangePassword);
       }
+
       return session;
     },
   },
