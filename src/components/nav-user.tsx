@@ -35,9 +35,9 @@ import { Skeleton } from "./ui/skeleton";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
 
-  if (!user) {
+  if (isLoading) {
     return <Skeleton className="h-12 w-full" />;
   }
 
