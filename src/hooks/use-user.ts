@@ -19,10 +19,10 @@ export const useUser = () => {
       }, 3000); // 3 seconds timeout
 
       return () => clearTimeout(timer);
-    } else {
-      setIsLoadingWithTimeout(false);
-      setHasTimedOut(false);
     }
+
+    setIsLoadingWithTimeout(false);
+    setHasTimedOut(false);
   }, [sessionStatus]);
 
   // Determine loading state:
@@ -36,17 +36,6 @@ export const useUser = () => {
   const isAuthenticated =
     sessionStatus === "authenticated" ||
     (session !== null && session !== undefined && !hasTimedOut);
-
-  console.log(
-    "Session status:",
-    sessionStatus,
-    "Session:",
-    !!session,
-    "IsLoading:",
-    isLoading,
-    "HasTimedOut:",
-    hasTimedOut,
-  );
 
   return {
     user: session?.user || null,
