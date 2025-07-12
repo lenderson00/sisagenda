@@ -1,12 +1,13 @@
 import { PageHeader } from "@/components/page-header";
+import { StatsCard } from "@/components/dashboard/stats-card";
+import { AppointmentsTable } from "@/components/dashboard/appointments-table";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Building2, Users, Calendar } from "lucide-react";
 import {
-  IconBuildingCommunity,
-  IconUsers,
-  IconCalendar,
-} from "@tabler/icons-react";
+  getComrjDashboardData,
+  getComrjDashboardAppointments,
+} from "@/lib/services/comrj-dashboard-service";
 
 export default async function ComrjDashboardPage() {
   const session = await auth();
@@ -19,55 +20,43 @@ export default async function ComrjDashboardPage() {
     redirect("/");
   }
 
+  const { totalOrganizations, totalSuppliers, futureAppointments } =
+    await getComrjDashboardData();
+  const appointments = await getComrjDashboardAppointments();
+
   return (
     <>
       <PageHeader
-        title="Dashboard"
+        title="Dashboard COMRJ"
         subtitle="Visão geral das suas organizações e atividades"
       />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Organizações Gerenciadas
-            </CardTitle>
-            <IconBuildingCommunity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">10</div>
-            <p className="text-xs text-muted-foreground">
-              Total de organizações
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Fornecedores
-            </CardTitle>
-            <IconUsers className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">25</div>
-            <p className="text-xs text-muted-foreground">
-              Total de fornecedores cadastrados
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Agendamentos Futuros
-            </CardTitle>
-            <IconCalendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">5</div>
-            <p className="text-xs text-muted-foreground">
-              Agendamentos para os próximos 7 dias
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex flex-col gap-4 px-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <StatsCard
+            title="Organizações Gerenciadas"
+            value={totalOrganizations}
+            icon={Building2}
+            description="Total de organizações"
+          />
+          <StatsCard
+            title="Total de Fornecedores"
+            value={totalSuppliers}
+            icon={Users}
+            description="Total de fornecedores cadastrados"
+          />
+          <StatsCard
+            title="Agendamentos Futuros"
+            value={futureAppointments}
+            icon={Calendar}
+            description="Agendamentos para os próximos 7 dias"
+          />
+        </div>
+
+        <AppointmentsTable
+          todayAppointments={appointments.today}
+          tomorrowAppointments={appointments.tomorrow}
+          weekAppointments={appointments.week}
+        />
       </div>
     </>
   );
