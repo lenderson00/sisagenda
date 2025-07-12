@@ -20,11 +20,7 @@ type AppointmentWithRelations = Appointment & {
   };
 };
 
-interface AgendaPageClientProps {
-  organizationId: string;
-}
-
-export function AgendaPageClient({ organizationId }: AgendaPageClientProps) {
+export function AgendaPageClient() {
   const { viewMode } = useSupplierView();
   const { data: appointments = [], isLoading } = useAppointments();
 

@@ -86,6 +86,7 @@ export const resetPassword = async (password: string) => {
   if (!session?.user?.id) {
     return { error: "Not authenticated" };
   }
+  const isSupplier = session.user.role === "FORNECEDOR";
 
   if (!password || password.length < 8 || password.length > 30) {
     throw new Error("Senha inválida");
@@ -97,14 +98,25 @@ export const resetPassword = async (password: string) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await prisma.user.update({
-    where: { id: session.user.id },
-    data: { password: hashedPassword, mustChangePassword: false },
-    select: { nip: true },
-  });
+  let credential: string;
+  if (isSupplier) {
+    const user = await prisma.supplier.update({
+      where: { id: session.user.id },
+      data: { password: hashedPassword, mustChangePassword: false },
+      select: { cnpj: true },
+    });
+    credential = user.cnpj;
+  } else {
+    const user = await prisma.user.update({
+      where: { id: session.user.id },
+      data: { password: hashedPassword, mustChangePassword: false },
+      select: { nip: true },
+    });
+    credential = user.nip;
+  }
 
   await signInAction("credentials", {
-    credential: user.nip,
+    credential,
     password: password,
     redirect: false,
   });

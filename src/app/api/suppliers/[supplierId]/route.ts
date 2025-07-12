@@ -48,16 +48,15 @@ export async function PUT(
       return new NextResponse("Supplier ID is required", { status: 400 });
     }
 
-    const supplier = await prisma.user.update({
+    const supplier = await prisma.supplier.update({
       where: {
         id: supplierId,
-        role: "FORNECEDOR",
       },
       data: {
         name,
         email,
         whatsapp: phone,
-        cnpj: cnpj || null,
+        cnpj: cnpj || undefined,
         address: address || "",
       },
     });
@@ -71,7 +70,7 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ supplierId: string }> },
+  { params }: { params: { supplierId: string } },
 ) {
   try {
     const session = await auth();
@@ -84,16 +83,12 @@ export async function DELETE(
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    const { supplierId } = await params;
-
-    if (!supplierId) {
-      return new NextResponse("Supplier ID is required", { status: 400 });
-    }
-
-    const supplier = await prisma.user.delete({
+    const supplier = await prisma.supplier.update({
       where: {
-        id: supplierId,
-        role: "FORNECEDOR",
+        id: params.supplierId,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
 
@@ -104,7 +99,7 @@ export async function DELETE(
   }
 }
 
-const updateSupplierSchema = z.object({
+const patchSupplierSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").optional(),
   email: z.string().email("Email inválido").optional(),
   whatsapp: z.string().min(1, "Telefone é obrigatório").optional(),
@@ -128,7 +123,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const validatedBody = updateSupplierSchema.safeParse(body);
+    const validatedBody = patchSupplierSchema.safeParse(body);
 
     if (!validatedBody.success) {
       return new NextResponse("Invalid body", { status: 400 });

@@ -14,10 +14,10 @@ function getYearsRange(startYear: number): number[] {
   );
 }
 
-async function getSupplierDashboard(userId: string, year: number) {
+async function getSupplierDashboard(supplierId: string, year: number) {
   // Fetch supplier info
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
+  const supplier = await prisma.supplier.findUnique({
+    where: { id: supplierId },
     select: {
       id: true,
       name: true,
@@ -25,14 +25,14 @@ async function getSupplierDashboard(userId: string, year: number) {
       whatsapp: true,
       cnpj: true,
       address: true,
-      image: true,
       createdAt: true,
     },
   });
+
   // Fetch all appointments for this supplier in the selected year
   const appointments = await prisma.appointment.findMany({
     where: {
-      userId,
+      supplierId,
       date: {
         gte: new Date(`${year}-01-01T00:00:00.000Z`),
         lte: new Date(`${year}-12-31T23:59:59.999Z`),
@@ -44,8 +44,10 @@ async function getSupplierDashboard(userId: string, year: number) {
     },
     orderBy: { date: "desc" },
   });
+
   // Stats
   const stats = calculateStats(appointments);
+
   // Activity calendar data
   const activityData = appointments.reduce(
     (acc, apt) => {
@@ -74,6 +76,7 @@ async function getSupplierDashboard(userId: string, year: number) {
       },
     ];
   }
+
   // Pie chart data by status
   const statusCounts: Record<string, number> = {};
   for (const apt of appointments) {
@@ -83,6 +86,7 @@ async function getSupplierDashboard(userId: string, year: number) {
     name: getStatusLabel(status as AppointmentStatus),
     value,
   }));
+
   // Bar chart data by month
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const barData = months.map((month) => {
@@ -92,7 +96,8 @@ async function getSupplierDashboard(userId: string, year: number) {
     ).length;
     return { month: format(new Date(`${year}-${monthStr}-01`), "MMM"), count };
   });
-  return { user, appointments, stats, activity, pieData, barData };
+
+  return { user: supplier, appointments, stats, activity, pieData, barData };
 }
 
 export default async function Page({
@@ -104,21 +109,24 @@ export default async function Page({
   if (!session?.user?.id || session.user.role !== "FORNECEDOR") {
     redirect("/entrar");
   }
+
   // Get supplier info for years
-  const user = await prisma.user.findUnique({
+  const supplier = await prisma.supplier.findUnique({
     where: { id: session.user.id },
     select: { createdAt: true },
   });
+
   const searchParamsResolved = await searchParams;
-  const startYear = user?.createdAt
-    ? new Date(user.createdAt).getFullYear()
+  const startYear = supplier?.createdAt
+    ? new Date(supplier.createdAt).getFullYear()
     : new Date().getFullYear();
   const years = getYearsRange(startYear);
   const selectedYear = searchParamsResolved?.year
     ? Number.parseInt(searchParamsResolved.year)
     : years[years.length - 1];
+
   const {
-    user: supplier,
+    user: supplierData,
     appointments,
     stats,
     activity,
@@ -128,7 +136,7 @@ export default async function Page({
 
   return (
     <DashboardClient
-      supplier={supplier}
+      supplier={supplierData}
       appointments={appointments}
       stats={stats}
       activity={activity}

@@ -21,11 +21,10 @@ export async function GET(req: Request) {
       return new NextResponse("CNPJ is required", { status: 400 });
     }
 
-    // Search for supplier by CNPJ across all organizations
-    const supplier = await prisma.user.findFirst({
+    // Search for supplier by CNPJ
+    const supplier = await prisma.supplier.findFirst({
       where: {
         cnpj: cnpj,
-        role: "FORNECEDOR",
         deletedAt: null,
       },
       select: {
@@ -36,13 +35,6 @@ export async function GET(req: Request) {
         cnpj: true,
         address: true,
         isActive: true,
-        organization: {
-          select: {
-            id: true,
-            name: true,
-            sigla: true,
-          },
-        },
       },
     });
 
@@ -59,7 +51,6 @@ export async function GET(req: Request) {
       cnpj: supplier.cnpj,
       address: supplier.address,
       isActive: supplier.isActive,
-      organization: supplier.organization,
     };
 
     return NextResponse.json(transformedSupplier);

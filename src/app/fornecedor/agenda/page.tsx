@@ -27,15 +27,9 @@ export default async function AgendaPage() {
     redirect("/");
   }
 
-  const orgId = session.user.organizationId;
-
-  if (!orgId) {
-    redirect("/");
-  }
-
   return (
     <>
-      <AgendaPageClient organizationId={orgId} />
+      <AgendaPageClient />
     </>
   );
 }

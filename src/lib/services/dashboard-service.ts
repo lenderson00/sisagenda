@@ -60,11 +60,10 @@ export async function getDashboardData(organizationId: string) {
 }
 
 export async function getSupplierPerformance(organizationId: string) {
-  const suppliers = await prisma.user.findMany({
+  const suppliers = await prisma.supplier.findMany({
     where: {
-      organizationId,
       isActive: true,
-      role: UserRole.FORNECEDOR,
+      deletedAt: null,
     },
     include: {
       appointments: {

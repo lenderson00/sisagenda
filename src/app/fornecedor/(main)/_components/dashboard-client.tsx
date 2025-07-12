@@ -60,10 +60,10 @@ interface DashboardStats {
 
 interface DashboardClientProps {
   supplier: {
-    name: string | null;
-    email: string;
+    name: string;
+    email: string | null;
     whatsapp: string | null;
-    cnpj: string | null;
+    cnpj: string;
     address: string | null;
     createdAt: Date;
   } | null;
@@ -127,13 +127,13 @@ export default function DashboardClient({
                   <b>Name:</b> {supplier?.name}
                 </div>
                 <div>
-                  <b>Email:</b> {supplier?.email}
+                  <b>Email:</b> {supplier?.email || "-"}
                 </div>
                 <div>
                   <b>WhatsApp:</b> {supplier?.whatsapp || "-"}
                 </div>
                 <div>
-                  <b>CNPJ:</b> {supplier?.cnpj || "-"}
+                  <b>CNPJ:</b> {supplier?.cnpj}
                 </div>
                 <div>
                   <b>Address:</b> {supplier?.address || "-"}

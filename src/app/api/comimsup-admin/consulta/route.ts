@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
               },
             }),
             ...(filters.supplier && {
-              user: {
+              Supplier: {
                 name: { contains: filters.supplier, mode: "insensitive" },
               },
             }),
@@ -75,6 +75,9 @@ export async function POST(request: NextRequest) {
           },
           include: {
             user: {
+              select: { name: true, email: true },
+            },
+            Supplier: {
               select: { name: true, email: true },
             },
             organization: {

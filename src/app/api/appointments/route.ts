@@ -39,14 +39,14 @@ const createAppointmentInput = z.object({
 
 const buildWhere = (
   tab: string,
-  role?: UserRole,
+  role?: string,
   userId?: string,
 ): Prisma.AppointmentWhereInput => {
   let where: Prisma.AppointmentWhereInput = {};
 
   if (role === "FORNECEDOR") {
     where = {
-      userId,
+      supplierId: userId,
     };
   }
 
@@ -104,27 +104,29 @@ export async function GET(req: NextRequest) {
 
   const where = buildWhere(tab, session.user.role as UserRole, session.user.id);
 
-  if (!session.user.organizationId) {
+  if (!fornecedor && !session.user.organizationId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const organization = await prisma.organization.findUnique({
-    where: {
-      id: session.user.organizationId,
-    },
-  });
+  if (!fornecedor) {
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: session.user.organizationId,
+      },
+    });
 
-  if (!organization) {
-    return NextResponse.json(
-      { error: "Organization not found" },
-      { status: 404 },
-    );
+    if (!organization) {
+      return NextResponse.json(
+        { error: "Organization not found" },
+        { status: 404 },
+      );
+    }
   }
 
   const finalWhere = hasTab
     ? where
     : fornecedor
-      ? { userId: session.user.id }
+      ? { supplierId: session.user.id }
       : {};
 
   try {
@@ -137,6 +139,7 @@ export async function GET(req: NextRequest) {
         deliveryType: true,
         organization: true,
         user: true,
+        Supplier: true,
         items: true,
         attachments: true,
       },
@@ -164,7 +167,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   const session = await auth();
 
-  if (!session || !session.user.email) {
+  if (!session || !session.user.id) {
     return new Response(JSON.stringify({ error: "Usuário não autenticado." }), {
       status: 401,
     });
@@ -191,17 +194,36 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email,
-      },
-    });
+    const isSupplier = session.user.role === "FORNECEDOR";
+    let user: any = null;
+    let supplier: any = null;
 
-    if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Usuário não encontrado." }),
-        { status: 404 },
-      );
+    if (isSupplier) {
+      supplier = await prisma.supplier.findUnique({
+        where: {
+          id: session.user.id,
+        },
+      });
+
+      if (!supplier) {
+        return new Response(
+          JSON.stringify({ error: "Fornecedor não encontrado." }),
+          { status: 404 },
+        );
+      }
+    } else {
+      user = await prisma.user.findUnique({
+        where: {
+          id: session.user.id,
+        },
+      });
+
+      if (!user) {
+        return new Response(
+          JSON.stringify({ error: "Usuário não encontrado." }),
+          { status: 404 },
+        );
+      }
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -210,7 +232,8 @@ export async function POST(req: Request) {
           ...rest,
           date: new Date(dateTime),
           duration: deliveryType.duration,
-          userId: user.id,
+          userId: user?.id,
+          supplierId: supplier?.id,
           status: "PENDING_CONFIRMATION",
           internalId: await generateInternalId(),
           items: {
@@ -232,7 +255,8 @@ export async function POST(req: Request) {
       await tx.appointmentActivity.create({
         data: {
           appointmentId: appointment.id,
-          userId: user.id,
+          userId: user?.id,
+          supplierId: supplier?.id,
           type: "CREATED",
           title: "Agendamento Criado",
           content: "Agendamento criado com sucesso.",
@@ -246,11 +270,14 @@ export async function POST(req: Request) {
     });
 
     // Notify OM users
-    await AppointmentService.notifyAppointmentCreated(
-      result.id,
-      result.organizationId,
-      result.userId,
-    );
+    const createdById = result.userId || result.supplierId;
+    if (createdById) {
+      await AppointmentService.notifyAppointmentCreated(
+        result.id,
+        result.organizationId,
+        createdById,
+      );
+    }
 
     return new Response(JSON.stringify(result), { status: 201 });
   } catch (error) {

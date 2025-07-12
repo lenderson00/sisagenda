@@ -23,10 +23,9 @@ export async function PUT(
       return new NextResponse("Supplier ID is required", { status: 400 });
     }
 
-    const supplier = await prisma.user.update({
+    const supplier = await prisma.supplier.update({
       where: {
         id: supplierId,
-        role: "FORNECEDOR",
       },
       data: {
         isActive: true,
