@@ -126,13 +126,15 @@ export default auth(async (req: NextAuthRequest) => {
     switch (role) {
       case UserRole.SUPER_ADMIN:
         return NextResponse.rewrite(new URL("/super-admin", nextUrl));
-      case UserRole.COMIMSUP_ADMIN || UserRole.COMRJ_ADMIN:
+      case UserRole.COMIMSUP_ADMIN:
         return NextResponse.rewrite(new URL("/comimsup-admin", nextUrl));
       case UserRole.ADMIN:
         return NextResponse.rewrite(new URL("/admin", nextUrl));
       case UserRole.USER:
         return NextResponse.rewrite(new URL("/user", nextUrl));
-      case UserRole.FORNECEDOR:
+      case UserRole.COMRJ_ADMIN:
+        return NextResponse.rewrite(new URL("/comrj-admin", nextUrl));
+      case "FORNECEDOR":
         return NextResponse.rewrite(new URL("/fornecedor", nextUrl));
     }
   }

@@ -21,18 +21,21 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
-    const organizationId = searchParams.get("organizationId");
+    const search = searchParams.get("search");
 
-    if (!organizationId) {
-      return new NextResponse("Organization ID is required", { status: 400 });
-    }
+    const where = {
+      deletedAt: null,
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { cnpj: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+        ],
+      }),
+    };
 
-    const suppliers = await prisma.user.findMany({
-      where: {
-        organizationId,
-        role: "FORNECEDOR",
-        deletedAt: null,
-      },
+    const suppliers = await prisma.supplier.findMany({
+      where: where as any,
       orderBy: {
         createdAt: "desc",
       },
@@ -53,7 +56,11 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
+    if (
+      session.user.role !== "ADMIN" &&
+      session.user.role !== "SUPER_ADMIN" &&
+      session.user.role !== "COMRJ_ADMIN"
+    ) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
@@ -67,43 +74,28 @@ export async function POST(req: Request) {
     const { name, email, phone, cnpj, address } = validatedBody.data;
 
     // Check if a supplier with this CNPJ already exists globally
-    const existingSupplier = await prisma.user.findFirst({
+    const existingSupplier = await prisma.supplier.findFirst({
       where: {
         cnpj: cnpj,
-        role: "FORNECEDOR",
         deletedAt: null,
       },
     });
 
     if (existingSupplier) {
-      return new NextResponse("A supplier with this CNPJ already exists", { status: 409 });
-    }
-
-    // Check if email is already in use
-    const existingEmail = await prisma.user.findFirst({
-      where: {
-        email: email,
-        deletedAt: null,
-      },
-    });
-
-    if (existingEmail) {
-      return new NextResponse("A user with this email already exists", { status: 409 });
+      return new NextResponse("A supplier with this CNPJ already exists", {
+        status: 409,
+      });
     }
 
     const hashedPassword = await hash("Fornecedor@2025", 10);
 
-    // Create the supplier for the current organization
-    const supplier = await prisma.user.create({
+    const supplier = await prisma.supplier.create({
       data: {
-        name: name,
-        email: email,
+        name,
+        email,
         whatsapp: phone,
-        cnpj: cnpj,
+        cnpj,
         address: address || "",
-        organizationId: session.user.organizationId,
-        role: "FORNECEDOR",
-        isActive: true,
         password: hashedPassword,
         mustChangePassword: true,
       },

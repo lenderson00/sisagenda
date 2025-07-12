@@ -38,12 +38,6 @@ export const mainMenuItems = [
     icon: IconUsers,
   },
   {
-    name: "Fornecedores",
-    url: "/fornecedores",
-    icon: IconBuilding,
-  },
-
-  {
     name: "Configurações",
     url: "/configuracoes",
     icon: IconSettings,
