@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { OrganizationsPageClient } from "./page-client";
 
-export default async function OrganizacoesPage() {
+export default async function DepositosPage() {
   const session = await auth();
 
   if (!session) {
@@ -23,9 +23,9 @@ export default async function OrganizacoesPage() {
   return (
     <>
       <PageHeader
-        title="Organizações"
-        subtitle="Gerencie as organizações e suas informações"
-      ></PageHeader>
+        title="Depósitos"
+        subtitle="Visualize os depósitos e suas estatísticas de agendamentos"
+      />
       <OrganizationsPageClient />
     </>
   );

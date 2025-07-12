@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { organizationKeys } from "./organization-keys";
-import { Organization } from "@prisma/client";
+import type { OrganizationWithStats } from "../_components/columns";
 
 export function useOrganizations() {
-  return useQuery<Organization[]>({
-    queryKey: organizationKeys.list("all"),
+  return useQuery<OrganizationWithStats[]>({
+    queryKey: organizationKeys.list("deposits"),
     queryFn: async () => {
-      const response = await fetch(`/api/comimsup-admin/organizations`);
+      const response = await fetch("/api/comimsup-admin/organizations");
       if (!response.ok) {
-        throw new Error("Failed to fetch organizations");
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to fetch organizations");
       }
       return response.json();
     },
