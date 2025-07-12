@@ -1,6 +1,7 @@
 import { createSafeActionClient } from "next-safe-action";
 import { auth } from "./auth";
 import { prisma } from "./prisma";
+import { z } from "zod";
 
 export const actionClient = createSafeActionClient({
   handleServerError: (error) => {
@@ -12,7 +13,13 @@ export const actionClient = createSafeActionClient({
 
     return "An unexpected error occurred";
   },
+  defineMetadataSchema() {
+    return z.object({
+      action: z.string(),
+    });
+  },
 });
+
 
 export const superAdminActionClient = actionClient.use(async ({ next }) => {
   const session = await auth();
@@ -69,7 +76,6 @@ export const adminActionClient = actionClient.use(async ({ next }) => {
     },
   });
 });
-
 
 export const comimsupAdminActionClient = actionClient.use(async ({ next }) => {
   const session = await auth();
