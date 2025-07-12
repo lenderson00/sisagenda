@@ -54,9 +54,15 @@ export function ActionsProvider({
   const allowedActions = useMemo<AllowedActions>(() => {
     const actions: AllowedActions = { ...defaultAllowedActions };
     if (!session?.user || !appointment) return actions;
+
     const { user } = session;
-    const { status, date } = appointment;
-    if (user.role === "ADMIN") {
+    const { status, date, creator } = appointment;
+
+    const isUserAdmin = user.role === "ADMIN";
+    const isUserRegular = user.role === "USER";
+    const isSupplier = !!session.user.id;
+
+    if (isUserAdmin) {
       switch (status) {
         case "PENDING_CONFIRMATION":
           actions.canApprove = true;
@@ -75,13 +81,13 @@ export function ActionsProvider({
             actions.canMarkAsNoShow = true;
             actions.canMarkAsCompleted = true;
           }
-
           break;
         default:
           break;
       }
     }
-    if (user.role === "FORNECEDOR") {
+
+    if (isSupplier) {
       if (status === "PENDING_CONFIRMATION") {
         actions.canEdit = true;
       }
@@ -91,7 +97,7 @@ export function ActionsProvider({
       }
     }
 
-    if (user.role === "USER") {
+    if (isUserRegular) {
       switch (status) {
         case "CONFIRMED":
           if (new Date(date) < new Date()) {

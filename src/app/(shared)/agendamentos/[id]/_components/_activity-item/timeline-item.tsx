@@ -48,7 +48,7 @@ export function TimelineItem({
         <div className="min-w-0 flex-1 py-1.5">
           <div className="text-sm ">
             <span className="font-bold ">
-              {isSystem ? "Sistema" : activity.user.name}
+              {isSystem ? "Sistema" : activity.user?.name}
             </span>{" "}
             {children}
             <span className="whitespace-nowrap">

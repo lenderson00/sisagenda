@@ -100,7 +100,7 @@ export function AppointmentDetailsCard({
                 <div>
                   <p className="font-medium text-foreground">Cliente</p>
                   <p className="text-muted-foreground">
-                    {appointment.user.name}
+                    {appointment.creator?.name ?? "Não identificado"}
                   </p>
                 </div>
               </div>
@@ -110,7 +110,8 @@ export function AppointmentDetailsCard({
                 <div>
                   <p className="font-medium text-foreground">Endereço</p>
                   <p className="text-muted-foreground">
-                    {appointment.user.address || "Endereço não informado"}
+                    {(appointment.creator as any)?.address ||
+                      "Endereço não informado"}
                   </p>
                 </div>
               </div>

@@ -4,12 +4,14 @@ const appointmentWithRelations =
   Prisma.validator<Prisma.AppointmentDefaultArgs>()({
     include: {
       deliveryType: true,
-      user: true,
+      User: true,
+      Supplier: true,
       items: true,
       attachments: true,
       activities: {
         include: {
           user: true,
+          supplier: true,
         },
       },
     },
@@ -26,4 +28,7 @@ export type AppointmentWithRelationsAndStringPrice = Omit<
   items: (Omit<AppointmentWithRelations["items"][number], "price"> & {
     price: string;
   })[];
+  creator:
+  | AppointmentWithRelations["User"]
+  | AppointmentWithRelations["Supplier"];
 };

@@ -14,10 +14,6 @@ interface AppointmentPageProps {
 async function getAppointment(id: string) {
   const session = await auth();
 
-  if (!session?.user?.id || !session?.user?.role) {
-    return null;
-  }
-
   const appointment = await prisma.appointment.findUnique({
     where: {
       id,
@@ -25,18 +21,22 @@ async function getAppointment(id: string) {
     },
     include: {
       deliveryType: true,
-      user: true,
+      User: true,
+      Supplier: true,
       items: true,
       attachments: true,
       activities: {
         include: {
           user: true,
+          supplier: true,
           replies: {
             include: {
               user: true,
+              supplier: true,
               replies: {
                 include: {
                   user: true,
+                  supplier: true,
                 },
               },
             },
@@ -53,21 +53,27 @@ async function getAppointment(id: string) {
     notFound();
   }
 
+  if (!session?.user?.id || !session?.user?.role) {
+    console.log("No session user");
+    return null;
+  }
+
   const { user } = session;
   const userRole = user.role;
+  const isSupplier = user.role === "FORNECEDOR";
 
-  if (userRole === "SUPER_ADMIN" || userRole === "COMIMSUP") {
+  if (userRole === "SUPER_ADMIN" || userRole === "COMIMSUP_ADMIN") {
     return appointment;
   }
 
-  if (userRole === "FORNECEDOR") {
-    if (appointment.userId === user.id) {
+  if (isSupplier) {
+    if (appointment.supplierId === user.id) {
       return appointment;
     }
   }
 
   if (userRole === "ADMIN" || userRole === "USER") {
-    if (appointment.deliveryType.organizationId === user.organizationId) {
+    if (appointment.organizationId === user.organizationId) {
       return appointment;
     }
   }
@@ -82,12 +88,15 @@ export default async function AppointmentPage({
   const session = await auth();
   const appointment = await getAppointment(id);
 
-  if (!appointment || !session?.user) {
+  if (!appointment) {
     notFound();
   }
 
+  const creator = appointment.User ?? appointment.Supplier;
+
   const plainAppointment = {
     ...appointment,
+    creator,
     items: appointment.items.map((item) => ({
       ...item,
       price: item.price.toString(),
@@ -105,7 +114,7 @@ export default async function AppointmentPage({
               appointment.activities as AppointmentActivityWithRelations[]
             }
             currentUser={{
-              name: session.user.name || "Usuário",
+              name: session?.user?.name ?? "Usuário",
             }}
           />
         </div>

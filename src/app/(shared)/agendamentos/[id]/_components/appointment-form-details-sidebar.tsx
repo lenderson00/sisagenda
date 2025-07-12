@@ -42,42 +42,42 @@ export function AppointmentFormDetailsSidebar({
             <div>
               <p className="text-sm font-medium text-foreground">Nome</p>
               <p className="text-sm text-muted-foreground">
-                {appointment.user.name}
+                {appointment.creator?.name ?? "Não identificado"}
               </p>
             </div>
           </div>
 
-          {appointment.user.email && (
+          {appointment.creator?.email && (
             <div className="flex items-start gap-3">
               <Mail className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
                 <p className="text-sm font-medium text-foreground">Email</p>
                 <p className="text-sm text-muted-foreground">
-                  {appointment.user.email}
+                  {appointment.creator.email}
                 </p>
               </div>
             </div>
           )}
 
-          {appointment.user.whatsapp && (
+          {(appointment.creator as any)?.whatsapp && (
             <div className="flex items-start gap-3">
               <Phone className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
                 <p className="text-sm font-medium text-foreground">Telefone</p>
                 <p className="text-sm text-muted-foreground">
-                  {appointment.user.whatsapp}
+                  {(appointment.creator as any)?.whatsapp}
                 </p>
               </div>
             </div>
           )}
 
-          {appointment.user.address && (
+          {(appointment.creator as any)?.address && (
             <div className="flex items-start gap-3">
               <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
                 <p className="text-sm font-medium text-foreground">Endereço</p>
                 <p className="text-sm text-muted-foreground">
-                  {appointment.user.address}
+                  {(appointment.creator as any)?.address}
                 </p>
               </div>
             </div>

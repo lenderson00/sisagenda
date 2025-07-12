@@ -25,13 +25,15 @@ const AgendamentosLayout = async ({
       id,
     },
     include: {
-      user: true,
+      User: true,
+      Supplier: true,
       deliveryType: true,
       items: true,
       attachments: true,
       activities: {
         include: {
           user: true,
+          supplier: true,
         },
         orderBy: {
           createdAt: "desc",
@@ -44,8 +46,11 @@ const AgendamentosLayout = async ({
     notFound();
   }
 
+  const creator = appointment.User ?? appointment.Supplier;
+
   const plainAppointment = {
     ...appointment,
+    creator,
     items: appointment.items.map((item) => ({
       ...item,
       price: item.price.toString(),
