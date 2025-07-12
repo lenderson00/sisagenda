@@ -138,7 +138,6 @@ export async function GET(req: NextRequest) {
       include: {
         deliveryType: true,
         organization: true,
-        user: true,
         Supplier: true,
         items: true,
         attachments: true,
@@ -232,7 +231,6 @@ export async function POST(req: Request) {
           ...rest,
           date: new Date(dateTime),
           duration: deliveryType.duration,
-          userId: user?.id,
           supplierId: supplier?.id,
           status: "PENDING_CONFIRMATION",
           internalId: await generateInternalId(),
@@ -255,7 +253,6 @@ export async function POST(req: Request) {
       await tx.appointmentActivity.create({
         data: {
           appointmentId: appointment.id,
-          userId: user?.id,
           supplierId: supplier?.id,
           type: "CREATED",
           title: "Agendamento Criado",

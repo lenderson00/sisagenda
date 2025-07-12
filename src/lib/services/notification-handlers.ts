@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../prisma";
 import type {
   NotificationData,
   NotificationEvent,
@@ -14,7 +14,8 @@ abstract class BaseNotificationHandler implements NotificationEventHandler {
     return prisma.appointment.findUnique({
       where: { id: appointmentId },
       include: {
-        user: { select: { name: true, email: true } },
+        User: { select: { name: true, email: true } },
+        Supplier: { select: { name: true, email: true } },
         deliveryType: { select: { name: true } },
         organization: { select: { name: true, sigla: true } },
       },
@@ -59,15 +60,17 @@ export class AppointmentCreatedHandler extends BaseNotificationHandler {
     const userIds = await this.getOrganizationUsers({
       organizationId: event.organizationId,
       excludeUserId: event.triggeredByUserId,
-      excludeRoles: ["FORNECEDOR"], // Exclude suppliers from receiving these notifications
     });
+
+    const creatorName = appointment.User?.name ?? appointment.Supplier?.name;
 
     return userIds.map((userId) => ({
       title: "Novo Agendamento Criado",
-      content: `Um novo agendamento foi criado por ${appointment.user.name} para ${appointment.deliveryType.name}`,
+      content: `Um novo agendamento foi criado por ${creatorName ?? "desconhecido"
+        } para ${appointment.deliveryType.name}`,
       payload: {
         appointmentId: event.appointmentId,
-        supplierName: appointment.user.name,
+        supplierName: creatorName,
         deliveryType: appointment.deliveryType.name,
         date: appointment.date.toISOString(),
         internalId: appointment.internalId,
@@ -86,24 +89,30 @@ export class AppointmentConfirmedHandler extends BaseNotificationHandler {
     const appointment = await this.getAppointmentDetails(event.appointmentId);
     if (!appointment) return [];
 
-    // Notify the supplier (appointment owner)
-    return [
-      {
-        title: "Agendamento Confirmado",
-        content: `Seu agendamento para ${appointment.deliveryType.name} foi confirmado pela organização`,
-        payload: {
-          appointmentId: event.appointmentId,
-          deliveryType: appointment.deliveryType.name,
-          date: appointment.date.toISOString(),
-          organizationName: appointment.organization.name,
-          internalId: appointment.internalId,
-        },
-        type: event.type,
-        userId: appointment.userId,
-        organizationId: event.organizationId,
+    const notification: NotificationData = {
+      title: "Agendamento Confirmado",
+      content: `Seu agendamento para ${appointment.deliveryType.name} foi confirmado pela organização`,
+      payload: {
         appointmentId: event.appointmentId,
+        deliveryType: appointment.deliveryType.name,
+        date: appointment.date.toISOString(),
+        organizationName: appointment.organization.name,
+        internalId: appointment.internalId,
       },
-    ];
+      type: event.type,
+      organizationId: event.organizationId,
+      appointmentId: event.appointmentId,
+    };
+
+    if (appointment.userId) {
+      notification.userId = appointment.userId;
+    } else if (appointment.supplierId) {
+      notification.supplierId = appointment.supplierId;
+    } else {
+      return []; // Or log an error, as this case is unexpected
+    }
+
+    return [notification];
   }
 }
 
@@ -113,25 +122,31 @@ export class AppointmentRejectedHandler extends BaseNotificationHandler {
     const appointment = await this.getAppointmentDetails(event.appointmentId);
     if (!appointment) return [];
 
-    // Notify the supplier (appointment owner)
-    return [
-      {
-        title: "Agendamento Rejeitado",
-        content: `Seu agendamento para ${appointment.deliveryType.name} foi rejeitado pela organização`,
-        payload: {
-          appointmentId: event.appointmentId,
-          deliveryType: appointment.deliveryType.name,
-          date: appointment.date.toISOString(),
-          organizationName: appointment.organization.name,
-          internalId: appointment.internalId,
-          reason: event.metadata?.reason || "Não especificado",
-        },
-        type: event.type,
-        userId: appointment.userId,
-        organizationId: event.organizationId,
+    const notification: NotificationData = {
+      title: "Agendamento Rejeitado",
+      content: `Seu agendamento para ${appointment.deliveryType.name} foi rejeitado pela organização`,
+      payload: {
         appointmentId: event.appointmentId,
+        deliveryType: appointment.deliveryType.name,
+        date: appointment.date.toISOString(),
+        organizationName: appointment.organization.name,
+        internalId: appointment.internalId,
+        reason: event.metadata?.reason || "Não especificado",
       },
-    ];
+      type: event.type,
+      organizationId: event.organizationId,
+      appointmentId: event.appointmentId,
+    };
+
+    if (appointment.userId) {
+      notification.userId = appointment.userId;
+    } else if (appointment.supplierId) {
+      notification.supplierId = appointment.supplierId;
+    } else {
+      return [];
+    }
+
+    return [notification];
   }
 }
 
@@ -142,10 +157,13 @@ export class AppointmentCancelledHandler extends BaseNotificationHandler {
     if (!appointment) return [];
 
     const notifications: NotificationData[] = [];
+    const creatorName = appointment.User?.name ?? appointment.Supplier?.name;
+    // This logic might need review depending on how supplier actions are tracked
+    const isCancelledByCreator = event.triggeredByUserId === appointment.userId;
 
-    // If cancelled by organization, notify supplier
-    if (event.triggeredByUserId !== appointment.userId) {
-      notifications.push({
+    // If cancelled by organization (or someone other than the User creator), notify creator
+    if (!isCancelledByCreator) {
+      const notification: NotificationData = {
         title: "Agendamento Cancelado",
         content: `Seu agendamento para ${appointment.deliveryType.name} foi cancelado pela organização`,
         payload: {
@@ -157,25 +175,33 @@ export class AppointmentCancelledHandler extends BaseNotificationHandler {
           reason: event.metadata?.reason || "Não especificado",
         },
         type: event.type,
-        userId: appointment.userId,
         organizationId: event.organizationId,
         appointmentId: event.appointmentId,
-      });
+      };
+      if (appointment.userId) {
+        notification.userId = appointment.userId;
+      } else if (appointment.supplierId) {
+        notification.supplierId = appointment.supplierId;
+      }
+
+      if (notification.userId || notification.supplierId) {
+        notifications.push(notification);
+      }
     } else {
-      // If cancelled by supplier, notify organization users
+      // If cancelled by User creator, notify organization users
       const userIds = await this.getOrganizationUsers({
         organizationId: event.organizationId,
         excludeUserId: event.triggeredByUserId,
-        excludeRoles: ["FORNECEDOR"],
       });
 
       notifications.push(
         ...userIds.map((userId) => ({
-          title: "Agendamento Cancelado pelo Fornecedor",
-          content: `O agendamento de ${appointment.user.name} para ${appointment.deliveryType.name} foi cancelado`,
+          title: "Agendamento Cancelado pelo Criador",
+          content: `O agendamento de ${creatorName ?? "desconhecido"
+            } para ${appointment.deliveryType.name} foi cancelado`,
           payload: {
             appointmentId: event.appointmentId,
-            supplierName: appointment.user.name,
+            supplierName: creatorName,
             deliveryType: appointment.deliveryType.name,
             date: appointment.date.toISOString(),
             internalId: appointment.internalId,
@@ -206,12 +232,15 @@ export class AppointmentRescheduleRequestedHandler extends BaseNotificationHandl
       includeRoles: ["ADMIN", "USER"], // Only notify admins and users
     });
 
+    const creatorName = appointment.User?.name ?? appointment.Supplier?.name;
+
     return userIds.map((userId) => ({
       title: "Solicitação de Reagendamento",
-      content: `${appointment.user.name} solicitou reagendamento para ${appointment.deliveryType.name}`,
+      content: `${creatorName ?? "desconhecido"
+        } solicitou reagendamento para ${appointment.deliveryType.name}`,
       payload: {
         appointmentId: event.appointmentId,
-        supplierName: appointment.user.name,
+        supplierName: creatorName,
         deliveryType: appointment.deliveryType.name,
         currentDate: appointment.date.toISOString(),
         requestedDate: event.metadata?.newDate,
@@ -233,10 +262,11 @@ export class AppointmentUpdatedHandler extends BaseNotificationHandler {
     if (!appointment) return [];
 
     const notifications: NotificationData[] = [];
+    const isUpdatedByCreator = event.triggeredByUserId === appointment.userId;
 
-    // If updated by organization, notify supplier
-    if (event.triggeredByUserId !== appointment.userId) {
-      notifications.push({
+    // If updated by someone other than the User creator, notify creator
+    if (!isUpdatedByCreator) {
+      const notification: NotificationData = {
         title: "Agendamento Atualizado",
         content: `Seu agendamento para ${appointment.deliveryType.name} foi atualizado`,
         payload: {
@@ -248,10 +278,19 @@ export class AppointmentUpdatedHandler extends BaseNotificationHandler {
           changes: event.metadata?.changes || {},
         },
         type: event.type,
-        userId: appointment.userId,
         organizationId: event.organizationId,
         appointmentId: event.appointmentId,
-      });
+      };
+
+      if (appointment.userId) {
+        notification.userId = appointment.userId;
+      } else if (appointment.supplierId) {
+        notification.supplierId = appointment.supplierId;
+      }
+
+      if (notification.userId || notification.supplierId) {
+        notifications.push(notification);
+      }
     }
 
     return notifications;
@@ -264,24 +303,30 @@ export class AppointmentCompletedHandler extends BaseNotificationHandler {
     const appointment = await this.getAppointmentDetails(event.appointmentId);
     if (!appointment) return [];
 
-    // Notify the supplier
-    return [
-      {
-        title: "Agendamento Concluído",
-        content: `Seu agendamento para ${appointment.deliveryType.name} foi marcado como concluído`,
-        payload: {
-          appointmentId: event.appointmentId,
-          deliveryType: appointment.deliveryType.name,
-          date: appointment.date.toISOString(),
-          organizationName: appointment.organization.name,
-          internalId: appointment.internalId,
-        },
-        type: event.type,
-        userId: appointment.userId,
-        organizationId: event.organizationId,
+    const notification: NotificationData = {
+      title: "Agendamento Concluído",
+      content: `Seu agendamento para ${appointment.deliveryType.name} foi marcado como concluído`,
+      payload: {
         appointmentId: event.appointmentId,
+        deliveryType: appointment.deliveryType.name,
+        date: appointment.date.toISOString(),
+        organizationName: appointment.organization.name,
+        internalId: appointment.internalId,
       },
-    ];
+      type: event.type,
+      organizationId: event.organizationId,
+      appointmentId: event.appointmentId,
+    };
+
+    if (appointment.userId) {
+      notification.userId = appointment.userId;
+    } else if (appointment.supplierId) {
+      notification.supplierId = appointment.supplierId;
+    } else {
+      return [];
+    }
+
+    return [notification];
   }
 }
 
@@ -291,24 +336,30 @@ export class AppointmentSupplierNoShowHandler extends BaseNotificationHandler {
     const appointment = await this.getAppointmentDetails(event.appointmentId);
     if (!appointment) return [];
 
-    // Notify the supplier
-    return [
-      {
-        title: "Agendamento - Não Comparecimento",
-        content: `Seu agendamento para ${appointment.deliveryType.name} foi marcado como não comparecimento`,
-        payload: {
-          appointmentId: event.appointmentId,
-          deliveryType: appointment.deliveryType.name,
-          date: appointment.date.toISOString(),
-          organizationName: appointment.organization.name,
-          internalId: appointment.internalId,
-        },
-        type: event.type,
-        userId: appointment.userId,
-        organizationId: event.organizationId,
+    const notification: NotificationData = {
+      title: "Agendamento - Não Comparecimento",
+      content: `Seu agendamento para ${appointment.deliveryType.name} foi marcado como não comparecimento`,
+      payload: {
         appointmentId: event.appointmentId,
+        deliveryType: appointment.deliveryType.name,
+        date: appointment.date.toISOString(),
+        organizationName: appointment.organization.name,
+        internalId: appointment.internalId,
       },
-    ];
+      type: event.type,
+      organizationId: event.organizationId,
+      appointmentId: event.appointmentId,
+    };
+
+    if (appointment.userId) {
+      notification.userId = appointment.userId;
+    } else if (appointment.supplierId) {
+      notification.supplierId = appointment.supplierId;
+    } else {
+      return [];
+    }
+
+    return [notification];
   }
 }
 
@@ -318,24 +369,30 @@ export class AppointmentRescheduledHandler extends BaseNotificationHandler {
     const appointment = await this.getAppointmentDetails(event.appointmentId);
     if (!appointment) return [];
 
-    // Notify the supplier
-    return [
-      {
-        title: "Agendamento Reagendado",
-        content: `Seu agendamento para ${appointment.deliveryType.name} foi reagendado`,
-        payload: {
-          appointmentId: event.appointmentId,
-          deliveryType: appointment.deliveryType.name,
-          newDate: appointment.date.toISOString(),
-          previousDate: event.metadata?.previousDate,
-          organizationName: appointment.organization.name,
-          internalId: appointment.internalId,
-        },
-        type: event.type,
-        userId: appointment.userId,
-        organizationId: event.organizationId,
+    const notification: NotificationData = {
+      title: "Agendamento Reagendado",
+      content: `Seu agendamento para ${appointment.deliveryType.name} foi reagendado`,
+      payload: {
         appointmentId: event.appointmentId,
+        deliveryType: appointment.deliveryType.name,
+        newDate: appointment.date.toISOString(),
+        previousDate: event.metadata?.previousDate,
+        organizationName: appointment.organization.name,
+        internalId: appointment.internalId,
       },
-    ];
+      type: event.type,
+      organizationId: event.organizationId,
+      appointmentId: event.appointmentId,
+    };
+
+    if (appointment.userId) {
+      notification.userId = appointment.userId;
+    } else if (appointment.supplierId) {
+      notification.supplierId = appointment.supplierId;
+    } else {
+      return [];
+    }
+
+    return [notification];
   }
 }

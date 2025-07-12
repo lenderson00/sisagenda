@@ -224,9 +224,6 @@ model Appointment {
   date     DateTime
   duration Int
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
   deliveryTypeId String
   deliveryType   DeliveryType @relation(fields: [deliveryTypeId], references: [id])
 
@@ -252,10 +249,13 @@ model Appointment {
   updatedAt    DateTime       @updatedAt
   deletedAt    DateTime?
   Notification Notification[]
-  Supplier     Supplier?      @relation(fields: [supplierId], references: [id])
-  supplierId   String?
 
-  @@index([userId])
+  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
+  supplierId String?
+  User       User?     @relation(fields: [userId], references: [id])
+  userId     String?
+
+  @@index([supplierId])
   @@index([organizationId])
   @@index([deliveryTypeId])
   @@index([date])
@@ -329,8 +329,11 @@ model AppointmentActivity {
   appointment   Appointment @relation(fields: [appointmentId], references: [id])
 
   // User who performed the activity
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  supplierId String?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
 
   // Additional fields for better tracking
   previousStatus AppointmentStatus? // Previous status before the change
@@ -345,10 +348,8 @@ model AppointmentActivity {
   replies  AppointmentActivity[] @relation("Replies")
 
   // Timestamps
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
-  supplierId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Indexes for better query performance
   @@index([appointmentId])
@@ -557,8 +558,8 @@ model Notification {
   status NotificationStatus @default(UNREAD)
 
   // User who receives the notification
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 
   // Organization context
   organizationId String

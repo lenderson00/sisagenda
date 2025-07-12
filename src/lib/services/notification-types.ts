@@ -19,7 +19,8 @@ export interface NotificationData {
   content: string;
   payload?: Prisma.JsonValue;
   type: NotificationType;
-  userId: string;
+  userId?: string;
+  supplierId?: string;
   organizationId: string;
   appointmentId?: string;
 }
