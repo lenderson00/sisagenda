@@ -2,6 +2,8 @@ import { createSafeActionClient } from "next-safe-action";
 import { auth } from "./auth";
 import { prisma } from "./prisma";
 import { z } from "zod";
+import { defineAbilityFor } from "@/features/permissions";
+import { roles } from "@/features/permissions/roles";
 
 export const actionClient = createSafeActionClient({
   handleServerError: (error) => {
@@ -15,13 +17,101 @@ export const actionClient = createSafeActionClient({
   },
   defineMetadataSchema() {
     return z.object({
-      action: z.string(),
+      action: z.enum(['manage', 'get', 'create', 'update', 'delete']),
+      subject: z.enum(['User', 'Organization', 'Supplier']),
+      role: roles,
     });
   },
 });
 
+const AuthUserSchema = z.object({
+  id: z.string(),
+  role: roles,
+  organizationId: z.string().nullable(),
+})
 
-export const superAdminActionClient = actionClient.use(async ({ next }) => {
+type AuthUser = z.infer<typeof AuthUserSchema>;
+
+const roleBasedActionClient = actionClient.use(async ({ next, metadata }) => {
+  const session = await auth();
+
+  if (!session?.user.id) {
+    throw new Error("Unauthorized: Login required.");
+  }
+
+  const isSupplier = session.user.role === "FORNECEDOR";
+
+  let user: AuthUser | null = null;
+
+  if (isSupplier) {
+    const supplier = await prisma.supplier.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!supplier) {
+      throw new Error("Supplier not found.");
+    }
+
+    user = {
+      id: supplier.id,
+      role: "FORNECEDOR",
+      organizationId: null,
+    }
+  } else {
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        id: true,
+        role: true,
+        organizationId: true,
+      },
+    });
+
+    if (!dbUser) {
+      throw new Error("User not found.");
+    }
+
+    user = {
+      id: dbUser.id,
+      role: dbUser.role,
+      organizationId: dbUser.organizationId,
+    }
+  }
+
+  const ability = defineAbilityFor(user);
+
+  const { action, role, subject: subjectMetadata } = metadata;
+
+  if (role !== user.role) {
+    throw new Error("Unauthorized: You don't have permission to do this action.");
+  }
+
+  const subject = {
+    __typename: subjectMetadata as any,
+    ...user,
+  };
+
+  if (!ability.can(action, subject)) {
+    throw new Error(
+      "Unauthorized: You don't have permission to do this action.",
+    );
+  }
+
+  return next({
+    ctx: {
+      user,
+    },
+  });
+});
+
+export const superAdminActionClient = roleBasedActionClient.use(async ({ next }) => {
   const session = await auth();
 
   if (!session?.user.id) {
@@ -33,21 +123,10 @@ export const superAdminActionClient = actionClient.use(async ({ next }) => {
   if (!isSuperAdmin) {
     throw new Error("Unauthorized: Super admin required.");
   }
-
-  const superAdmin = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
-
-  return next({
-    ctx: {
-      user: superAdmin,
-    },
-  });
+  return next();
 });
 
-export const adminActionClient = actionClient.use(async ({ next }) => {
+export const adminActionClient = roleBasedActionClient.use(async ({ next }) => {
   const session = await auth();
 
   if (!session?.user.id) {
@@ -60,24 +139,10 @@ export const adminActionClient = actionClient.use(async ({ next }) => {
     throw new Error("Unauthorized: Admin required.");
   }
 
-  const admin = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
-
-  if (!admin) {
-    throw new Error("Admin not found.");
-  }
-
-  return next({
-    ctx: {
-      user: admin,
-    },
-  });
+  return next();
 });
 
-export const comimsupAdminActionClient = actionClient.use(async ({ next }) => {
+export const comimsupAdminActionClient = roleBasedActionClient.use(async ({ next }) => {
   const session = await auth();
 
   if (!session?.user.id) {
@@ -90,24 +155,10 @@ export const comimsupAdminActionClient = actionClient.use(async ({ next }) => {
     throw new Error("Unauthorized: Comimsup admin required.");
   }
 
-  const comimsupAdmin = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
-
-  if (!comimsupAdmin) {
-    throw new Error("Comimsup admin not found.");
-  }
-
-  return next({
-    ctx: {
-      user: comimsupAdmin,
-    },
-  });
+  return next();
 });
 
-export const comrjAdminActionClient = actionClient.use(async ({ next }) => {
+export const comrjAdminActionClient = roleBasedActionClient.use(async ({ next }) => {
   const session = await auth();
 
   if (!session?.user.id) {
@@ -120,24 +171,10 @@ export const comrjAdminActionClient = actionClient.use(async ({ next }) => {
     throw new Error("Unauthorized: Comrj admin required.");
   }
 
-  const comrjAdmin = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
-
-  if (!comrjAdmin) {
-    throw new Error("Comrj admin not found.");
-  }
-
-  return next({
-    ctx: {
-      user: comrjAdmin,
-    },
-  });
+  return next();
 });
 
-export const supplierActionClient = actionClient.use(async ({ next }) => {
+export const supplierActionClient = roleBasedActionClient.use(async ({ next }) => {
   const session = await auth();
 
   if (!session?.user.id) {
@@ -150,24 +187,12 @@ export const supplierActionClient = actionClient.use(async ({ next }) => {
     throw new Error("Unauthorized: Supplier required.");
   }
 
-  const supplier = await prisma.supplier.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
 
-  if (!supplier) {
-    throw new Error("Supplier not found.");
-  }
 
-  return next({
-    ctx: {
-      user: supplier,
-    },
-  });
+  return next();
 });
 
-export const userActionClient = actionClient.use(async ({ next }) => {
+export const userActionClient = roleBasedActionClient.use(async ({ next }) => {
   const session = await auth();
 
   if (!session?.user.id) {
