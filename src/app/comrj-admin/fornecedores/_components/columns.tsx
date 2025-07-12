@@ -1,40 +1,58 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { createColumnConfigHelper } from "@/components/data-table/core/filters";
 import type { Supplier } from "@prisma/client";
-import { createColumnHelper } from "@tanstack/react-table";
-import { SupplierActions } from "./supplier-actions";
+import { Building, Calendar, Mail, Phone, ToggleLeft } from "lucide-react";
 
-const columnHelper = createColumnHelper<Supplier>();
+const dtf = createColumnConfigHelper<Supplier>();
 
-export const columns = [
-  columnHelper.accessor("name", {
-    header: "Nome",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("cnpj", {
-    header: "CNPJ",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("email", {
-    header: "Email",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("whatsapp", {
-    header: "WhatsApp",
-    cell: (info) => info.getValue() || "N/A",
-  }),
-  columnHelper.accessor("isActive", {
-    header: "Status",
-    cell: (info) =>
-      info.getValue() ? (
-        <Badge variant="default">Ativo</Badge>
-      ) : (
-        <Badge variant="destructive">Inativo</Badge>
-      ),
-  }),
-  columnHelper.display({
-    id: "actions",
-    cell: ({ row }) => <SupplierActions supplier={row.original} />,
-  }),
+export const columnsConfig = [
+  dtf
+    .text()
+    .id("name")
+    .displayName("Nome")
+    .icon(Building)
+    .accessor((supplier) => supplier.name)
+    .build(),
+  dtf
+    .text()
+    .id("cnpj")
+    .displayName("CNPJ")
+    .icon(Building)
+    .accessor((supplier) => supplier.cnpj)
+    .build(),
+  dtf
+    .text()
+    .id("email")
+    .displayName("Email")
+    .icon(Mail)
+    .accessor((supplier) => supplier.email)
+    .build(),
+  dtf
+    .text()
+    .id("whatsapp")
+    .displayName("WhatsApp")
+    .icon(Phone)
+    .accessor((supplier) => supplier.whatsapp || "N/A")
+    .build(),
+  dtf
+    .option()
+    .id("isActive")
+    .displayName("Status")
+    .icon(ToggleLeft)
+    .accessor((supplier) => (supplier.isActive ? "Ativo" : "Inativo"))
+    .options([
+      { label: "Ativo", value: "Ativo" },
+      { label: "Inativo", value: "Inativo" },
+    ])
+    .build(),
+  dtf
+    .date()
+    .id("createdAt")
+    .displayName("Criado em")
+    .icon(Calendar)
+    .accessor((supplier) =>
+      supplier.createdAt ? new Date(supplier.createdAt) : new Date(),
+    )
+    .build(),
 ];

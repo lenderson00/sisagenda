@@ -68,7 +68,13 @@ export async function POST(req: Request) {
     const validatedBody = createSupplierSchema.safeParse(body);
 
     if (!validatedBody.success) {
-      return new NextResponse("Invalid body", { status: 400 });
+      return NextResponse.json(
+        {
+          error: "Invalid body",
+          details: validatedBody.error.flatten()
+        },
+        { status: 400 }
+      );
     }
 
     const { name, email, phone, cnpj, address } = validatedBody.data;

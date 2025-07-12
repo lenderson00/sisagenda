@@ -1,149 +1,71 @@
 "use client";
 
+import { StatsCard } from "@/components/dashboard/stats-card";
 import { EmptyCard } from "@/components/empty-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  IconBuilding,
-  IconSearch,
-  IconUsers,
-  IconUserCheck,
-  IconUserX,
-} from "@tabler/icons-react";
-import { useMemo, useState } from "react";
-import { columns } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
+import { IconBuilding } from "@tabler/icons-react";
+import { Building, UserCheck, UserX, Users, Calendar } from "lucide-react";
+import { useMemo } from "react";
+import { SuppliersDataTable } from "./_components/suppliers-data-table";
+import { SuppliersPageSkeleton } from "./_components/suppliers-page-skeleton";
 import { useSuppliers } from "./_hooks/supplier-queries";
 
 export function SuppliersPageClient() {
-  const [search, setSearch] = useState("");
-  const { data: suppliers = [], isLoading } = useSuppliers(search);
+  const { data: suppliers = [], isLoading } = useSuppliers();
 
   const stats = useMemo(() => {
     const total = suppliers.length;
     const active = suppliers.filter((s) => s.isActive).length;
     const inactive = suppliers.filter((s) => !s.isActive).length;
 
-    return { total, active, inactive };
+    // Recent suppliers (created in the last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const recent = suppliers.filter(
+      (s) => new Date(s.createdAt) > thirtyDaysAgo,
+    ).length;
+
+    return { total, active, inactive, recent };
   }, [suppliers]);
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Stats Cards Skeleton */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <Skeleton className="h-24" />
-          <Skeleton className="h-24" />
-          <Skeleton className="h-24" />
-        </div>
-
-        {/* Search Skeleton */}
-        <Skeleton className="h-10 w-full max-w-sm" />
-
-        {/* Table Skeleton */}
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="h-64 w-full" />
-        </div>
-      </div>
-    );
+    return <SuppliersPageSkeleton />;
   }
 
+  // Always show the main layout with stats, even when there are no suppliers
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Fornecedores
-            </CardTitle>
-            <IconUsers className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground">
-              fornecedores cadastrados
-            </p>
-          </CardContent>
-        </Card>
+    <div className="min-h-[80vh]">
+      <div className="px-4 pt-2">
+        {/* Stats Cards */}
+        <div className="grid gap-4 md:grid-cols-4 mb-8">
+          <StatsCard
+            title="Total de Fornecedores"
+            value={stats.total}
+            icon={Users}
+            description="fornecedores cadastrados"
+          />
+          <StatsCard
+            title="Fornecedores Ativos"
+            value={stats.active}
+            icon={UserCheck}
+            description={`${stats.total > 0 ? Math.round((stats.active / stats.total) * 100) : 0}% do total`}
+          />
+          <StatsCard
+            title="Fornecedores Inativos"
+            value={stats.inactive}
+            icon={UserX}
+            description={`${stats.total > 0 ? Math.round((stats.inactive / stats.total) * 100) : 0}% do total`}
+          />
+          <StatsCard
+            title="Novos Fornecedores"
+            value={stats.recent}
+            icon={Calendar}
+            description="últimos 30 dias"
+          />
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Fornecedores Ativos
-            </CardTitle>
-            <IconUserCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {stats.active}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {stats.total > 0
-                ? `${Math.round((stats.active / stats.total) * 100)}%`
-                : "0%"}{" "}
-              do total
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Fornecedores Inativos
-            </CardTitle>
-            <IconUserX className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {stats.inactive}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {stats.total > 0
-                ? `${Math.round((stats.inactive / stats.total) * 100)}%`
-                : "0%"}{" "}
-              do total
-            </p>
-          </CardContent>
-        </Card>
+        <SuppliersDataTable data={suppliers} />
       </div>
-
-      {/* Search */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="relative max-w-sm">
-            <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por nome, CNPJ ou email..."
-              className="pl-8"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Fornecedores</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {suppliers.length === 0 ? (
-            <EmptyCard
-              title="Nenhum fornecedor encontrado"
-              description="Tente ajustar sua busca ou crie um novo fornecedor."
-              icon={IconBuilding}
-            >
-              <></>
-            </EmptyCard>
-          ) : (
-            <DataTable columns={columns} data={suppliers} />
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }

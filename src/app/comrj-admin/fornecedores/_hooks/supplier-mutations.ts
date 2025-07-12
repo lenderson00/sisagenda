@@ -28,8 +28,14 @@ async function createSupplier(
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Falha ao criar fornecedor");
+    try {
+      const errorData = await response.json();
+      throw new Error(errorData.error || errorData.message || "Falha ao criar fornecedor");
+    } catch (jsonError) {
+      // If response is not JSON, create a new response to get text
+      const errorText = response.statusText || `Erro ${response.status}`;
+      throw new Error(errorText || "Falha ao criar fornecedor");
+    }
   }
 
   return response.json();

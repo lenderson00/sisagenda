@@ -18,7 +18,7 @@ import { z } from "zod";
 const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
   email: z.string().email("Email inválido"),
-  whatsapp: z.string().min(1, "Telefone é obrigatório"),
+  phone: z.string().min(1, "Telefone é obrigatório"),
   cnpj: z.string().min(1, "CNPJ é obrigatório"),
   address: z.string().optional(),
 });
@@ -41,7 +41,7 @@ export function SupplierForm({
     defaultValues: {
       name: supplier?.name || "",
       email: supplier?.email || "",
-      whatsapp: supplier?.whatsapp || "",
+      phone: supplier?.whatsapp || "",
       cnpj: supplier?.cnpj || "",
       address: supplier?.address || "",
     },
@@ -91,7 +91,7 @@ export function SupplierForm({
         />
         <FormField
           control={form.control}
-          name="whatsapp"
+          name="phone"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Telefone / Whatsapp</FormLabel>
